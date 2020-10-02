@@ -12,19 +12,19 @@ namespace CycleFinder.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ChartDataController : ControllerBase
+    public class CandleStickDataController : ControllerBase
     {
-        private readonly ILogger<ChartDataController> _logger;
+        private readonly ILogger<CandleStickDataController> _logger;
         private readonly IDataService _dataService;
 
-        public ChartDataController(ILogger<ChartDataController> logger, IDataService dataService)
+        public CandleStickDataController(ILogger<CandleStickDataController> logger, IDataService dataService)
         {
             _logger = logger;
             _dataService = dataService;
         }
 
         [HttpGet("{symbol}")]
-        public async Task<IEnumerable<CandleStick>> GetAllData(string symbol)
+        public async Task<IEnumerable<CandleStickData>> GetAllData(string symbol)
         {
             return await _dataService.GetAllData(symbol, TimeFrame.Daily);
         }

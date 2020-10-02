@@ -35,15 +35,15 @@ namespace CycleFinder.Services
         }
 
 
-        public async Task<List<CandleStick>> GetData(string symbol, TimeFrame timeFrame, DateTime? startTime = null, DateTime? endTime = null)
+        public async Task<List<CandleStickData>> GetData(string symbol, TimeFrame timeFrame, DateTime? startTime = null, DateTime? endTime = null)
         {
             var str = await client.GetStringAsync(BuildMarketDataRequest(symbol, timeFrame, startTime, endTime));
             List<List<double>> candles = JsonConvert.DeserializeObject<List<List<double>>>(str);
 
-            return candles.Select(_ => new CandleStick(_[0], _[1], _[2], _[3], _[4], _[5])).ToList();
+            return candles.Select(_ => new CandleStickData(_[0], _[1], _[2], _[3], _[4], _[5])).ToList();
         }
 
-        public async Task<List<CandleStick>> GetAllData(string symbol, TimeFrame timeFrame)
+        public async Task<List<CandleStickData>> GetAllData(string symbol, TimeFrame timeFrame)
         {
             switch (timeFrame)
             {
@@ -54,7 +54,7 @@ namespace CycleFinder.Services
             }
         }
 
-        private async Task<List<CandleStick>> GetAllDailyData(string symbol, TimeFrame timeFrame, DateTime startTime)
+        private async Task<List<CandleStickData>> GetAllDailyData(string symbol, TimeFrame timeFrame, DateTime startTime)
         {
             var candles = (await GetData(symbol, timeFrame, startTime));
             var diff = candles.First().Time - DateTime.Now;
