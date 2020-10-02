@@ -26,6 +26,7 @@ namespace CycleFinder.Controllers
         [HttpGet("{symbol}")]
         public async Task<IEnumerable<CandleStickData>> GetAllData(string symbol)
         {
+            //TODO: change to ActionResult
             return await _dataService.GetAllData(symbol, TimeFrame.Daily);
         }
     }
