@@ -2,7 +2,7 @@
 
 namespace CycleFinder.Models
 {
-    public class CandleStickData
+    public class CandleStick
     {
         public DateTime Time { get; }
         public long TimeInSeconds { get; }
@@ -12,7 +12,7 @@ namespace CycleFinder.Models
         public double Close { get; }
         public double Volume { get; }
 
-        public CandleStickData(double time, double open, double high, double low, double close, double volume)
+        public CandleStick(double time, double open, double high, double low, double close, double volume)
         {
             Time = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddMilliseconds(time);
             TimeInSeconds = (long)time / 1000;

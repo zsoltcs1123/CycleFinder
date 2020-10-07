@@ -1,9 +1,11 @@
-using CycleFinder.Services;
+using AutoMapper;
+using CycleFinder.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace CycleFinder
 {
@@ -19,7 +21,8 @@ namespace CycleFinder
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IDataService, BinanceDataService>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddScoped<IExternalDataService, BinanceDataService>();
             services.AddControllers();
         }
 
