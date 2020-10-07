@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CycleFinder.Data
 {
-    public class BinanceDataService : IExternalDataService
+    public class BinanceDataService : ICandleStickRepository
     {
         private readonly ILogger<BinanceDataService> _logger;
         private const string _rootUrl = "https://api.binance.com";
@@ -37,7 +37,10 @@ namespace CycleFinder.Data
 
         public async Task<List<Symbol>> ListSymbols()
         {
-            var result = JObject.Parse(await client.GetStringAsync(_rootUrl + Endpoints[Endpoint.ExchangeInfo]));
+            var url = _rootUrl + Endpoints[Endpoint.ExchangeInfo];
+            LogRequest(url);
+
+            var result = JObject.Parse(await client.GetStringAsync(url));
             return result["symbols"].Select(_ => new Symbol(_["symbol"].ToString(), _["quoteAsset"].ToString())).ToList();
         }
 
@@ -45,9 +48,10 @@ namespace CycleFinder.Data
         public async Task<List<CandleStick>> GetData(string symbol, TimeFrame timeFrame, DateTime? startTime = null, DateTime? endTime = null)
         {
             var request = BuildMarketDataRequest(symbol, timeFrame, startTime, endTime);
-            _logger.LogInformation($"Calling Binance API with url: {request}");
+            LogRequest(request);
 
             var response = await client.GetStringAsync(request);
+
             List<List<double>> candles = JsonConvert.DeserializeObject<List<List<double>>>(response);
 
             return candles.Select(_ => new CandleStick(_[0], _[1], _[2], _[3], _[4], _[5])).ToList();
@@ -90,6 +94,11 @@ namespace CycleFinder.Data
             sb.Append($"&limit={_limit}");
 
             return sb.ToString();
+        }
+
+        private void LogRequest(string url)
+        {
+            _logger.LogInformation($"Calling Binance API with url: {url}");
         }
 
 
