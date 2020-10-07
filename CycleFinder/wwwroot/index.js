@@ -13,16 +13,17 @@ const domElement = document.getElementById('tvchart');
 const chart = LightweightCharts.createChart(domElement, chartProterties);
 const candleSeries = chart.addCandlestickSeries();
 
-fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=1000')
+fetch('https://localhost:5001/api/CandleStick/BTCUSDT')
     .then(res => res.json())
     .then(data => {
+        console.log(data)
         const cdata = data.map(d => {
             return {
-                time: d[0] / 1000,
-                open: parseFloat(d[1]),
-                high: parseFloat(d[2]),
-                low: parseFloat(d[3]),
-                close: parseFloat(d[4])
+                time: d.time,
+                open: d.open,
+                high: d.high,
+                low: d.low,
+                close: d.close
             }
         });
         candleSeries.setData(cdata);
