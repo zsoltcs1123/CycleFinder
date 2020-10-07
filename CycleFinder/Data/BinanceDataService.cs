@@ -79,7 +79,6 @@ namespace CycleFinder.Data
             return await client.GetStringAsync(_rootUrl + Endpoints[Endpoint.Connectivity]) == "{}";
         }
 
-
         private string BuildMarketDataRequest(string symbol, TimeFrame timeframe, DateTime? startTime, DateTime? endTime)
         {
             var sb = new StringBuilder(_rootUrl + Endpoints[Endpoint.MarketData] + "?");

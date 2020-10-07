@@ -7,6 +7,8 @@ using CycleFinder.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using CycleFinder.Dtos;
+using LazyCache;
 
 namespace CycleFinder.Controllers
 {
@@ -16,29 +18,32 @@ namespace CycleFinder.Controllers
     {
         private readonly ILogger<CandleStickController> _logger;
         private readonly ICandleStickRepository _repository;
-        private List<Symbol> _symbols = new List<Symbol>();
+        private readonly IAppCache _cache;
 
-        public CandleStickController(ILogger<CandleStickController> logger, ICandleStickRepository repository)
+        public CandleStickController(
+            ILogger<CandleStickController> logger, 
+            ICandleStickRepository repository, 
+            IAppCache cache)
         {
             _logger = logger;
             _repository = repository;
-            GetSymbols();
+            _cache = cache;
         }
 
-        private async void GetSymbols()
+        private async Task<List<Symbol>> GetSymbols()
         {
-            _symbols = await _repository.ListSymbols();
+            return await _cache.GetOrAddAsync("symbols", () => _repository.ListSymbols());
         }
 
         [HttpGet("{symbol}")]
-        public async Task<ActionResult<IEnumerable<CandleStick>> > GetAllData(string symbol)
+        public async Task<ActionResult<IEnumerable<CandleStickDto>> > GetAllData(string symbol)
         {
-            if (_symbols.FirstOrDefault(_ => _.Name == symbol) == null)
+            if (GetSymbols().Result.FirstOrDefault(_ => _.Name == symbol) == null)
             {
                 return NotFound();
             }
 
-            return Ok(await _repository.GetAllData(symbol, TimeFrame.Daily));
+            return Ok((await _repository.GetAllData(symbol, TimeFrame.Daily)));
         }
     }
 }
