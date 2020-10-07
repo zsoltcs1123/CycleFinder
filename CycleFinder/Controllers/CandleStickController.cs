@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CycleFinder.Dtos;
 using LazyCache;
+using CycleFinder.Extensions;
 
 namespace CycleFinder.Controllers
 {
@@ -43,7 +44,7 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            return Ok((await _repository.GetAllData(symbol, TimeFrame.Daily)));
+            return Ok((await _repository.GetAllData(symbol, TimeFrame.Daily)).Select(_ => _.ToDto()));
         }
     }
 }
