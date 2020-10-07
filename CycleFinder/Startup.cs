@@ -23,6 +23,8 @@ namespace CycleFinder
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IExternalDataService, BinanceDataService>();
+            services.AddScoped<ICandleStickRepository, CandleStickRepository>();
+
             services.AddControllers();
         }
 

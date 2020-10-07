@@ -15,19 +15,18 @@ namespace CycleFinder.Controllers
     public class CandleStickController : ControllerBase
     {
         private readonly ILogger<CandleStickController> _logger;
-        private readonly IExternalDataService _dataService;
+        private readonly ICandleStickRepository _repository;
 
-        public CandleStickController(ILogger<CandleStickController> logger, IExternalDataService dataService)
+        public CandleStickController(ILogger<CandleStickController> logger, ICandleStickRepository repository)
         {
             _logger = logger;
-            _dataService = dataService;
+            _repository = repository;
         }
 
         [HttpGet("{symbol}")]
-        public async Task<IEnumerable<CandleStick>> GetAllData(string symbol)
+        public async Task<ActionResult<IEnumerable<CandleStick>> > GetAllData(string symbol)
         {
-            //TODO: change to ActionResult
-            return await _dataService.GetAllData(symbol, TimeFrame.Daily);
+            return Ok(await _repository.GetAllData(symbol, TimeFrame.Daily));
         }
     }
 }

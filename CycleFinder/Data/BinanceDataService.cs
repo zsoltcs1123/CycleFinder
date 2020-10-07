@@ -1,5 +1,6 @@
 ﻿using CycleFinder.Extensions;
 using CycleFinder.Models;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -13,6 +14,7 @@ namespace CycleFinder.Data
 {
     public class BinanceDataService : IExternalDataService
     {
+        private readonly ILogger<BinanceDataService> _logger;
         private const string _rootUrl = "https://api.binance.com";
         private readonly int _limit = 1000;
         private readonly DateTime _firstTradeDate = new DateTime(2016, 01, 01);
@@ -28,6 +30,11 @@ namespace CycleFinder.Data
 
         public bool IsAlive { get { return CheckConnection().Result; } }
 
+        public BinanceDataService(ILogger<BinanceDataService> logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<List<Symbol>> ListSymbols()
         {
             var result = JObject.Parse(await client.GetStringAsync(_rootUrl + Endpoints[Endpoint.ExchangeInfo]));
@@ -37,8 +44,11 @@ namespace CycleFinder.Data
 
         public async Task<List<CandleStick>> GetData(string symbol, TimeFrame timeFrame, DateTime? startTime = null, DateTime? endTime = null)
         {
-            var str = await client.GetStringAsync(BuildMarketDataRequest(symbol, timeFrame, startTime, endTime));
-            List<List<double>> candles = JsonConvert.DeserializeObject<List<List<double>>>(str);
+            var request = BuildMarketDataRequest(symbol, timeFrame, startTime, endTime);
+            _logger.LogInformation($"Calling Binance API with url: {request}");
+
+            var response = await client.GetStringAsync(request);
+            List<List<double>> candles = JsonConvert.DeserializeObject<List<List<double>>>(response);
 
             return candles.Select(_ => new CandleStick(_[0], _[1], _[2], _[3], _[4], _[5])).ToList();
         }
