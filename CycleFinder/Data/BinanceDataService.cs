@@ -35,7 +35,7 @@ namespace CycleFinder.Data
             _logger = logger;
         }
 
-        public async Task<List<Symbol>> ListSymbols()
+        public async Task<IEnumerable<Symbol>> ListSymbols()
         {
             var url = _rootUrl + Endpoints[Endpoint.ExchangeInfo];
             LogRequest(url);
@@ -45,7 +45,7 @@ namespace CycleFinder.Data
         }
 
 
-        public async Task<List<CandleStick>> GetData(string symbol, TimeFrame timeFrame, DateTime? startTime = null, DateTime? endTime = null)
+        public async Task<IEnumerable<CandleStick>> GetData(string symbol, TimeFrame timeFrame, DateTime? startTime = null, DateTime? endTime = null)
         {
             var request = BuildMarketDataRequest(symbol, timeFrame, startTime, endTime);
             LogRequest(request);
@@ -57,7 +57,7 @@ namespace CycleFinder.Data
             return candles.Select(_ => new CandleStick(_[0], _[1], _[2], _[3], _[4], _[5])).ToList();
         }
 
-        public async Task<List<CandleStick>> GetAllData(string symbol, TimeFrame timeFrame)
+        public async Task<IEnumerable<CandleStick>> GetAllData(string symbol, TimeFrame timeFrame)
         {
             return timeFrame switch
             {
@@ -66,7 +66,7 @@ namespace CycleFinder.Data
             };
         }
 
-        private async Task<List<CandleStick>> GetAllDailyData(string symbol, TimeFrame timeFrame, DateTime startTime)
+        private async Task<IEnumerable<CandleStick>> GetAllDailyData(string symbol, TimeFrame timeFrame, DateTime startTime)
         {
             var candles = (await GetData(symbol, timeFrame, startTime));
             var diff = candles.First().Time - DateTime.Now;
