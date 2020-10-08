@@ -1,4 +1,6 @@
 using CycleFinder.Data;
+using CycleFinder.Extensions;
+using CycleFinder.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +23,7 @@ namespace CycleFinder
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICandleStickRepository, BinanceDataService>();
+            services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
 
             services.AddControllers();
             services.AddLazyCache();

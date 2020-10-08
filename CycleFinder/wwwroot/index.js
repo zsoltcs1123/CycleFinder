@@ -44,7 +44,7 @@ fetch('https://localhost:5001/api/CandleStick/BTCUSDT/15')
             return {
                 time: d.time,
                 position: 'belowBar',
-                color: '#758696',
+                color: d.color,
                 shape: 'arrowUp',
                 text: 'LOW',
             }

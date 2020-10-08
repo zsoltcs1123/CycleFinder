@@ -10,6 +10,7 @@ using CycleFinder.Dtos;
 using LazyCache;
 using CycleFinder.Extensions;
 using CycleFinder.Calculations;
+using CycleFinder.Services;
 
 namespace CycleFinder.Controllers
 {
@@ -20,15 +21,18 @@ namespace CycleFinder.Controllers
         private readonly ILogger<CandleStickController> _logger;
         private readonly ICandleStickRepository _repository;
         private readonly IAppCache _cache;
+        private readonly Func<IRandomColorGenerator> _colorGeneratorFactory;
 
         public CandleStickController(
             ILogger<CandleStickController> logger, 
             ICandleStickRepository repository, 
-            IAppCache cache)
+            IAppCache cache,
+            Func<IRandomColorGenerator> colorGeneratorFactory)
         {
             _logger = logger;
             _repository = repository;
             _cache = cache;
+            _colorGeneratorFactory = colorGeneratorFactory;
         }
 
         /// <summary>
@@ -54,7 +58,7 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            return Ok((await GetOrAddAllData(symbol)).Select(_ => _.ToDto()));
+            return Ok((await GetOrAddAllData(symbol)).Select(_ => _.ToCandleStickDto()));
         }
 
         /// <summary>
@@ -64,14 +68,18 @@ namespace CycleFinder.Controllers
         /// <param name="order">The order parameter defines the number of adjacent candles, both left and right, from a low for it to be considered valid.</param>
         /// <returns></returns>
         [HttpGet("{symbol}/{order?}")]
-        public async Task<ActionResult<IEnumerable<CandleStickDto>>> GetLows(string symbol, int order = 5)
+        public async Task<ActionResult<IEnumerable<CandleStickDto>>> GetLows(string symbol, int order = 10)
         {
             if (!CheckSymbolExists(symbol))
             {
                 return NotFound();
             }
 
-            return Ok(await Task.Run(async () => CandleStickMath.GetLocalMinima(await GetOrAddAllData(symbol),order).Select(_ => _.ToDto())));
+            return Ok(
+                await Task.Run(
+                    async () => CandleStickMath.GetLocalMinima(
+                        await GetOrAddAllData(symbol), order).Select(_ => _.ToLowCandleStickDto(_colorGeneratorFactory().GetRandomColor()))));
+
         }
 
         private bool CheckSymbolExists(string symbol) => GetSymbols().Result.FirstOrDefault(_ => _.Name == symbol) != null;
