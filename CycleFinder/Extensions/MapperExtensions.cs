@@ -11,9 +11,9 @@ namespace CycleFinder.Extensions
             return new CandleStickDto(candleStick.TimeInSeconds, candleStick.Open, candleStick.High, candleStick.Low, candleStick.Close, candleStick.Volume);
         }
 
-        public static LowCandleStickDto ToLowCandleStickDto(this CandleStick candleStick, Color color)
+        public static CandleStickMarkerDto ToCandleStickMarkerDto(this CandleStick candleStick, Color color)
         {
-            return new LowCandleStickDto(candleStick.TimeInSeconds, color);
+            return new CandleStickMarkerDto(candleStick.TimeInSeconds, color);
         }
     }
 }

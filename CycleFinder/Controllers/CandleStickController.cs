@@ -78,7 +78,7 @@ namespace CycleFinder.Controllers
             return Ok(
                 await Task.Run(
                     async () => CandleStickMath.GetLocalMinima(
-                        await GetOrAddAllData(symbol), order).Select(_ => _.ToLowCandleStickDto(_colorGeneratorFactory().GetRandomColor()))));
+                        await GetOrAddAllData(symbol), order).Select(_ => _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor()))));
 
         }
 
