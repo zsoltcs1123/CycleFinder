@@ -97,6 +97,11 @@ namespace CycleFinder.Calculations
                         //only check backwards
                         isMinima = arr[index] < arr[index - i];
                     }
+                    else if (index - i < 0)
+                    {
+                        //only check forward
+                        isMinima = arr[index] < arr[index + i];
+                    }
                     else
                     {
                         isMinima = arr[index] < arr[index + i] && arr[index] < arr[index - i];

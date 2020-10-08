@@ -63,7 +63,7 @@ namespace CycleFinder.Controllers
         /// <param name="symbol">Ticker symbol of the instrument.</param>
         /// <param name="order">The order parameter defines the number of adjacent candles, both left and right, from a low for it to be considered valid.</param>
         /// <returns></returns>
-        [HttpGet("{symbol}, {order}")]
+        [HttpGet("{symbol}/{order?}")]
         public async Task<ActionResult<IEnumerable<CandleStickDto>>> GetLows(string symbol, int order = 5)
         {
             if (!CheckSymbolExists(symbol))
@@ -71,7 +71,7 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            return Ok(await Task.Run(async () => CandleStickMath.GetLocalMinima(await GetOrAddAllData(symbol),order)));
+            return Ok(await Task.Run(async () => CandleStickMath.GetLocalMinima(await GetOrAddAllData(symbol),order).Select(_ => _.ToDto())));
         }
 
         private bool CheckSymbolExists(string symbol) => GetSymbols().Result.FirstOrDefault(_ => _.Name == symbol) != null;

@@ -44,7 +44,6 @@ namespace CycleFinder.Data
             return result["symbols"].Select(_ => new Symbol(_["symbol"].ToString(), _["quoteAsset"].ToString())).ToList();
         }
 
-
         public async Task<IEnumerable<CandleStick>> GetData(string symbol, TimeFrame timeFrame, DateTime? startTime = null, DateTime? endTime = null)
         {
             var request = BuildMarketDataRequest(symbol, timeFrame, startTime, endTime);
