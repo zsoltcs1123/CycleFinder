@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CycleFinder.Calculations
 {
-    public static class Math
+    public static class GenericMath
     {
         // Function to find all the local maxima  
         // and minima in the given array arr[]  
@@ -57,17 +57,17 @@ namespace CycleFinder.Calculations
         /// <param name="arr">Input array</param>
         /// <param name="order">Specifies how many adjacent elements needed for the local minima to be valid.</param>
         /// <returns></returns>
-        public static List<int> FindLocalMinima(int[] arr, int order = 1)
+        public static List<int> FindLocalMinima(double[] arr, int order = 1)
         {
             List<int> mn = new List<int>();
 
             //Ensure input array has at least 2 elements
             if (arr.Length < 2)
             {
-                return new List<int>(arr);
+                return new List<int>() { 0 };
             }
 
-            static bool firstElementIsMinima(int[] arr, int order)
+            static bool firstElementIsMinima(double[] arr, int order)
             {
                 bool isMinima = true;
                 for (int i = 1; i <= order && isMinima; i++)
@@ -77,7 +77,7 @@ namespace CycleFinder.Calculations
                 return isMinima;
             }
 
-            static bool lastElementIsMinima(int[] arr, int order)
+            static bool lastElementIsMinima(double[] arr, int order)
             {
                 bool isMinima = true;
                 for (int i = 1; i <= order && isMinima; i++)
@@ -87,7 +87,7 @@ namespace CycleFinder.Calculations
                 return isMinima;
             }
 
-            static bool elementIsMinima(int[] arr, int index, int order)
+            static bool elementIsMinima(double[] arr, int index, int order)
             {
                 bool isMinima = true;
                 for (int i = 1; i <= order && isMinima; i++)
