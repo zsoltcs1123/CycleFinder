@@ -19,7 +19,7 @@ chart.applyOptions({
     },
 });
 
-fetch('https://localhost:5001/api/CandleStick/BTCUSDT')
+fetch('https://localhost:5001/api/CandleStick/VETBTC')
     .then(res => res.json())
     .then(data => {
         console.log(data)
@@ -36,17 +36,17 @@ fetch('https://localhost:5001/api/CandleStick/BTCUSDT')
     })
     .catch(err => log(err))
 
-fetch('https://localhost:5001/api/CandleStick/BTCUSDT/15')
+fetch('https://localhost:5001/api/CandleStick/VETBTC/15')
     .then(res => res.json())
     .then(data => {
         console.log(data)
         const cdata = data.map(d => {
             return {
                 time: d.time,
-                position: 'belowBar',
+                position: d.position,
                 color: d.color,
                 shape: 'arrowUp',
-                text: 'LOW',
+                text: d.text,
             }
         });
         candleSeries.setMarkers(cdata);

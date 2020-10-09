@@ -1,5 +1,6 @@
 ﻿using CycleFinder.Dtos;
 using CycleFinder.Models;
+using System;
 using System.Drawing;
 
 namespace CycleFinder.Extensions
@@ -11,9 +12,13 @@ namespace CycleFinder.Extensions
             return new CandleStickDto(candleStick.TimeInSeconds, candleStick.Open, candleStick.High, candleStick.Low, candleStick.Close, candleStick.Volume);
         }
 
-        public static CandleStickMarkerDto ToCandleStickMarkerDto(this CandleStick candleStick, Color color)
+        public static CandleStickMarkerDto ToCandleStickMarkerDto(
+            this CandleStick candleStick, 
+            Color color,
+            string text = "",
+            MarkerPosition markerPosition = MarkerPosition.BelowBar)
         {
-            return new CandleStickMarkerDto(candleStick.TimeInSeconds, color);
+            return new CandleStickMarkerDto(candleStick.TimeInSeconds, color, text, markerPosition);
         }
     }
 }

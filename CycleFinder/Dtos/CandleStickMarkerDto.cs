@@ -7,11 +7,15 @@ namespace CycleFinder.Dtos
     {
         public long Time { get; }
         public string Color { get; }
+        public string Position { get;}
+        public string Text { get; }
 
-        public CandleStickMarkerDto(long time, Color color)
+        public CandleStickMarkerDto(long time, Color color, string text, MarkerPosition position)
         {
             Time = time;
             Color = color.ToHexString();
+            Text = text;
+            Position = position.GetDescription();
         }
     }
 }

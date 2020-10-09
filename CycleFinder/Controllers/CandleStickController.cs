@@ -67,8 +67,8 @@ namespace CycleFinder.Controllers
         /// <param name="symbol">Ticker symbol of the instrument.</param>
         /// <param name="order">The order parameter defines the number of adjacent candles, both left and right, from a low for it to be considered valid.</param>
         /// <returns></returns>
-        [HttpGet("{symbol}/{order?}")]
-        public async Task<ActionResult<IEnumerable<CandleStickDto>>> GetLows(string symbol, int order = 10)
+        //[HttpGet("{symbol}/{order?}")]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLows(string symbol, int order = 10)
         {
             if (!CheckSymbolExists(symbol))
             {
@@ -78,8 +78,34 @@ namespace CycleFinder.Controllers
             return Ok(
                 await Task.Run(
                     async () => CandleStickMath.GetLocalMinima(
-                        await GetOrAddAllData(symbol), order).Select(_ => _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor()))));
+                        await GetOrAddAllData(symbol), order).Select(_ => _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor(),"LOW"))));
 
+        }
+
+        [HttpGet("{symbol}/{order?}")]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetPrimaryTimeCyclesFromLows(string symbol, int order = 10)
+        {
+            if (!CheckSymbolExists(symbol))
+            {
+                return NotFound();
+            }
+
+            return Ok(
+                await Task.Run(
+                    async () =>
+                        {
+                            var ret = new List<CandleStickMarkerDto>();
+                            foreach (var kvp in CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order))
+                            {
+                                var color = _colorGeneratorFactory().GetRandomColor();
+                                ret.Add(kvp.Key.ToCandleStickMarkerDto(color, "LOW", MarkerPosition.BelowBar));
+
+                                //Todo: change turn to actual value +34, +55, etc
+                                ret.AddRange(kvp.Value.Select(val => val.ToCandleStickMarkerDto(color, "TURN", MarkerPosition.AboveBar)));
+                            }
+                            return ret;
+
+                        }));
         }
 
         private bool CheckSymbolExists(string symbol) => GetSymbols().Result.FirstOrDefault(_ => _.Name == symbol) != null;
