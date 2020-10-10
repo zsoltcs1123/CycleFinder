@@ -19,6 +19,7 @@ chart.applyOptions({
     },
 });
 
+
 //Get all data
 fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
     .then(res => res.json())
@@ -50,7 +51,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                 });
 
                 //Get highs
-                fetch('https://localhost:5001/api/CandleStick/GetHighsWithTurns?symbol=BTCUSDT&numberofhighs=5')
+                fetch('https://localhost:5001/api/CandleStick/GetHighsWithTurns?symbol=BTCUSDT&numberofhighs=7')
                     .then(res => res.json())
                     .then(data => {
                         console.log(data)
@@ -64,12 +65,33 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                             }
                         });
 
-                        candleSeries.setMarkers(lows.concat(highs));
+                        candleSeries.setMarkers(lows.concat(highs).sort((a, b) => a.time - b.time));
+                        /*candleSeries.setMarkers([
+                            {
+                                time: '2019-04-09',
+                                position: 'aboveBar',
+                                color: 'black',
+                                shape: 'arrowDown',
+                            },
+                            {
+                                time: '2019-05-31',
+                                position: 'belowBar',
+                                color: 'red',
+                                shape: 'arrowUp',
+                            },
+                            {
+                                time: '2019-05-31',
+                                position: 'belowBar',
+                                color: 'orange',
+                                shape: 'arrowUp',
+                                text: 'example',
+                                size: 2,
+                            },
+                        ]);*/
                     })
                     .catch(err => log(err))
             })
             .catch(err => log(err))
-
     })
     .catch(err => log(err))
 
