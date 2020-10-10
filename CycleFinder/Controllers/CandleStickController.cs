@@ -95,13 +95,19 @@ namespace CycleFinder.Controllers
                     async () =>
                         {
                             var ret = new List<CandleStickMarkerDto>();
-                            foreach (var kvp in CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order))
+                            int lowId = 1;
+                            foreach (var cycles in CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order))
                             {
                                 var color = _colorGeneratorFactory().GetRandomColor();
-                                ret.Add(kvp.Key.ToCandleStickMarkerDto(color, "LOW", MarkerPosition.BelowBar));
+                                ret.Add(cycles.Key.ToCandleStickMarkerDto(color, $"LOW #{lowId}", MarkerPosition.BelowBar, MarkerShape.ArrowUp));
 
-                                //Todo: change turn to actual value +34, +55, etc
-                                ret.AddRange(kvp.Value.Select(val => val.ToCandleStickMarkerDto(color, "TURN", MarkerPosition.AboveBar)));
+                                int turnId = 1;
+                                foreach (var turn in cycles.Value)
+                                {
+                                    ret.Add(turn.ToCandleStickMarkerDto(color, $"TURN #{lowId}/{turnId}", MarkerPosition.AboveBar, MarkerShape.ArrowDown));
+                                    turnId++;
+                                }
+                                lowId++;
                             }
                             return ret;
 

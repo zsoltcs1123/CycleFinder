@@ -10,12 +10,15 @@ namespace CycleFinder.Dtos
         public string Position { get;}
         public string Text { get; }
 
-        public CandleStickMarkerDto(long time, Color color, string text, MarkerPosition position)
+        public string Shape { get; }
+
+        public CandleStickMarkerDto(long time, Color color, string text, MarkerPosition position, MarkerShape shape)
         {
             Time = time;
             Color = color.ToHexString();
             Text = text;
             Position = position.GetDescription();
+            Shape = shape.GetDescription();
         }
     }
 }

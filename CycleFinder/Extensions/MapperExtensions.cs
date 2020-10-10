@@ -16,9 +16,10 @@ namespace CycleFinder.Extensions
             this CandleStick candleStick, 
             Color color,
             string text = "",
-            MarkerPosition markerPosition = MarkerPosition.BelowBar)
+            MarkerPosition markerPosition = MarkerPosition.BelowBar,
+            MarkerShape markerShape = MarkerShape.ArrowUp)
         {
-            return new CandleStickMarkerDto(candleStick.TimeInSeconds, color, text, markerPosition);
+            return new CandleStickMarkerDto(candleStick.TimeInSeconds, color, text, markerPosition, markerShape);
         }
     }
 }

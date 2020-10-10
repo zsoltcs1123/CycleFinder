@@ -9,4 +9,12 @@ namespace CycleFinder.Dtos
         [Description("belowBar")]
         BelowBar
     }
+
+    public enum MarkerShape
+    {
+        ArrowUp,
+        ArrowDown,
+        Circle,
+        Square
+    }
 }

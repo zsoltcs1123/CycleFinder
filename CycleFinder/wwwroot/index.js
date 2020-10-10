@@ -19,7 +19,7 @@ chart.applyOptions({
     },
 });
 
-fetch('https://localhost:5001/api/CandleStick/VETBTC')
+fetch('https://localhost:5001/api/CandleStick/ETHBTC')
     .then(res => res.json())
     .then(data => {
         console.log(data)
@@ -36,7 +36,7 @@ fetch('https://localhost:5001/api/CandleStick/VETBTC')
     })
     .catch(err => log(err))
 
-fetch('https://localhost:5001/api/CandleStick/VETBTC/15')
+fetch('https://localhost:5001/api/CandleStick/ETHBTC/15')
     .then(res => res.json())
     .then(data => {
         console.log(data)
