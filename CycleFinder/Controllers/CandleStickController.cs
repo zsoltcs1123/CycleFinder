@@ -67,7 +67,7 @@ namespace CycleFinder.Controllers
         /// <param name="symbol">Ticker symbol of the instrument.</param>
         /// <param name="order">The order parameter defines the number of adjacent candles, both left and right, from a low for it to be considered valid.</param>
         /// <returns></returns>
-        //[HttpGet("{symbol}/{order?}")]
+        [HttpGet("{symbol}/{order?}")]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLows(string symbol, int order = 10)
         {
             if (!CheckSymbolExists(symbol))
@@ -78,7 +78,24 @@ namespace CycleFinder.Controllers
             return Ok(
                 await Task.Run(
                     async () => CandleStickMath.GetLocalMinima(
-                        await GetOrAddAllData(symbol), order).Select(_ => _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor(),"LOW"))));
+                        await GetOrAddAllData(symbol), order).Select(_ => 
+                        _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor(),"LOW", MarkerPosition.BelowBar, MarkerShape.ArrowUp))));
+
+        }
+
+        //[HttpGet("{symbol}/{order?}")]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighs(string symbol, int order = 10)
+        {
+            if (!CheckSymbolExists(symbol))
+            {
+                return NotFound();
+            }
+
+            return Ok(
+                await Task.Run(
+                    async () => CandleStickMath.GetLocalMaxima(
+                        await GetOrAddAllData(symbol), order).Select(_ => 
+                        _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor(), "High", MarkerPosition.AboveBar, MarkerShape.ArrowDown))));
 
         }
 
