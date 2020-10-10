@@ -19,10 +19,9 @@ chart.applyOptions({
     },
 });
 
-fetch('https://localhost:5001/api/CandleStick/GetAllData/BTCUSDT')
+fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
     .then(res => res.json())
     .then(data => {
-        console.log(data)
         const cdata = data.map(d => {
             return {
                 time: d.time,
@@ -33,24 +32,44 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData/BTCUSDT')
             }
         });
         candleSeries.setData(cdata);
+
+        fetch('https://localhost:5001/api/CandleStick/GetLows?symbol=BTCUSDT')
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                const lows = data.map(d => {
+                    return {
+                        time: d.time,
+                        position: d.position,
+                        color: d.color,
+                        shape: d.shape,
+                        text: d.text,
+                    }
+                });
+
+                fetch('https://localhost:5001/api/CandleStick/GetHighs?symbol=BTCUSDT')
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data)
+                        const highs = data.map(d => {
+                            return {
+                                time: d.time,
+                                position: d.position,
+                                color: d.color,
+                                shape: d.shape,
+                                text: d.text,
+                            }
+                        });
+
+                        candleSeries.setMarkers(lows.concat(highs));
+                    })
+                    .catch(err => log(err))
+            })
+            .catch(err => log(err))
+
     })
     .catch(err => log(err))
 
-fetch('https://localhost:5001/api/CandleStick/GetLows?symbol=BTCUSDT')
-    .then(res => res.json())
-    .then(data => {
-        console.log(data)
-        const cdata = data.map(d => {
-            return {
-                time: d.time,
-                position: d.position,
-                color: d.color,
-                shape: d.shape,
-                text: d.text,
-            }
-        });
-        candleSeries.setMarkers(cdata);
-    })
-    .catch(err => log(err))
+
 
 

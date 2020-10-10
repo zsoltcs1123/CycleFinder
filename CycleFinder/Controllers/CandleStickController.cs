@@ -84,7 +84,7 @@ namespace CycleFinder.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighs([FromQuery]string symbol, [FromQuery]int order = 10)
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighs([FromQuery]string symbol, [FromQuery]int order = 15)
         {
             if (!CheckSymbolExists(symbol))
             {
