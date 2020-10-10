@@ -19,7 +19,7 @@ chart.applyOptions({
     },
 });
 
-fetch('https://localhost:5001/api/CandleStick/BTCUSDT')
+fetch('https://localhost:5001/api/CandleStick/GetAllData/BTCUSDT')
     .then(res => res.json())
     .then(data => {
         console.log(data)
@@ -36,7 +36,7 @@ fetch('https://localhost:5001/api/CandleStick/BTCUSDT')
     })
     .catch(err => log(err))
 
-fetch('https://localhost:5001/api/CandleStick/BTCUSDT/15')
+fetch('https://localhost:5001/api/CandleStick/GetLows?symbol=BTCUSDT')
     .then(res => res.json())
     .then(data => {
         console.log(data)

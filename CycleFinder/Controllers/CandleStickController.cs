@@ -14,8 +14,8 @@ using CycleFinder.Services;
 
 namespace CycleFinder.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]/[action]", Name = "[controller]_[action]")]
     public class CandleStickController : ControllerBase
     {
         private readonly ILogger<CandleStickController> _logger;
@@ -50,8 +50,8 @@ namespace CycleFinder.Controllers
         /// </summary>
         /// <param name="symbol">Ticker symbol of the instrument.</param>
         /// <returns></returns>
-        [HttpGet("{symbol}")]
-        public async Task<ActionResult<IEnumerable<CandleStickDto>> > GetAllData(string symbol)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CandleStickDto>> > GetAllData([FromQuery]string symbol)
         {
             if (!CheckSymbolExists(symbol))
             {
@@ -67,8 +67,8 @@ namespace CycleFinder.Controllers
         /// <param name="symbol">Ticker symbol of the instrument.</param>
         /// <param name="order">The order parameter defines the number of adjacent candles, both left and right, from a low for it to be considered valid.</param>
         /// <returns></returns>
-        [HttpGet("{symbol}/{order?}")]
-        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLows(string symbol, int order = 10)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLows([FromQuery]string symbol, [FromQuery]int order = 15)
         {
             if (!CheckSymbolExists(symbol))
             {
@@ -83,8 +83,8 @@ namespace CycleFinder.Controllers
 
         }
 
-        //[HttpGet("{symbol}/{order?}")]
-        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighs(string symbol, int order = 10)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighs([FromQuery]string symbol, [FromQuery]int order = 10)
         {
             if (!CheckSymbolExists(symbol))
             {
@@ -95,12 +95,12 @@ namespace CycleFinder.Controllers
                 await Task.Run(
                     async () => CandleStickMath.GetLocalMaxima(
                         await GetOrAddAllData(symbol), order).Select(_ => 
-                        _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor(), "High", MarkerPosition.AboveBar, MarkerShape.ArrowDown))));
+                        _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor(), "HIGH", MarkerPosition.AboveBar, MarkerShape.ArrowDown))));
 
         }
 
-        [HttpGet("{symbol}/{order?}/{numberoflows?}")]
-        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetPrimaryTimeCyclesFromLows(string symbol, int order = 10, int numberOfLows = 5)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetPrimaryTimeCyclesFromLows([FromQuery]string symbol, [FromQuery]int order = 10, [FromQuery]int? numberOfLows = null)
         {
             if (!CheckSymbolExists(symbol))
             {
@@ -108,7 +108,7 @@ namespace CycleFinder.Controllers
             }
 
             Func<IDictionary<CandleStick, IEnumerable<CandleStick>>, IEnumerable<KeyValuePair<CandleStick, IEnumerable<CandleStick>>>> lowSelector = 
-                d => numberOfLows == 0 ? d.AsEnumerable() : d.TakeLast(numberOfLows);
+                d => !numberOfLows.HasValue ? d.AsEnumerable() : d.TakeLast(numberOfLows.Value);
 
             return Ok(
                 await Task.Run(
