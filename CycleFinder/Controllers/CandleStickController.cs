@@ -136,15 +136,14 @@ namespace CycleFinder.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighsWithTurns([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? numberOfLows = null)
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighsWithTurns([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? numberOfHighs = null)
         {
             if (!CheckSymbolExists(symbol))
             {
                 return NotFound();
             }
 
-            Func<IDictionary<CandleStick, IEnumerable<CandleStick>>, IEnumerable<KeyValuePair<CandleStick, IEnumerable<CandleStick>>>> selector =
-                d => !numberOfLows.HasValue ? d.AsEnumerable() : d.TakeLast(numberOfLows.Value);
+            Func<IEnumerable<CandleWithTurns>, IEnumerable<CandleWithTurns>> selector = d => !numberOfHighs.HasValue ? d : d.TakeLast(numberOfHighs.Value);
 
             return Ok(
                 await Task.Run(
@@ -152,13 +151,13 @@ namespace CycleFinder.Controllers
                     {
                         var ret = new List<CandleStickMarkerDto>();
                         int lowId = 1;
-                        foreach (var cycles in selector(CandleStickMath.GetPrimaryTimeCyclesFromHighs(await GetOrAddAllData(symbol), order)))
+                        foreach (var cwt in selector(CandleStickMath.GetPrimaryTimeCyclesFromHighs(await GetOrAddAllData(symbol), order)))
                         {
                             var color = _colorGeneratorFactory().GetRandomColor();
-                            ret.Add(CreateHighMarker(cycles.Key, color, lowId));
+                            ret.Add(CreateHighMarker(cwt.Candle, color, lowId));
 
                             int turnId = 1;
-                            foreach (var turn in cycles.Value)
+                            foreach (var turn in cwt.Turns)
                             {
                                 ret.Add(CreateLowTurnMarker(turn, color, lowId, turnId));
                                 turnId++;

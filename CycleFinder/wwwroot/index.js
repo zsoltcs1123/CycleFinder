@@ -39,7 +39,6 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
             .then(res => res.json())
             .then(data => {
                 console.log(data)
-                var highs;
                 const lows = data.map(d => {
                     return {
                         time: d.time,
@@ -51,7 +50,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                 });
 
                 //Get highs
-                fetch('https://localhost:5001/api/CandleStick/GetHighs?symbol=BTCUSDT')
+                fetch('https://localhost:5001/api/CandleStick/GetHighsWithTurns?symbol=BTCUSDT&numberofhighs=5')
                     .then(res => res.json())
                     .then(data => {
                         console.log(data)

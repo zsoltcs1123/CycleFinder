@@ -45,18 +45,17 @@ namespace CycleFinder.Calculations
                 .Select(date => data.FirstOrDefault(c => c.Time == date))));
         }
 
-        public static IDictionary<CandleStick, IEnumerable<CandleStick>> GetPrimaryTimeCyclesFromHighs(IEnumerable<CandleStick> data, int order)
+        public static IEnumerable<CandleWithTurns> GetPrimaryTimeCyclesFromHighs(IEnumerable<CandleStick> data, int order)
         {
             //need to filter out dates that are in the future because the engine cannot draw only on candles
             //TODO find a way to draw in the future
             var maxDate = data.Last().Time;
 
             return GetLocalMaxima(data, order)
-                .ToDictionary(
-                candle => candle,
-                candle => GilmoreGeometry.GetPrimaryStaticNumbersFromDate(candle.Time).Values
+                .Select(candle =>
+                new CandleWithTurns(candle, GilmoreGeometry.GetPrimaryStaticNumbersFromDate(candle.Time).Values
                 .Where(date => date <= maxDate)
-                .Select(date => data.FirstOrDefault(c => c.Time == date)));
+                .Select(date => data.FirstOrDefault(c => c.Time == date))));
         }
     }
 }
