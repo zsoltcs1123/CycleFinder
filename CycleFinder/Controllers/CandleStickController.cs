@@ -11,6 +11,7 @@ using LazyCache;
 using CycleFinder.Extensions;
 using CycleFinder.Calculations;
 using CycleFinder.Services;
+using System.Drawing;
 
 namespace CycleFinder.Controllers
 {
@@ -22,6 +23,9 @@ namespace CycleFinder.Controllers
         private readonly ICandleStickRepository _repository;
         private readonly IAppCache _cache;
         private readonly Func<IRandomColorGenerator> _colorGeneratorFactory;
+
+        private Func<IDictionary<CandleStick, IEnumerable<CandleStick>>,int?,IEnumerable<KeyValuePair<CandleStick, IEnumerable<CandleStick>>>> selector = 
+            (d,i) => !i.HasValue ? d.AsEnumerable() : d.TakeLast(i.Value);
 
         public CandleStickController(
             ILogger<CandleStickController> logger, 
@@ -78,8 +82,7 @@ namespace CycleFinder.Controllers
             return Ok(
                 await Task.Run(
                     async () => CandleStickMath.GetLocalMinima(
-                        await GetOrAddAllData(symbol), order).Select(_ => 
-                        _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor(),"LOW", MarkerPosition.BelowBar, MarkerShape.ArrowUp))));
+                        await GetOrAddAllData(symbol), order).Select(_ => CreateLowMarker(_, _colorGeneratorFactory().GetRandomColor()))));
 
         }
 
@@ -94,21 +97,19 @@ namespace CycleFinder.Controllers
             return Ok(
                 await Task.Run(
                     async () => CandleStickMath.GetLocalMaxima(
-                        await GetOrAddAllData(symbol), order).Select(_ => 
-                        _.ToCandleStickMarkerDto(_colorGeneratorFactory().GetRandomColor(), "HIGH", MarkerPosition.AboveBar, MarkerShape.ArrowDown))));
+                        await GetOrAddAllData(symbol), order).Select(_ => CreateHighMarker(_, _colorGeneratorFactory().GetRandomColor()))));
 
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetPrimaryTimeCyclesFromLows([FromQuery]string symbol, [FromQuery]int order = 10, [FromQuery]int? numberOfLows = null)
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLowsWithTurns([FromQuery]string symbol, [FromQuery]int order = 15, [FromQuery]int? numberOfLows = null)
         {
             if (!CheckSymbolExists(symbol))
             {
                 return NotFound();
             }
 
-            Func<IDictionary<CandleStick, IEnumerable<CandleStick>>, IEnumerable<KeyValuePair<CandleStick, IEnumerable<CandleStick>>>> lowSelector = 
-                d => !numberOfLows.HasValue ? d.AsEnumerable() : d.TakeLast(numberOfLows.Value);
+            Func<IEnumerable<CandleWithTurns>, IEnumerable<CandleWithTurns>> selector = d => !numberOfLows.HasValue ? d : d.TakeLast(numberOfLows.Value);
 
             return Ok(
                 await Task.Run(
@@ -116,15 +117,15 @@ namespace CycleFinder.Controllers
                         {
                             var ret = new List<CandleStickMarkerDto>();
                             int lowId = 1;
-                            foreach (var cycles in lowSelector(CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order)))
+                            foreach (var cwt in selector(CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order)))
                             {
                                 var color = _colorGeneratorFactory().GetRandomColor();
-                                ret.Add(cycles.Key.ToCandleStickMarkerDto(color, $"LOW #{lowId}", MarkerPosition.BelowBar, MarkerShape.ArrowUp));
+                                ret.Add(CreateLowMarker(cwt.Candle, color, lowId));
 
                                 int turnId = 1;
-                                foreach (var turn in cycles.Value)
+                                foreach (var turn in cwt.Turns)
                                 {
-                                    ret.Add(turn.ToCandleStickMarkerDto(color, $"TURN #{lowId}/{turnId}", MarkerPosition.AboveBar, MarkerShape.ArrowDown));
+                                    ret.Add(CreateHighTurnMarker(turn, color, lowId, turnId));
                                     turnId++;
                                 }
                                 lowId++;
@@ -134,9 +135,54 @@ namespace CycleFinder.Controllers
                         }));
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighsWithTurns([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? numberOfLows = null)
+        {
+            if (!CheckSymbolExists(symbol))
+            {
+                return NotFound();
+            }
+
+            Func<IDictionary<CandleStick, IEnumerable<CandleStick>>, IEnumerable<KeyValuePair<CandleStick, IEnumerable<CandleStick>>>> selector =
+                d => !numberOfLows.HasValue ? d.AsEnumerable() : d.TakeLast(numberOfLows.Value);
+
+            return Ok(
+                await Task.Run(
+                    async () =>
+                    {
+                        var ret = new List<CandleStickMarkerDto>();
+                        int lowId = 1;
+                        foreach (var cycles in selector(CandleStickMath.GetPrimaryTimeCyclesFromHighs(await GetOrAddAllData(symbol), order)))
+                        {
+                            var color = _colorGeneratorFactory().GetRandomColor();
+                            ret.Add(CreateHighMarker(cycles.Key, color, lowId));
+
+                            int turnId = 1;
+                            foreach (var turn in cycles.Value)
+                            {
+                                ret.Add(CreateLowTurnMarker(turn, color, lowId, turnId));
+                                turnId++;
+                            }
+                            lowId++;
+                        }
+                        return ret;
+
+                    }));
+        }
+
         private bool CheckSymbolExists(string symbol) => GetSymbols().Result.FirstOrDefault(_ => _.Name == symbol) != null;
         private Task<IEnumerable<CandleStick>> GetOrAddAllData(string symbol) => _cache.GetOrAddAsync(symbol, () => _repository.GetAllData(symbol, TimeFrame.Daily));
+        private CandleStickMarkerDto CreateLowMarker(CandleStick candle, Color color, int? id = null) 
+            => candle.ToCandleStickMarkerDto(color, $"LOW {(id == null ? "" : "#")}{id}", MarkerPosition.BelowBar, MarkerShape.ArrowUp);
 
+        private CandleStickMarkerDto CreateHighMarker(CandleStick candle, Color color, int? id = null)
+            => candle.ToCandleStickMarkerDto(color, $"HIGH {(id == null ? "" : "#")}{id}", MarkerPosition.AboveBar, MarkerShape.ArrowDown);
+
+        private CandleStickMarkerDto CreateHighTurnMarker(CandleStick candle, Color color, int lowId, int turnId)
+            => candle.ToCandleStickMarkerDto(color, $"TURN #{lowId}/{turnId}", MarkerPosition.AboveBar, MarkerShape.ArrowDown);
+
+        private CandleStickMarkerDto CreateLowTurnMarker(CandleStick candle, Color color, int highId, int turnId)
+            => candle.ToCandleStickMarkerDto(color, $"TURN #{highId}/{turnId}", MarkerPosition.BelowBar, MarkerShape.ArrowUp);
 
 
     }

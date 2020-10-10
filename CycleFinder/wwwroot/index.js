@@ -19,6 +19,7 @@ chart.applyOptions({
     },
 });
 
+//Get all data
 fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
     .then(res => res.json())
     .then(data => {
@@ -33,10 +34,12 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         });
         candleSeries.setData(cdata);
 
-        fetch('https://localhost:5001/api/CandleStick/GetLows?symbol=BTCUSDT')
+        //Get lows
+        fetch('https://localhost:5001/api/CandleStick/GetLowsWithTurns?symbol=BTCUSDT&numberoflows=5')
             .then(res => res.json())
             .then(data => {
                 console.log(data)
+                var highs;
                 const lows = data.map(d => {
                     return {
                         time: d.time,
@@ -47,6 +50,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                     }
                 });
 
+                //Get highs
                 fetch('https://localhost:5001/api/CandleStick/GetHighs?symbol=BTCUSDT')
                     .then(res => res.json())
                     .then(data => {
