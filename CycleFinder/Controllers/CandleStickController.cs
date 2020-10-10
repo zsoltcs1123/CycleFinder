@@ -82,13 +82,16 @@ namespace CycleFinder.Controllers
 
         }
 
-        [HttpGet("{symbol}/{order?}")]
-        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetPrimaryTimeCyclesFromLows(string symbol, int order = 10)
+        [HttpGet("{symbol}/{order?}/{numberoflows?}")]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetPrimaryTimeCyclesFromLows(string symbol, int order = 10, int numberOfLows = 5)
         {
             if (!CheckSymbolExists(symbol))
             {
                 return NotFound();
             }
+
+            Func<IDictionary<CandleStick, IEnumerable<CandleStick>>, IEnumerable<KeyValuePair<CandleStick, IEnumerable<CandleStick>>>> lowSelector = 
+                d => numberOfLows == 0 ? d.AsEnumerable() : d.TakeLast(numberOfLows);
 
             return Ok(
                 await Task.Run(
@@ -96,7 +99,7 @@ namespace CycleFinder.Controllers
                         {
                             var ret = new List<CandleStickMarkerDto>();
                             int lowId = 1;
-                            foreach (var cycles in CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order))
+                            foreach (var cycles in lowSelector(CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order)))
                             {
                                 var color = _colorGeneratorFactory().GetRandomColor();
                                 ret.Add(cycles.Key.ToCandleStickMarkerDto(color, $"LOW #{lowId}", MarkerPosition.BelowBar, MarkerShape.ArrowUp));

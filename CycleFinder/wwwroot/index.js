@@ -19,7 +19,7 @@ chart.applyOptions({
     },
 });
 
-fetch('https://localhost:5001/api/CandleStick/ETHBTC')
+fetch('https://localhost:5001/api/CandleStick/BTCUSDT')
     .then(res => res.json())
     .then(data => {
         console.log(data)
@@ -36,7 +36,7 @@ fetch('https://localhost:5001/api/CandleStick/ETHBTC')
     })
     .catch(err => log(err))
 
-fetch('https://localhost:5001/api/CandleStick/ETHBTC/15')
+fetch('https://localhost:5001/api/CandleStick/BTCUSDT/15')
     .then(res => res.json())
     .then(data => {
         console.log(data)
@@ -45,7 +45,7 @@ fetch('https://localhost:5001/api/CandleStick/ETHBTC/15')
                 time: d.time,
                 position: d.position,
                 color: d.color,
-                shape: 'arrowUp',
+                shape: d.shape,
                 text: d.text,
             }
         });
