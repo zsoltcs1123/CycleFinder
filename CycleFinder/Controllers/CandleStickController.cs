@@ -23,9 +23,7 @@ namespace CycleFinder.Controllers
         private readonly ICandleStickRepository _repository;
         private readonly IAppCache _cache;
         private readonly Func<IRandomColorGenerator> _colorGeneratorFactory;
-
-        private Func<IDictionary<CandleStick, IEnumerable<CandleStick>>,int?,IEnumerable<KeyValuePair<CandleStick, IEnumerable<CandleStick>>>> selector = 
-            (d,i) => !i.HasValue ? d.AsEnumerable() : d.TakeLast(i.Value);
+        private readonly Func<IEnumerable<CandleWithTurns>, int?, IEnumerable<CandleWithTurns>> _candleLimiter = (candles, limit) => !limit.HasValue ? candles : candles.TakeLast(limit.Value);
 
         public CandleStickController(
             ILogger<CandleStickController> logger, 
@@ -102,14 +100,12 @@ namespace CycleFinder.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLowsWithTurns([FromQuery]string symbol, [FromQuery]int order = 15, [FromQuery]int? numberOfLows = null)
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLowsWithTurns([FromQuery]string symbol, [FromQuery]int order = 15, [FromQuery]int? limit = null)
         {
             if (!CheckSymbolExists(symbol))
             {
                 return NotFound();
             }
-
-            Func<IEnumerable<CandleWithTurns>, IEnumerable<CandleWithTurns>> selector = d => !numberOfLows.HasValue ? d : d.TakeLast(numberOfLows.Value);
 
             return Ok(
                 await Task.Run(
@@ -117,7 +113,7 @@ namespace CycleFinder.Controllers
                         {
                             var ret = new List<CandleStickMarkerDto>();
                             int lowId = 1;
-                            foreach (var cwt in selector(CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order)))
+                            foreach (var cwt in _candleLimiter(CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order),limit))
                             {
                                 var color = _colorGeneratorFactory().GetRandomColor();
                                 ret.Add(CreateLowMarker(cwt.Candle, color, lowId));
@@ -136,14 +132,12 @@ namespace CycleFinder.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighsWithTurns([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? numberOfHighs = null)
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighsWithTurns([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
             if (!CheckSymbolExists(symbol))
             {
                 return NotFound();
             }
-
-            Func<IEnumerable<CandleWithTurns>, IEnumerable<CandleWithTurns>> selector = d => !numberOfHighs.HasValue ? d : d.TakeLast(numberOfHighs.Value);
 
             return Ok(
                 await Task.Run(
@@ -151,7 +145,7 @@ namespace CycleFinder.Controllers
                     {
                         var ret = new List<CandleStickMarkerDto>();
                         int lowId = 1;
-                        foreach (var cwt in selector(CandleStickMath.GetPrimaryTimeCyclesFromHighs(await GetOrAddAllData(symbol), order)))
+                        foreach (var cwt in _candleLimiter(CandleStickMath.GetPrimaryTimeCyclesFromHighs(await GetOrAddAllData(symbol), order),limit))
                         {
                             var color = _colorGeneratorFactory().GetRandomColor();
                             ret.Add(CreateHighMarker(cwt.Candle, color, lowId));
