@@ -19,7 +19,7 @@ namespace CycleFinder.Extensions
             MarkerPosition markerPosition = MarkerPosition.BelowBar,
             MarkerShape markerShape = MarkerShape.ArrowUp)
         {
-            return new CandleStickMarkerDto(candleStick.TimeInSeconds, color, text, markerPosition, markerShape);
+            return new CandleStickMarkerDto(candleStick, color, text, markerPosition, markerShape);
         }
     }
 }

@@ -39,8 +39,14 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         fetch('https://localhost:5001/api/CandleStick/GetLowsWithTurns?symbol=BTCUSDT&numberoflows=5')
             .then(res => res.json())
             .then(data => {
-                console.log(data)
-                const lows = data.map(d => {
+                console.log(JSON.stringify(data, null, '\t'));
+
+                /*var i;
+                for (i = 0; i < whitespaces.length; i++) {
+                    candleSeries.update({ time: whitespaces[i].time })
+                }*/
+
+                const lows = data.filter(l => !l.isInTheFuture).map(d => {
                     return {
                         time: d.time,
                         position: d.position,
@@ -54,8 +60,8 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                 fetch('https://localhost:5001/api/CandleStick/GetHighsWithTurns?symbol=BTCUSDT&numberofhighs=7')
                     .then(res => res.json())
                     .then(data => {
-                        console.log(data)
-                        const highs = data.map(d => {
+                        console.log(JSON.stringify(data, null, '\t'));
+                        const highs = data.filter(l => !l.isInTheFuture).map(d => {
                             return {
                                 time: d.time,
                                 position: d.position,
@@ -92,6 +98,15 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                     .catch(err => log(err))
             })
             .catch(err => log(err))
+
+        /*candleSeries.setData([
+            { time: '2018-12-02', open: 141.77, high: 170.39, low: 120.25, close: 145.72 },
+            { time: '2018-12-03' }, // whitespace
+            { time: '2018-12-04' }, // whitespace
+            { time: '2018-12-05', open: 145.72, high: 147.99, low: 100.11, close: 108.19 },
+            { time: '2018-12-06' }, // whitespace
+            { time: '2018-12-07' }, // whitespace
+        ]);*/
     })
     .catch(err => log(err))
 

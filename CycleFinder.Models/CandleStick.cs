@@ -14,13 +14,19 @@ namespace CycleFinder.Models
 
         public CandleStick(double time, double open, double high, double low, double close, double volume)
         {
-            Time = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddMilliseconds(time);
-            TimeInSeconds = (long)time / 1000;
+            Time = DateTime.UnixEpoch.AddSeconds(time);
+            TimeInSeconds = (long)time;
             Open = open;
             High = high;
             Low = low;
             Close = close;
             Volume = volume;
+        }
+
+        public CandleStick(double timeInSeconds)
+        {
+            Time = DateTime.UnixEpoch.AddSeconds(timeInSeconds);
+            TimeInSeconds = (long)timeInSeconds;
         }
 
         public override string ToString()

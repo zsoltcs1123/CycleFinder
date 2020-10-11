@@ -53,7 +53,8 @@ namespace CycleFinder.Data
 
             List<List<double>> candles = JsonConvert.DeserializeObject<List<List<double>>>(response);
 
-            return candles.Select(_ => new CandleStick(_[0], _[1], _[2], _[3], _[4], _[5])).ToList();
+            //Binance sends time in milliseconds so it has to be divided by 1000
+            return candles.Select(_ => new CandleStick(_[0]/1000, _[1], _[2], _[3], _[4], _[5])).ToList();
         }
 
         public async Task<IEnumerable<CandleStick>> GetAllData(string symbol, TimeFrame timeFrame)

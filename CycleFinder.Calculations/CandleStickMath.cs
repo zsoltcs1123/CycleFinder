@@ -41,8 +41,7 @@ namespace CycleFinder.Calculations
             return GetLocalMinima(data, order)
                 .Select(candle => 
                 new CandleWithTurns(candle,GilmoreGeometry.GetPrimaryStaticNumbersFromDate(candle.Time).Values
-                .Where(date => date <= maxDate)
-                .Select(date => data.FirstOrDefault(c => c.Time == date))));
+                .Select(date => data.FirstOrDefault(c => c.Time == date) ?? new CandleStick(date.ToUnixTimestamp()))));
         }
 
         public static IEnumerable<CandleWithTurns> GetPrimaryTimeCyclesFromHighs(IEnumerable<CandleStick> data, int order)
@@ -51,11 +50,11 @@ namespace CycleFinder.Calculations
             //TODO find a way to draw in the future
             var maxDate = data.Last().Time;
 
+            //TODO max search is incorrect (last and 1 candle before last is always high)
             return GetLocalMaxima(data, order)
                 .Select(candle =>
                 new CandleWithTurns(candle, GilmoreGeometry.GetPrimaryStaticNumbersFromDate(candle.Time).Values
-                .Where(date => date <= maxDate)
-                .Select(date => data.FirstOrDefault(c => c.Time == date))));
+                .Select(date => data.FirstOrDefault(c => c.Time == date) ?? new CandleStick(date.ToUnixTimestamp()))));
         }
     }
 }
