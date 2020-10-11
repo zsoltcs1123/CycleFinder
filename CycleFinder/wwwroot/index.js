@@ -36,7 +36,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         candleSeries.setData(cdata);
 
         //Get lows
-        fetch('https://localhost:5001/api/CandleStick/GetLowsWithTurns?symbol=BTCUSDT&numberoflows=5')
+        fetch('https://localhost:5001/api/CandleStickMarker/GetLowsWithTurns?symbol=BTCUSDT&limit=5')
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));
@@ -57,7 +57,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                 });
 
                 //Get highs
-                fetch('https://localhost:5001/api/CandleStick/GetHighsWithTurns?symbol=BTCUSDT&numberofhighs=7')
+                fetch('https://localhost:5001/api/CandleStickMarker/GetHighsWithTurns?symbol=BTCUSDT&limit=7')
                     .then(res => res.json())
                     .then(data => {
                         console.log(JSON.stringify(data, null, '\t'));
