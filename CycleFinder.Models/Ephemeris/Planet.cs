@@ -1,4 +1,4 @@
-﻿namespace CycleFinder.Models.Planets
+﻿namespace CycleFinder.Models.Ephemeris
 {
     public class Planet
     {

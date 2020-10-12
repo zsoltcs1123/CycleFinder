@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace CycleFinder.Models.Planets
+namespace CycleFinder.Models.Ephemeris
 {
     [Owned]
     public class Coordinate

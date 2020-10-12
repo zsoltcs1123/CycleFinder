@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CycleFinder.Models.Planets
+namespace CycleFinder.Models.Ephemeris
 {
-    public class Ephemeris
+    public class EphemerisEntry
     {
         [Key]
         public DateTime Date { get; set; }

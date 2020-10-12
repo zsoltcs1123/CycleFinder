@@ -4,14 +4,16 @@ using CycleFinder.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CycleFinder.Migrations
 {
     [DbContext(typeof(EphemerisEntryContext))]
-    partial class EphemerisContextModelSnapshot : ModelSnapshot
+    [Migration("20201012213734_UpdateNames01")]
+    partial class UpdateNames01
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

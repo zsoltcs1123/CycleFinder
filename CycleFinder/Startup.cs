@@ -26,7 +26,7 @@ namespace CycleFinder
             services.AddScoped<ICandleStickRepository, BinanceDataService>();
             services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
 
-            services.AddDbContext<EphemerisContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));
+            services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));
             services.AddControllers();
             services.AddLazyCache();
         }

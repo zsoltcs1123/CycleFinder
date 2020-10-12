@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CycleFinder.Migrations
 {
-    [DbContext(typeof(EphemerisContext))]
+    [DbContext(typeof(EphemerisEntryContext))]
     [Migration("20201012205028_InitialMigration")]
     partial class InitialMigration
     {
