@@ -27,4 +27,18 @@ namespace CycleFinder.Models
         ETH,
         USDT
     }
+
+    public enum Planet
+    {
+        Moon,
+        Sun,
+        Mercury,
+        Venus,
+        Mars,
+        Jupiter,
+        Saturn,
+        Uranus,
+        Neptune,
+        Pluto
+    }
 }
