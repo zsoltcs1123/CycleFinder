@@ -3,6 +3,7 @@ using CycleFinder.Extensions;
 using CycleFinder.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +26,7 @@ namespace CycleFinder
             services.AddScoped<ICandleStickRepository, BinanceDataService>();
             services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
 
+            services.AddDbContext<EphemerisContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));
             services.AddControllers();
             services.AddLazyCache();
         }
