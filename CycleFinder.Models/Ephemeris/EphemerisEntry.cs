@@ -6,17 +6,17 @@ namespace CycleFinder.Models.Ephemeris
     public class EphemerisEntry
     {
         [Key]
-        public DateTime Date { get; set; }
-        public Coordinate Moon { get; set; }
-        public Coordinate Sun { get; set; }
-        public Coordinate Mercury { get; set; }
-        public Coordinate Venus { get; set; }
-        public Coordinate Mars { get; set; }
-        public Coordinate Jupiter { get; set; }
-        public Coordinate Saturn { get; set; }
-        public Coordinate Uranus { get; set; }
-        public Coordinate Neptune { get; set; }
-        public Coordinate Pluto { get; set; }
+        public DateTime Time { get; set; }
+        public Coordinates Moon { get; set; }
+        public Coordinates Sun { get; set; }
+        public Coordinates Mercury { get; set; }
+        public Coordinates Venus { get; set; }
+        public Coordinates Mars { get; set; }
+        public Coordinates Jupiter { get; set; }
+        public Coordinates Saturn { get; set; }
+        public Coordinates Uranus { get; set; }
+        public Coordinates Neptune { get; set; }
+        public Coordinates Pluto { get; set; }
 
     }
 }

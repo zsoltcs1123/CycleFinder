@@ -8,8 +8,8 @@ namespace CycleFinder.Data
 {
     public interface IEphemerisEntryRepository
     {
-        Task<Coordinate> GetCoordinatesByDate(DateTime date, Planet planet);
+        Task<Coordinates> GetCoordinatesByTime(DateTime time, Planet planet);
         Task<IDictionary<DateTime, double>> GetDatesByLongitude(double longitude, Planet planet);
-        Task<IDictionary<Planet, Coordinate>> GetCoordinatesByDate(DateTime date);
+        Task<IDictionary<Planet, Coordinates>> GetCoordinatesByTime(DateTime time);
     }
 }

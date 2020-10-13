@@ -82,6 +82,7 @@ namespace CycleFinder.Controllers
                     {
                         var ret = new List<CandleStickMarkerDto>();
                         int lowId = 1;
+                        //TODO do not use static method in controller, refactor to service
                         foreach (var cwt in _candleLimiter(CandleStickMath.GetPrimaryTimeCyclesFromLows(await GetOrAddAllData(symbol), order), limit))
                         {
                             var color = _colorGeneratorFactory().GetRandomColor();
