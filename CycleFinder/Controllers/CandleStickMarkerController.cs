@@ -142,6 +142,26 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15, 
             [FromQuery] int? limit = null)
         {
+            return await GetExtremeWithPlanetPositions(_candleStickCalculator.GetLocalMinima, symbol, planet, order, limit);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighsWithPlanetPositions(
+            [FromQuery] string symbol,
+            [FromQuery] string planet,
+            [FromQuery] int order = 15,
+            [FromQuery] int? limit = null)
+        {
+            return await GetExtremeWithPlanetPositions(_candleStickCalculator.GetLocalMaxima, symbol, planet, order, limit);
+        }
+
+        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetExtremeWithPlanetPositions(
+            Func<IEnumerable<CandleStick>, int, IEnumerable<CandleStick>> candleSelector,
+            string symbol, 
+            string planet, 
+            int order,
+            int? limit)
+        {
             var planetEnum = PlanetFromString(planet);
 
             if (!CheckSymbolExists(symbol) || !CheckPlanetExists(planetEnum))
@@ -150,11 +170,11 @@ namespace CycleFinder.Controllers
             }
 
             var ret = new List<CandleStickMarkerDto>();
-            foreach (var candle in _candleStickCalculator.GetLocalMinima(await GetOrAddAllData(symbol), order).TakeLast(limit))
+            foreach (var candle in candleSelector(await GetOrAddAllData(symbol), order).TakeLast(limit))
             {
                 ret.Add(candle.ToPlanetPositionMarkerDto(
-                    _colorGeneratorFactory().GetRandomColor(), 
-                    planetEnum.Value, 
+                    _colorGeneratorFactory().GetRandomColor(),
+                    planetEnum.Value,
                     (await _ephemerisEntryRepository.GetCoordinatesByTime(candle.Time, planetEnum.Value)).Longitude));
             }
 
