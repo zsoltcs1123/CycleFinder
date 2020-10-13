@@ -36,7 +36,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         candleSeries.setData(cdata);
 
         //Get lows
-        fetch('https://localhost:5001/api/CandleStickMarker/GetLowsWithTurns?symbol=BTCUSDT&limit=5')
+        fetch('https://localhost:5001/api/CandleStickMarker/GetLowsWithPlanetPositions?symbol=BTCUSDT&planet=mercury&limit=15')
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));
@@ -56,57 +56,9 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                     }
                 });
 
-                //Get highs
-                fetch('https://localhost:5001/api/CandleStickMarker/GetHighsWithTurns?symbol=BTCUSDT&limit=7')
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log(JSON.stringify(data, null, '\t'));
-                        const highs = data.filter(l => !l.isInTheFuture).map(d => {
-                            return {
-                                time: d.time,
-                                position: d.position,
-                                color: d.color,
-                                shape: d.shape,
-                                text: d.text,
-                            }
-                        });
-
-                        candleSeries.setMarkers(lows.concat(highs).sort((a, b) => a.time - b.time));
-                        /*candleSeries.setMarkers([
-                            {
-                                time: '2019-04-09',
-                                position: 'aboveBar',
-                                color: 'black',
-                                shape: 'arrowDown',
-                            },
-                            {
-                                time: '2019-05-31',
-                                position: 'belowBar',
-                                color: 'red',
-                                shape: 'arrowUp',
-                            },
-                            {
-                                time: '2019-05-31',
-                                position: 'belowBar',
-                                color: 'orange',
-                                shape: 'arrowUp',
-                                text: 'example',
-                                size: 2,
-                            },
-                        ]);*/
-                    })
-                    .catch(err => log(err))
+                candleSeries.setMarkers(lows);
             })
             .catch(err => log(err))
-
-        /*candleSeries.setData([
-            { time: '2018-12-02', open: 141.77, high: 170.39, low: 120.25, close: 145.72 },
-            { time: '2018-12-03' }, // whitespace
-            { time: '2018-12-04' }, // whitespace
-            { time: '2018-12-05', open: 145.72, high: 147.99, low: 100.11, close: 108.19 },
-            { time: '2018-12-06' }, // whitespace
-            { time: '2018-12-07' }, // whitespace
-        ]);*/
     })
     .catch(err => log(err))
 
