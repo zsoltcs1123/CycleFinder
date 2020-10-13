@@ -34,5 +34,4 @@ namespace CycleFinder.Extensions
             return null; // could also return string.Empty
         }
     }
-
 }

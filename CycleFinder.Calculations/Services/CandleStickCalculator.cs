@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CycleFinder.Calculations
+namespace CycleFinder.Calculations.Services
 {
-    public static class CandleStickMath
+    public class CandleStickCalculator : ICandleStickCalculator
     {
-        public static IEnumerable<CandleStick> GetLocalMinima(IEnumerable<CandleStick> data, int order)
+        public IEnumerable<CandleStick> GetLocalMinima(IEnumerable<CandleStick> data, int order)
         {
             if (data == null)
             {
@@ -19,7 +19,7 @@ namespace CycleFinder.Calculations
             return indices.Select(_ => arr[_]);
         }
 
-        public static IEnumerable<CandleStick> GetLocalMaxima(IEnumerable<CandleStick> data, int order)
+        public IEnumerable<CandleStick> GetLocalMaxima(IEnumerable<CandleStick> data, int order)
         {
             if (data == null)
             {
@@ -32,7 +32,7 @@ namespace CycleFinder.Calculations
             return indices.Select(_ => arr[_]);
         }
 
-        public static IEnumerable<CandleWithTurns> GetPrimaryTimeCyclesFromLows(IEnumerable<CandleStick> data, int order)
+        public IEnumerable<CandleWithTurns> GetPrimaryTimeCyclesFromLows(IEnumerable<CandleStick> data, int order)
         {
             //TODO find a way to draw in the future
             return GetLocalMinima(data, order)
@@ -41,7 +41,7 @@ namespace CycleFinder.Calculations
                 .Select(date => data.FirstOrDefault(c => c.Time == date) ?? new CandleStick(date.ToUnixTimestamp()))));
         }
 
-        public static IEnumerable<CandleWithTurns> GetPrimaryTimeCyclesFromHighs(IEnumerable<CandleStick> data, int order)
+        public IEnumerable<CandleWithTurns> GetPrimaryTimeCyclesFromHighs(IEnumerable<CandleStick> data, int order)
         {
             //TODO max search is incorrect (last and 1 candle before last is always high)
             return GetLocalMaxima(data, order)

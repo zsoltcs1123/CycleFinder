@@ -1,3 +1,4 @@
+using CycleFinder.Calculations.Services;
 using CycleFinder.Data;
 using CycleFinder.Extensions;
 using CycleFinder.Services;
@@ -25,6 +26,8 @@ namespace CycleFinder
         {
             services.AddScoped<ICandleStickRepository, BinanceDataService>();
             services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
+            services.AddSingleton<ICandleStickCalculator, CandleStickCalculator>();
+            services.AddSingleton<ILongitudeComparer, LongitudeComparer>();
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));
             services.AddControllers();
