@@ -158,12 +158,9 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            return Ok(_candleLimiter(_candleStickCalculator.GetLocalMaxima(await GetOrAddAllData(symbol), order), limit)
-                .Select(async candle => CreatePlanetPositionMarker(
-                    candle,
-                    _colorGeneratorFactory().GetRandomColor(),
-                    planetEnum.Value,
-                    (await _ephemerisEntryRepository.GetCoordinatesByTime(candle.Time, planetEnum.Value)).Longitude)));
+            return Ok(_candleLimiter(_candleStickCalculator.GetLocalMinima(await GetOrAddAllData(symbol), order), limit)
+                .Select(candle => CreatePlanetPositionMarker(candle, _colorGeneratorFactory().GetRandomColor(),planetEnum.Value,
+                    (_ephemerisEntryRepository.GetCoordinatesByTime(candle.Time, planetEnum.Value)).Result.Longitude)));
         }
 
 

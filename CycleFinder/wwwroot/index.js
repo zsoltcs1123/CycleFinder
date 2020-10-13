@@ -46,7 +46,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                     candleSeries.update({ time: whitespaces[i].time })
                 }*/
 
-                const lows = data.filter(l => !l.isInTheFuture).map(d => {
+                const markers = data.map(d => {
                     return {
                         time: d.time,
                         position: d.position,
@@ -56,7 +56,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                     }
                 });
 
-                candleSeries.setMarkers(lows);
+                candleSeries.setMarkers(markers);
             })
             .catch(err => log(err))
     })

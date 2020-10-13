@@ -39,7 +39,7 @@ namespace CycleFinder.Data
 
         public async Task<Coordinates> GetCoordinatesByTime(DateTime time, Planet planet)
         {
-            return _planetSelector(planet, await _ephemerisEntryContext.Entries.FirstOrDefaultAsync(_ => _.Time.Date == time.Date));
+            return _planetSelector(planet, await _ephemerisEntryContext.DailyEphemeris.FirstOrDefaultAsync(_ => _.Time.Date == time.Date));
         }
 
         public async Task<IDictionary<Planet, Coordinates>> GetCoordinatesByTime(DateTime date)
@@ -49,7 +49,7 @@ namespace CycleFinder.Data
 
         public async Task<IDictionary<DateTime, double>> GetDatesByLongitude(double longitude, Planet planet)
         {
-            return (await _ephemerisEntryContext.Entries.ToDictionaryAsync(_ => _.Time, _ => _planetSelector(planet, _).Longitude))
+            return (await _ephemerisEntryContext.DailyEphemeris.ToDictionaryAsync(_ => _.Time, _ => _planetSelector(planet, _).Longitude))
                 .Where(_ => _longitudeComparer.AreEqual(planet, longitude, _.Value))
                 .ToDictionary(_ => _.Key, _ => _.Value);
         }

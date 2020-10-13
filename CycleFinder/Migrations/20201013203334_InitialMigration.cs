@@ -8,10 +8,10 @@ namespace CycleFinder.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Ephemeris",
+                name: "DailyEphemeris",
                 columns: table => new
                 {
-                    Date = table.Column<DateTime>(nullable: false),
+                    Time = table.Column<DateTime>(nullable: false),
                     Moon_Longitude = table.Column<double>(nullable: true),
                     Moon_Latitude = table.Column<double>(nullable: true),
                     Moon_Declination = table.Column<double>(nullable: true),
@@ -55,14 +55,14 @@ namespace CycleFinder.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Ephemeris", x => x.Date);
+                    table.PrimaryKey("PK_DailyEphemeris", x => x.Time);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Ephemeris");
+                name: "DailyEphemeris");
         }
     }
 }

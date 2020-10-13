@@ -19,21 +19,21 @@ namespace CycleFinder.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("CycleFinder.Models.Planets.EphemerisEntry", b =>
+            modelBuilder.Entity("CycleFinder.Models.Ephemeris.EphemerisEntry", b =>
                 {
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("Time")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Date");
+                    b.HasKey("Time");
 
-                    b.ToTable("EphemerisEntries");
+                    b.ToTable("DailyEphemeris");
                 });
 
-            modelBuilder.Entity("CycleFinder.Models.Planets.EphemerisEntry", b =>
+            modelBuilder.Entity("CycleFinder.Models.Ephemeris.EphemerisEntry", b =>
                 {
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Jupiter", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Jupiter", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -48,17 +48,17 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
 
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Mars", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Mars", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -73,17 +73,17 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
 
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Mercury", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Mercury", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -98,17 +98,17 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
 
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Moon", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Moon", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -123,17 +123,17 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
 
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Neptune", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Neptune", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -148,17 +148,17 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
 
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Pluto", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Pluto", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -173,17 +173,17 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
 
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Saturn", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Saturn", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -198,17 +198,17 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
 
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Sun", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Sun", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -223,17 +223,17 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
 
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Uranus", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Uranus", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -248,17 +248,17 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
 
-                    b.OwnsOne("CycleFinder.Models.Planets.Coordinate", "Venus", b1 =>
+                    b.OwnsOne("CycleFinder.Models.Ephemeris.Coordinates", "Venus", b1 =>
                         {
-                            b1.Property<DateTime>("EphemerisEntryDate")
+                            b1.Property<DateTime>("EphemerisEntryTime")
                                 .HasColumnType("datetime2");
 
                             b1.Property<double>("Declination")
@@ -273,12 +273,12 @@ namespace CycleFinder.Migrations
                             b1.Property<double>("Speed")
                                 .HasColumnType("float");
 
-                            b1.HasKey("EphemerisEntryDate");
+                            b1.HasKey("EphemerisEntryTime");
 
-                            b1.ToTable("EphemerisEntries");
+                            b1.ToTable("DailyEphemeris");
 
                             b1.WithOwner()
-                                .HasForeignKey("EphemerisEntryDate");
+                                .HasForeignKey("EphemerisEntryTime");
                         });
                 });
 #pragma warning restore 612, 618

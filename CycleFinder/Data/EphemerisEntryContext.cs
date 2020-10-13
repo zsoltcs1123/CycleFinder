@@ -6,7 +6,7 @@ namespace CycleFinder.Data
 {
     public class EphemerisEntryContext : DbContext
     {
-        public DbSet<EphemerisEntry> Entries { get; set; }
+        public DbSet<EphemerisEntry> DailyEphemeris { get; set; }
 
         public EphemerisEntryContext(DbContextOptions<EphemerisEntryContext> options) : base(options) { }
     }
