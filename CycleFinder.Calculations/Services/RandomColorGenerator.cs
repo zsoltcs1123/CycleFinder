@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace CycleFinder.Services
+namespace CycleFinder.Calculations.Services
 {
     public class RandomColorGenerator : IRandomColorGenerator
     {

@@ -27,8 +27,9 @@ namespace CycleFinder
             services.AddScoped<ICandleStickRepository, BinanceDataService>();
             services.AddScoped<IEphemerisEntryRepository, EphemerisEntryRepository>();
             services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
-            services.AddSingleton<ICandleStickCalculator, CandleStickCalculator>();
+            services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
             services.AddSingleton<ILongitudeComparer, LongitudeComparer>();
+            services.AddSingleton<ICandleStickMarkerCalculator, CandleStickMarkerCalculator>();
 
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));

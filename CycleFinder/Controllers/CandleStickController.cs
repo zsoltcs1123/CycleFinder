@@ -12,6 +12,7 @@ using CycleFinder.Extensions;
 using CycleFinder.Calculations;
 using CycleFinder.Services;
 using System.Drawing;
+using CycleFinder.Models.Candles;
 
 namespace CycleFinder.Controllers
 {
@@ -34,7 +35,7 @@ namespace CycleFinder.Controllers
             Cache = cache;
         }
 
-        protected Task<IEnumerable<CandleStick>> GetOrAddAllData(string symbol) => Cache.GetOrAddAsync(symbol, () => Repository.GetAllData(symbol, TimeFrame.Daily));
+        protected Task<IEnumerable<CandleStick>> GetOrAddAllData(string symbol) => Cache.GetOrAddAsync(symbol, () => Repository.GetAllData(symbol, TimeFrames.Daily));
         protected bool CheckSymbolExists(string symbol) => GetSymbols().Result.FirstOrDefault(_ => _.Name == symbol) != null;
 
 

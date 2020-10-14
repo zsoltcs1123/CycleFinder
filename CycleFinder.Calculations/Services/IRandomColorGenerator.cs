@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace CycleFinder.Services
+namespace CycleFinder.Calculations.Services
 {
     public interface IRandomColorGenerator
     {

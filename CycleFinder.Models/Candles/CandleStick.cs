@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CycleFinder.Models
+namespace CycleFinder.Models.Candles
 {
     public class CandleStick
     {

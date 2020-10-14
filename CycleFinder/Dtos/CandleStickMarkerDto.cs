@@ -1,5 +1,6 @@
 ﻿using CycleFinder.Extensions;
 using CycleFinder.Models;
+using CycleFinder.Models.Markers;
 using System;
 using System.Drawing;
 
@@ -15,14 +16,14 @@ namespace CycleFinder.Dtos
         public string Shape { get; }
         public bool IsInTheFuture { get => _time > DateTime.Now; }
 
-        public CandleStickMarkerDto(CandleStick candle, Color color, string text, MarkerPosition position, MarkerShape shape)
+        public CandleStickMarkerDto(ICandleStickMarker candleMarker)
         {
-            _time = candle.Time;
-            Time = candle.TimeInSeconds;
-            Color = color.ToHexString();
-            Text = text;
-            Position = position.GetDescription();
-            Shape = shape.GetDescription();
+            _time = candleMarker.Candle.Time;
+            Time = candleMarker.Candle.TimeInSeconds;
+            Color = candleMarker.Color.ToHexString();
+            Text = candleMarker.Text;
+            Position = candleMarker.Position.GetDescription();
+            Shape = candleMarker.Shape.GetDescription();
         }
     }
 }
