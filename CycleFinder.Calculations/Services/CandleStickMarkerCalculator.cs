@@ -17,7 +17,7 @@ namespace CycleFinder.Calculations.Services
                 if (spec.IncluePrimaryStaticCycles) return GenerateHighMarkersWithTurns(spec);
                 else return null;
             }
-            else if (spec.Extremes == Extremes.Low && spec.IncludeNone)
+            else if (spec.Extremes == Extremes.Low)
             {
                 if (spec.IncludeNone) return GenerateLowMarkers(spec);
                 if (spec.IncluePrimaryStaticCycles) return GenerateLowMarkersWithTurns(spec);
@@ -48,12 +48,12 @@ namespace CycleFinder.Calculations.Services
             foreach (var cwt in candlesWithTurns)
             {
                 var color = spec.RandomColorGenerator.GetRandomColor();
-                ret.Add(new LowCandleMarker(cwt.Candle, color, lowId));
+                ret.Add(new HighCandleMarker(cwt.Candle, color, lowId));
 
                 int turnId = 1;
                 foreach (var turn in cwt.StaticTurns)
                 {
-                    ret.Add(new HighCandleMarker(turn, color, lowId, turnId));
+                    ret.Add(new LowCandleMarker(turn, color, lowId, turnId));
                     turnId++;
                 }
                 lowId++;
@@ -72,12 +72,12 @@ namespace CycleFinder.Calculations.Services
             foreach (var cwt in candlesWithTurns)
             {
                 var color = spec.RandomColorGenerator.GetRandomColor();
-                ret.Add(new HighCandleMarker(cwt.Candle, color, lowId));
+                ret.Add(new LowCandleMarker(cwt.Candle, color, lowId));
 
                 int turnId = 1;
                 foreach (var turn in cwt.StaticTurns)
                 {
-                    ret.Add(new LowCandleMarker(turn, color, lowId, turnId));
+                    ret.Add(new HighCandleMarker(turn, color, lowId, turnId));
                     turnId++;
                 }
                 lowId++;

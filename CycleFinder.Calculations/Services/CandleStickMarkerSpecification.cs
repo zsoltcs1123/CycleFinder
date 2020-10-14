@@ -26,6 +26,7 @@ namespace CycleFinder.Calculations.Services
         {
             Candles = candles;
             Extremes = extreme;
+            RandomColorGenerator = randomColorGenerator;
         }
     }
 }

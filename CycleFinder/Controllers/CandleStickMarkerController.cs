@@ -38,18 +38,6 @@ namespace CycleFinder.Controllers
             _candleStickMarkerCalculator = candleStickMarkerCalculator;
         }
 
-        private async Task<IEnumerable<CandleStick>> GetExtremes(Extremes extreme, string symbol, int order, int? limit)
-        {
-            return extreme switch
-            {
-                Extremes.Low => _localExtremeCalculator.GetLocalMinima(await GetOrAddAllData(symbol), order).TakeLast(limit),
-                Extremes.High => _localExtremeCalculator.GetLocalMaxima(await GetOrAddAllData(symbol), order).TakeLast(limit),
-                _ => null,
-            };
-        }
-
-        private IEnumerable<CandleStickMarkerDto> ExecuteSpec(CandleStickMarkerSpecification spec) => _candleStickMarkerCalculator.GetMarkers(spec).Select(_ => _.ToCandleStickMarkerDto());
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLows([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
@@ -70,7 +58,7 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            var spec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.Low, symbol, order, limit), Extremes.Low, _colorGeneratorFactory());
+            var spec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.High, symbol, order, limit), Extremes.High, _colorGeneratorFactory());
             return Ok(ExecuteSpec(spec));
         }
 
@@ -192,8 +180,20 @@ namespace CycleFinder.Controllers
                 Planets = planetEnum.Value
             };
 
-            return Ok(ExecuteSpec(lowSpec).Concat(ExecuteSpec(highSpec)).Select(_ => _.ToCandleStickMarkerDto()).OrderBy(_ => _.Time).OrderBy(_ => _.Time));
+            return Ok(ExecuteSpec(lowSpec).Concat(ExecuteSpec(highSpec)).OrderBy(_ => _.Time).OrderBy(_ => _.Time));
         }
+
+        private async Task<IEnumerable<CandleStick>> GetExtremes(Extremes extreme, string symbol, int order, int? limit)
+        {
+            return extreme switch
+            {
+                Extremes.Low => _localExtremeCalculator.GetLocalMinima(await GetOrAddAllData(symbol), order).TakeLast(limit),
+                Extremes.High => _localExtremeCalculator.GetLocalMaxima(await GetOrAddAllData(symbol), order).TakeLast(limit),
+                _ => null,
+            };
+        }
+
+        private IEnumerable<CandleStickMarkerDto> ExecuteSpec(CandleStickMarkerSpecification spec) => _candleStickMarkerCalculator.GetMarkers(spec).Select(_ => _.ToCandleStickMarkerDto());
 
         private Planets? PlanetFromString(string planet) => planet switch
         {

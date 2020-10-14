@@ -1,5 +1,6 @@
 ﻿using CycleFinder.Extensions;
 using CycleFinder.Models;
+using CycleFinder.Models.Candles;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
