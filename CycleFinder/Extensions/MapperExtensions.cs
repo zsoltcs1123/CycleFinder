@@ -34,7 +34,10 @@ namespace CycleFinder.Extensions
         public static CandleStickMarkerDto ToLowTurnMarkerDto(this CandleStick candle, Color color, int highId, int turnId)
             => candle.ToCandleStickMarkerDto(color, $"TURN #{highId}/{turnId}", MarkerPosition.BelowBar, MarkerShape.ArrowUp);
 
-        public static CandleStickMarkerDto ToPlanetPositionMarkerDto(this CandleStick candle, Color color, Planet planet, double longitude)
+        public static CandleStickMarkerDto ToLowMarkerWithPlanetDto(this CandleStick candle, Color color, Planet planet, double longitude)
             => candle.ToCandleStickMarkerDto(color, $"{planet.GetDescription()}:{longitude}", MarkerPosition.BelowBar, MarkerShape.ArrowUp);
+
+        public static CandleStickMarkerDto ToHighMarkerWithPlanetDto(this CandleStick candle, Color color, Planet planet, double longitude)
+            => candle.ToCandleStickMarkerDto(color, $"{planet.GetDescription()}:{longitude}", MarkerPosition.AboveBar, MarkerShape.ArrowDown);
     }
 }

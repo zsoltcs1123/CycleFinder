@@ -7,6 +7,7 @@ namespace CycleFinder.Calculations.Services
     {
         IEnumerable<CandleStick> GetLocalMinima(IEnumerable<CandleStick> data, int order);
         IEnumerable<CandleStick> GetLocalMaxima(IEnumerable<CandleStick> data, int order);
+        IEnumerable<CandleStick> GetLocalExtremes(IEnumerable<CandleStick> data, int order);
         IEnumerable<CandleWithTurns> GetPrimaryTimeCyclesFromLows(IEnumerable<CandleStick> data, int order);
         IEnumerable<CandleWithTurns> GetPrimaryTimeCyclesFromHighs(IEnumerable<CandleStick> data, int order);
     }

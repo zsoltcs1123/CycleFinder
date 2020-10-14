@@ -71,10 +71,13 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            var lowCandles = _candleStickCalculator.GetLocalMinima(await GetOrAddAllData(symbol), order).TakeLast(limit);
-            var highCandles = _candleStickCalculator.GetLocalMaxima(await GetOrAddAllData(symbol), order).TakeLast(limit);
+            var lowMarkers = _candleStickCalculator.GetLocalMinima(await GetOrAddAllData(symbol), order).TakeLast(limit)
+                .Select(_ => _.ToLowMarkerDto(_colorGeneratorFactory().GetRandomColor()));
 
-            return Ok(lowCandles.Concat(highCandles).OrderBy(_ =>_.Time).Select(_ => _.ToHighMarkerDto(_colorGeneratorFactory().GetRandomColor())));
+            var highMarkers = _candleStickCalculator.GetLocalMaxima(await GetOrAddAllData(symbol), order).TakeLast(limit)
+                .Select(_ => _.ToHighMarkerDto(_colorGeneratorFactory().GetRandomColor()));
+
+            return Ok(lowMarkers.Concat(highMarkers).OrderBy(_ =>_.Time));
         }
 
         [HttpGet]
@@ -142,7 +145,14 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15, 
             [FromQuery] int? limit = null)
         {
-            return await GetExtremeWithPlanetPositions(_candleStickCalculator.GetLocalMinima, symbol, planet, order, limit);
+            var planetEnum = PlanetFromString(planet);
+
+            if (!CheckSymbolExists(symbol) || !CheckPlanetExists(planetEnum))
+            {
+                return NotFound();
+            }
+
+            return Ok(await GenerateExtremeMarkers(_candleStickCalculator.GetLocalMinima, MapperExtensions.ToLowMarkerWithPlanetDto, symbol, planetEnum, order, limit));
         }
 
         [HttpGet]
@@ -152,16 +162,6 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15,
             [FromQuery] int? limit = null)
         {
-            return await GetExtremeWithPlanetPositions(_candleStickCalculator.GetLocalMaxima, symbol, planet, order, limit);
-        }
-
-        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetExtremeWithPlanetPositions(
-            Func<IEnumerable<CandleStick>, int, IEnumerable<CandleStick>> candleSelector,
-            string symbol, 
-            string planet, 
-            int order,
-            int? limit)
-        {
             var planetEnum = PlanetFromString(planet);
 
             if (!CheckSymbolExists(symbol) || !CheckPlanetExists(planetEnum))
@@ -169,16 +169,40 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
+            return Ok(await GenerateExtremeMarkers(_candleStickCalculator.GetLocalMaxima, MapperExtensions.ToHighMarkerWithPlanetDto, symbol, planetEnum, order, limit));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetExtremesWithPlanetPositions(
+            [FromQuery] string symbol,
+            [FromQuery] string planet,
+            [FromQuery] int order = 15,
+            [FromQuery] int? limit = null)
+        {
+            var lowMarkers = await GenerateExtremeMarkers(_candleStickCalculator.GetLocalMinima, MapperExtensions.ToLowMarkerWithPlanetDto, symbol, PlanetFromString(planet), order, limit);
+            var highMarkers = await GenerateExtremeMarkers(_candleStickCalculator.GetLocalMaxima, MapperExtensions.ToHighMarkerWithPlanetDto, symbol, PlanetFromString(planet), order, limit);
+
+            return Ok(lowMarkers.Concat(highMarkers).OrderBy(_ => _.Time));
+        }
+
+        private async Task<IEnumerable<CandleStickMarkerDto>> GenerateExtremeMarkers(
+            Func<IEnumerable<CandleStick>, int, IEnumerable<CandleStick>> candleSelector,
+            Func<CandleStick, Color, Planet, double, CandleStickMarkerDto> mapper,
+            string symbol,
+            Planet? planetEnum,
+            int order,
+            int? limit)
+        {
             var ret = new List<CandleStickMarkerDto>();
             foreach (var candle in candleSelector(await GetOrAddAllData(symbol), order).TakeLast(limit))
             {
-                ret.Add(candle.ToPlanetPositionMarkerDto(
+                ret.Add(mapper(candle,
                     _colorGeneratorFactory().GetRandomColor(),
                     planetEnum.Value,
                     (await _ephemerisEntryRepository.GetCoordinatesByTime(candle.Time, planetEnum.Value)).Longitude));
             }
 
-            return Ok(ret);
+            return ret;
         }
 
 

@@ -32,6 +32,22 @@ namespace CycleFinder.Calculations.Services
             return indices.Select(_ => arr[_]);
         }
 
+        public IEnumerable<CandleStick> GetLocalExtremes(IEnumerable<CandleStick> data, int order)
+        {
+            if (data == null)
+            {
+                return null;
+            }
+
+            var arr = data.ToArray();
+            var lowIndices = GenericMath.FindLocalMinima(arr.Select(_ => _.Low).ToArray(), order);
+            var highIndices = GenericMath.FindLocalMaxima(arr.Select(_ => _.High).ToArray(), order);
+            var indices = lowIndices.Concat(highIndices);
+
+            return indices.Select(_ => arr[_]);
+        }
+
+
         public IEnumerable<CandleWithTurns> GetPrimaryTimeCyclesFromLows(IEnumerable<CandleStick> data, int order)
         {
             //TODO find a way to draw in the future
