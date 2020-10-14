@@ -7,10 +7,7 @@ namespace CycleFinder.Calculations.Services
 {
     public class CandleStickMarkerSpecification
     {
-        public IEnumerable<CandleStick> Candles { get; }
-        public Extremes Extremes { get; }
-        public IRandomColorGenerator RandomColorGenerator {get;}
-
+        public Extremes Extremes { get; set; }
         public bool IncluePrimaryStaticCycles { get; set; }
         public bool IncludeSecondaryStaticCycles { get; set; }
         public bool IncludeLongitudinalReturns { get; set; }
@@ -19,14 +16,5 @@ namespace CycleFinder.Calculations.Services
         public Ephemeris Ephemeris { get; set; }
         public bool IncludeNone => !IncluePrimaryStaticCycles && !IncludeSecondaryStaticCycles && !IncludeLongitudinalReturns && !IncludeRetrogrades;
 
-        public CandleStickMarkerSpecification(
-            IEnumerable<CandleStick> candles, 
-            Extremes extreme,
-            IRandomColorGenerator randomColorGenerator)
-        {
-            Candles = candles;
-            Extremes = extreme;
-            RandomColorGenerator = randomColorGenerator;
-        }
     }
 }

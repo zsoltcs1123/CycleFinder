@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CycleFinder.Calculations
+namespace CycleFinder.Calculations.Extensions
 {
     public static class DateTimeExtensions
     {

@@ -1,8 +1,5 @@
 ﻿using CycleFinder.Models.Candles;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace CycleFinder.Models.Markers
 {

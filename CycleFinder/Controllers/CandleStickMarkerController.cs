@@ -6,7 +6,6 @@ using CycleFinder.Models;
 using LazyCache;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,8 +17,6 @@ namespace CycleFinder.Controllers
     [Route("api/[controller]/[action]", Name = "[controller]_[action]")]
     public class CandleStickMarkerController : CandleStickController
     {
-        private readonly Func<IRandomColorGenerator> _colorGeneratorFactory;
-        private readonly ILocalExtremeCalculator _localExtremeCalculator;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
         private readonly ICandleStickMarkerCalculator _candleStickMarkerCalculator;
 
@@ -27,13 +24,9 @@ namespace CycleFinder.Controllers
             ILogger<CandleStickController> logger,
             ICandleStickRepository repository,
             IAppCache cache,
-            Func<IRandomColorGenerator> colorGeneratorFactory,
-            ILocalExtremeCalculator localExtremeCalculator,
             IEphemerisEntryRepository ephemerisEntryRepository,
             ICandleStickMarkerCalculator candleStickMarkerCalculator) : base(logger, repository, cache)
         {
-            _colorGeneratorFactory = colorGeneratorFactory;
-            _localExtremeCalculator = localExtremeCalculator;
             _ephemerisEntryRepository = ephemerisEntryRepository;
             _candleStickMarkerCalculator = candleStickMarkerCalculator;
         }
@@ -41,71 +34,66 @@ namespace CycleFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLows([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
-            if (!CheckSymbolExists(symbol))
+            var spec = new CandleStickMarkerSpecification
             {
-                return NotFound();
-            }
+                Extremes = Extremes.Low
+            };
 
-            var spec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.Low, symbol, order, limit), Extremes.Low, _colorGeneratorFactory());
-            return Ok(ExecuteSpec(spec));
+            return await ProcessSpecs(spec, symbol, order, limit);
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighs([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
-            if (!CheckSymbolExists(symbol))
-            {
-                return NotFound();
-            }
 
-            var spec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.High, symbol, order, limit), Extremes.High, _colorGeneratorFactory());
-            return Ok(ExecuteSpec(spec));
+            var spec = new CandleStickMarkerSpecification
+            {
+                Extremes = Extremes.High
+            };
+
+            return await ProcessSpecs(spec, symbol, order, limit);
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetExtremes([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
-            if (!CheckSymbolExists(symbol))
+            var specs = new[]
             {
-                return NotFound();
-            }
+                new CandleStickMarkerSpecification
+                {
+                    Extremes = Extremes.Low
+                },
+                new CandleStickMarkerSpecification
+                {
+                    Extremes = Extremes.High
+                }
+            };
 
-            var lowSpec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.Low, symbol, order, limit), Extremes.Low, _colorGeneratorFactory());
-            var highSpec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.High, symbol, order, limit), Extremes.High, _colorGeneratorFactory());
-
-            return Ok(ExecuteSpec(lowSpec).Concat(ExecuteSpec(highSpec)).OrderBy(_ => _.Time));
+            return await ProcessSpecs(specs, symbol, order, limit);
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLowsWithTurns([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
-            if (!CheckSymbolExists(symbol))
+            var spec = new CandleStickMarkerSpecification
             {
-                return NotFound();
-            }
-
-            var spec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.Low, symbol, order, limit), Extremes.Low, _colorGeneratorFactory())
-            {
+                Extremes = Extremes.Low,
                 IncluePrimaryStaticCycles = true
             };
 
-            return Ok(ExecuteSpec(spec));
+            return await ProcessSpecs(spec, symbol, order, limit);
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighsWithTurns([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
-            if (!CheckSymbolExists(symbol))
+            var spec = new CandleStickMarkerSpecification
             {
-                return NotFound();
-            }
-
-            var spec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.High, symbol, order, limit), Extremes.High, _colorGeneratorFactory())
-            {
+                Extremes = Extremes.High,
                 IncluePrimaryStaticCycles = true
             };
 
-            return Ok(ExecuteSpec(spec));
+            return await ProcessSpecs(spec, symbol, order, limit);
         }
 
         [HttpGet]
@@ -117,18 +105,19 @@ namespace CycleFinder.Controllers
         {
             var planetEnum = PlanetFromString(planet);
 
-            if (!CheckSymbolExists(symbol) || !CheckPlanetExists(planetEnum))
+            if (!CheckPlanetExists(planetEnum))
             {
                 return NotFound();
             }
 
-            var spec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.Low, symbol, order, limit), Extremes.Low, _colorGeneratorFactory())
+            var spec = new CandleStickMarkerSpecification
             {
+                Extremes = Extremes.Low,
                 IncludeLongitudinalReturns = true,
                 Planets = planetEnum.Value
             };
 
-            return Ok(ExecuteSpec(spec));
+            return await ProcessSpecs(spec, symbol, order, limit);
         }
 
         [HttpGet]
@@ -140,18 +129,19 @@ namespace CycleFinder.Controllers
         {
             var planetEnum = PlanetFromString(planet);
 
-            if (!CheckSymbolExists(symbol) || !CheckPlanetExists(planetEnum))
+            if (!CheckPlanetExists(planetEnum))
             {
                 return NotFound();
             }
 
-            var spec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.High, symbol, order, limit), Extremes.High, _colorGeneratorFactory())
+            var spec = new CandleStickMarkerSpecification
             {
+                Extremes = Extremes.High,
                 IncludeLongitudinalReturns = true,
                 Planets = planetEnum.Value
             };
 
-            return Ok(ExecuteSpec(spec));
+            return await ProcessSpecs(spec, symbol, order, limit);
         }
 
         [HttpGet]
@@ -163,37 +153,54 @@ namespace CycleFinder.Controllers
         {
             var planetEnum = PlanetFromString(planet);
 
-            if (!CheckSymbolExists(symbol) || !CheckPlanetExists(planetEnum))
+            if (!CheckPlanetExists(planetEnum))
             {
                 return NotFound();
             }
 
-            var lowSpec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.Low, symbol, order, limit), Extremes.Low, _colorGeneratorFactory())
-            {
-                IncludeLongitudinalReturns = true,
-                Planets = planetEnum.Value
+            var specs = new[]
+{
+                new CandleStickMarkerSpecification
+                {
+                    Extremes = Extremes.Low,
+                    IncludeLongitudinalReturns = true,
+                    Planets = planetEnum.Value
+                },
+                new CandleStickMarkerSpecification
+                {
+                    Extremes = Extremes.High,
+                    IncludeLongitudinalReturns = true,
+                    Planets = planetEnum.Value
+                }
             };
 
-            var highSpec = new CandleStickMarkerSpecification(await GetExtremes(Extremes.High, symbol, order, limit), Extremes.High, _colorGeneratorFactory())
-            {
-                IncludeLongitudinalReturns = true,
-                Planets = planetEnum.Value
-            };
-
-            return Ok(ExecuteSpec(lowSpec).Concat(ExecuteSpec(highSpec)).OrderBy(_ => _.Time).OrderBy(_ => _.Time));
+            return await ProcessSpecs(specs, symbol, order, limit);
         }
 
-        private async Task<IEnumerable<CandleStick>> GetExtremes(Extremes extreme, string symbol, int order, int? limit)
+
+        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(CandleStickMarkerSpecification spec, string symbol, int order, int? limit)
+            => await ProcessSpecs(new[] { spec }, symbol, order, limit);
+
+        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(IEnumerable<CandleStickMarkerSpecification> specs, string symbol, int order, int? limit)
         {
-            return extreme switch
+            if (!CheckSymbolExists(symbol))
             {
-                Extremes.Low => _localExtremeCalculator.GetLocalMinima(await GetOrAddAllData(symbol), order).TakeLast(limit),
-                Extremes.High => _localExtremeCalculator.GetLocalMaxima(await GetOrAddAllData(symbol), order).TakeLast(limit),
-                _ => null,
-            };
+                return NotFound();
+            }
+
+            var data = await GetOrAddAllData(symbol);
+            var ret = new List<CandleStickMarkerDto>();
+
+            foreach (var spec in specs)
+            {
+                ret.AddRange(ExecuteSpec(spec, data, order, limit));
+            }
+
+            return Ok(ret.OrderBy(_ => _.Time));
         }
 
-        private IEnumerable<CandleStickMarkerDto> ExecuteSpec(CandleStickMarkerSpecification spec) => _candleStickMarkerCalculator.GetMarkers(spec).Select(_ => _.ToCandleStickMarkerDto());
+        private IEnumerable<CandleStickMarkerDto> ExecuteSpec(CandleStickMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
+             => _candleStickMarkerCalculator.GetMarkers(spec, candles, order, limit).Select(_ => _.ToCandleStickMarkerDto());
 
         private Planets? PlanetFromString(string planet) => planet switch
         {
