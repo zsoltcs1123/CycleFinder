@@ -9,7 +9,7 @@ namespace CycleFinder.Data
     public interface ICandleStickRepository
     {
         Task<IEnumerable<Symbol>> ListSymbols();
-        Task<IEnumerable<CandleStick>> GetData(string symbol, TimeFrames timeFrame, DateTime? startTime = null, DateTime? endTime = null);
-        Task<IEnumerable<CandleStick>> GetAllData(string symbol, TimeFrames timeFrame);
+        Task<IEnumerable<CandleStick>> GetData(string symbol, TimeFrame timeFrame, DateTime? startTime = null, DateTime? endTime = null);
+        Task<IEnumerable<CandleStick>> GetAllData(string symbol, TimeFrame timeFrame);
     }
 }

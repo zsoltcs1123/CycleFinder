@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace CycleFinder.Models
 {
-    public enum TimeFrames
+    public enum TimeFrame
     {
         [Description("1M")]
         Monthly,
@@ -15,14 +15,14 @@ namespace CycleFinder.Models
         Hourly,
     }
 
-    public enum Endpoints
+    public enum Endpoint
     {
         Connectivity,
         MarketData,
         ExchangeInfo,
     }
 
-    public enum QuoteAssets
+    public enum QuoteAsset
     {
         BTC,
         ETH,
@@ -30,7 +30,7 @@ namespace CycleFinder.Models
     }
 
     [Flags]
-    public enum Planets
+    public enum Planet
     {
         None = 0,
 
@@ -61,15 +61,13 @@ namespace CycleFinder.Models
         SlowPlanetsWithPlut = SlowPlanets | Pluto
     }
 
-    [Flags]
-    public enum Extremes
+    public enum Extreme
     {
-        High = 1 << 0,
-        Low= 1 << 1,
-        Both = High & Low
+        High,
+        Low
     }
 
-    public enum MarkerPositions
+    public enum MarkerPosition
     {
         [Description("aboveBar")]
         AboveBar,
@@ -77,7 +75,7 @@ namespace CycleFinder.Models
         BelowBar
     }
 
-    public enum MarkerShapes
+    public enum MarkerShape
     {
         [Description("arrowUp")]
         ArrowUp,

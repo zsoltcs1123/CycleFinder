@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CycleFinder.Models.Candles;
+using CycleFinder.Models.Specifications;
 
 namespace CycleFinder.Controllers
 {
@@ -34,9 +35,9 @@ namespace CycleFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLows([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
-            var spec = new CandleStickMarkerSpecification
+            var spec = new ExtremeCandleMarkerSpecification
             {
-                Extremes = Extremes.Low
+                Extreme = Extreme.Low
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);
@@ -46,9 +47,9 @@ namespace CycleFinder.Controllers
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighs([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
 
-            var spec = new CandleStickMarkerSpecification
+            var spec = new ExtremeCandleMarkerSpecification
             {
-                Extremes = Extremes.High
+                Extreme = Extreme.High
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);
@@ -59,13 +60,13 @@ namespace CycleFinder.Controllers
         {
             var specs = new[]
             {
-                new CandleStickMarkerSpecification
+                new ExtremeCandleMarkerSpecification
                 {
-                    Extremes = Extremes.Low
+                    Extreme = Extreme.Low
                 },
-                new CandleStickMarkerSpecification
+                new ExtremeCandleMarkerSpecification
                 {
-                    Extremes = Extremes.High
+                    Extreme = Extreme.High
                 }
             };
 
@@ -75,9 +76,9 @@ namespace CycleFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetLowsWithTurns([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
-            var spec = new CandleStickMarkerSpecification
+            var spec = new ExtremeCandleWithTurnsMarkerSpecification
             {
-                Extremes = Extremes.Low,
+                Extreme = Extreme.Low,
                 IncluePrimaryStaticCycles = true
             };
 
@@ -87,9 +88,9 @@ namespace CycleFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetHighsWithTurns([FromQuery] string symbol, [FromQuery] int order = 15, [FromQuery] int? limit = null)
         {
-            var spec = new CandleStickMarkerSpecification
+            var spec = new ExtremeCandleWithTurnsMarkerSpecification
             {
-                Extremes = Extremes.High,
+                Extreme = Extreme.High,
                 IncluePrimaryStaticCycles = true
             };
 
@@ -110,11 +111,10 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            var spec = new CandleStickMarkerSpecification
+            var spec = new ExtremeCandleWithPlanetMarkerSpecification
             {
-                Extremes = Extremes.Low,
+                Extreme = Extreme.Low,
                 IncludeLongitudinalReturns = true,
-                Planets = planetEnum.Value
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);
@@ -134,11 +134,10 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            var spec = new CandleStickMarkerSpecification
+            var spec = new ExtremeCandleWithPlanetMarkerSpecification
             {
-                Extremes = Extremes.High,
+                Extreme = Extreme.High,
                 IncludeLongitudinalReturns = true,
-                Planets = planetEnum.Value
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);
@@ -160,17 +159,15 @@ namespace CycleFinder.Controllers
 
             var specs = new[]
 {
-                new CandleStickMarkerSpecification
+                new ExtremeCandleWithPlanetMarkerSpecification
                 {
-                    Extremes = Extremes.Low,
+                    Extreme = Extreme.Low,
                     IncludeLongitudinalReturns = true,
-                    Planets = planetEnum.Value
                 },
-                new CandleStickMarkerSpecification
+                new ExtremeCandleWithPlanetMarkerSpecification
                 {
-                    Extremes = Extremes.High,
+                    Extreme = Extreme.High,
                     IncludeLongitudinalReturns = true,
-                    Planets = planetEnum.Value
                 }
             };
 
@@ -178,10 +175,10 @@ namespace CycleFinder.Controllers
         }
 
 
-        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(CandleStickMarkerSpecification spec, string symbol, int order, int? limit)
+        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(CandleMarkerSpecification spec, string symbol, int order, int? limit)
             => await ProcessSpecs(new[] { spec }, symbol, order, limit);
 
-        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(IEnumerable<CandleStickMarkerSpecification> specs, string symbol, int order, int? limit)
+        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(IEnumerable<CandleMarkerSpecification> specs, string symbol, int order, int? limit)
         {
             if (!CheckSymbolExists(symbol))
             {
@@ -199,24 +196,24 @@ namespace CycleFinder.Controllers
             return Ok(ret.OrderBy(_ => _.Time));
         }
 
-        private IEnumerable<CandleStickMarkerDto> ExecuteSpec(CandleStickMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
+        private IEnumerable<CandleStickMarkerDto> ExecuteSpec(CandleMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
              => _candleStickMarkerCalculator.GetMarkers(spec, candles, order, limit).Select(_ => _.ToCandleStickMarkerDto());
 
-        private Planets? PlanetFromString(string planet) => planet switch
+        private Planet? PlanetFromString(string planet) => planet switch
         {
-            "moon" => Planets.Moon,
-            "sun" => Planets.Sun,
-            "mercury" => Planets.Mercury,
-            "venus" => Planets.Venus,
-            "mars" => Planets.Mars,
-            "jupiter" => Planets.Jupiter,
-            "saturn" => Planets.Saturn,
-            "uranus" => Planets.Uranus,
-            "neptune" => Planets.Neptune,
-            "pluto" => Planets.Pluto,
+            "moon" => Planet.Moon,
+            "sun" => Planet.Sun,
+            "mercury" => Planet.Mercury,
+            "venus" => Planet.Venus,
+            "mars" => Planet.Mars,
+            "jupiter" => Planet.Jupiter,
+            "saturn" => Planet.Saturn,
+            "uranus" => Planet.Uranus,
+            "neptune" => Planet.Neptune,
+            "pluto" => Planet.Pluto,
             _ => null,
         };
 
-        private bool CheckPlanetExists(Planets? planet) => planet.HasValue;
+        private bool CheckPlanetExists(Planet? planet) => planet.HasValue;
     }
 }

@@ -17,19 +17,19 @@ namespace CycleFinder.Data
         private readonly ILongitudeComparer _longitudeComparer;
         private readonly IAppCache _cache;
 
-        private Func<Planets, EphemerisEntry, Coordinates> _planetSelector =
+        private Func<Planet, EphemerisEntry, Coordinates> _planetSelector =
             (planet, entry) => planet switch
                 {
-                    Planets.Moon => entry.Moon,
-                    Planets.Sun => entry.Sun,
-                    Planets.Mercury => entry.Mercury,
-                    Planets.Venus => entry.Venus,
-                    Planets.Mars => entry.Mars,
-                    Planets.Jupiter => entry.Jupiter,
-                    Planets.Saturn => entry.Saturn,
-                    Planets.Uranus => entry.Uranus,
-                    Planets.Neptune => entry.Neptune,
-                    Planets.Pluto => entry.Pluto,
+                    Planet.Moon => entry.Moon,
+                    Planet.Sun => entry.Sun,
+                    Planet.Mercury => entry.Mercury,
+                    Planet.Venus => entry.Venus,
+                    Planet.Mars => entry.Mars,
+                    Planet.Jupiter => entry.Jupiter,
+                    Planet.Saturn => entry.Saturn,
+                    Planet.Uranus => entry.Uranus,
+                    Planet.Neptune => entry.Neptune,
+                    Planet.Pluto => entry.Pluto,
                     _ => null,
                 };
  
@@ -41,27 +41,30 @@ namespace CycleFinder.Data
             _cache = cache;
         }
 
-        public async Task<Coordinates> GetCoordinatesByTime(DateTime time, Planets planet)
+        public async Task<Ephemerides> GetEphemeridesForPlanets(DateTime startTime, Planet planets)
         {
-            return _planetSelector(planet, await _ephemerisEntryContext.DailyEphemeris.FirstOrDefaultAsync(_ => _.Time.Date == time.Date));
+            var earliestStartTime = _cache.GetOrAdd($"int{planets}", () => startTime);
+
+            if (startTime < earliestStartTime)
+            {
+                _cache.Remove($"Coordinates_{(int)planets}_From{earliestStartTime}");
+            }
+
+            return await _cache.GetOrAddAsync($"Coordinates_{(int)planets}_From{startTime}", async () => await GetEphemerides(startTime, planets));
         }
 
-        public async Task<IDictionary<Planets, Coordinates>> GetCoordinatesByTime(DateTime date)
+        private async Task<Ephemerides> GetEphemerides(DateTime startTime, Planet planets)
         {
-            throw new NotImplementedException();
+            //TODO this can be a minor inefficiency since caching happens on the top level, e.g. a client asks for a Mercury ephemeris multiple times, it will be served from the cache
+            //But if a client asks for a Mercury-Saturn ephemeris it will go to the DB first even though the Mercury data is already in the cache.
+            //Architecture-wise this structure makes more sense to me so performance is sacrificed here.
+
+            return new Ephemerides(await FilterByTime(startTime)
+                .ToDictionaryAsync(entry => entry.Time, entry => planets.GetFlags().ToDictionary(planet => planet, planet => GetCoordinateFromEntry(entry, planet))));
         }
 
-        public async Task<Ephemeris> GetEphemerisForPlanets(DateTime startTime, Planets planet)
-        {
-            return await _cache.GetOrAddAsync($"Coordinates_{(int)planet}_From{startTime}",
-                async () => new Ephemeris(await _ephemerisEntryContext.DailyEphemeris.Where(entry => entry.Time >= startTime).ToDictionaryAsync(entry => entry.Time, _ => _planetSelector(planet, _)), planet));
-        }
+        private IQueryable<EphemerisEntry> FilterByTime(DateTime startTime) => _ephemerisEntryContext.DailyEphemeris.Where(entry => entry.Time >= startTime);
 
-        public async Task<IDictionary<DateTime, double>> GetDatesByLongitude(double longitude, Planets planet)
-        {
-            return (await _ephemerisEntryContext.DailyEphemeris.ToDictionaryAsync(_ => _.Time, _ => _planetSelector(planet, _).Longitude))
-                .Where(_ => _longitudeComparer.AreEqual(planet, longitude, _.Value))
-                .ToDictionary(_ => _.Key, _ => _.Value);
-        }
+        private Coordinates GetCoordinateFromEntry(EphemerisEntry entry, Planet planet) => _planetSelector(planet, entry);
     }
 }

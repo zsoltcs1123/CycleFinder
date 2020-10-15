@@ -3,16 +3,14 @@ using System.Drawing;
 
 namespace CycleFinder.Models.Markers
 {
-    public class LowCandleMarker : CandleMarkerBase
+    public class LowCandleMarker : EventMarker
     {
-        public override MarkerPositions Position => MarkerPositions.BelowBar;
+        public override MarkerPosition Position => MarkerPosition.BelowBar;
 
-        public override MarkerShapes Shape => MarkerShapes.ArrowUp;
+        public override MarkerShape Shape => MarkerShape.ArrowUp;
 
-        public LowCandleMarker(CandleStick candle, Color color, int? id = null, int? turnId = null)
+        public LowCandleMarker(CandleStick candle, Color color, int? id = null, int? turnId = null) : base(candle, color)
         {
-            Candle = candle;
-            Color = color;
             Text = turnId.HasValue ? $"TURN #{id}/{turnId}" : $"LOW {(id == null ? "" : "#")}{id}";
 
         }

@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace CycleFinder.Extensions
 {
@@ -32,6 +34,17 @@ namespace CycleFinder.Extensions
             }
 
             return null; // could also return string.Empty
+        }
+
+        public static IEnumerable<T> GetFlags<T>(this T e) where T:Enum
+        {
+            foreach (T value in Enum.GetValues(e.GetType()))
+            {
+                if (e.HasFlag(value))
+                {
+                    yield return value;
+                }
+            }
         }
     }
 }

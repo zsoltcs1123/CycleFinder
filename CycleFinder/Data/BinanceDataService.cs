@@ -20,11 +20,11 @@ namespace CycleFinder.Data
         private readonly int _limit = 1000;
         private readonly DateTime _firstTradeDate = new DateTime(2016, 01, 01);
 
-        protected Dictionary<Endpoints, string> Endpoints = new Dictionary<Endpoints, string>()
+        protected Dictionary<Endpoint, string> Endpoints = new Dictionary<Endpoint, string>()
         {
-            { Models.Endpoints.Connectivity, "/api/v3/ping" },
-            { Models.Endpoints.MarketData, $"/api/v3/klines" },
-            { Models.Endpoints.ExchangeInfo, "/api/v3/exchangeInfo"},
+            { Models.Endpoint.Connectivity, "/api/v3/ping" },
+            { Models.Endpoint.MarketData, $"/api/v3/klines" },
+            { Models.Endpoint.ExchangeInfo, "/api/v3/exchangeInfo"},
         };
 
         private static readonly HttpClient client = new HttpClient();
@@ -38,14 +38,14 @@ namespace CycleFinder.Data
 
         public async Task<IEnumerable<Symbol>> ListSymbols()
         {
-            var url = _rootUrl + Endpoints[Models.Endpoints.ExchangeInfo];
+            var url = _rootUrl + Endpoints[Models.Endpoint.ExchangeInfo];
             LogRequest(url);
 
             var result = JObject.Parse(await client.GetStringAsync(url));
             return result["symbols"].Select(_ => new Symbol(_["symbol"].ToString(), _["quoteAsset"].ToString())).ToList();
         }
 
-        public async Task<IEnumerable<CandleStick>> GetData(string symbol, TimeFrames timeFrame, DateTime? startTime = null, DateTime? endTime = null)
+        public async Task<IEnumerable<CandleStick>> GetData(string symbol, TimeFrame timeFrame, DateTime? startTime = null, DateTime? endTime = null)
         {
             var request = BuildMarketDataRequest(symbol, timeFrame, startTime, endTime);
             LogRequest(request);
@@ -58,16 +58,16 @@ namespace CycleFinder.Data
             return candles.Select(_ => new CandleStick(_[0]/1000, _[1], _[2], _[3], _[4], _[5])).ToList();
         }
 
-        public async Task<IEnumerable<CandleStick>> GetAllData(string symbol, TimeFrames timeFrame)
+        public async Task<IEnumerable<CandleStick>> GetAllData(string symbol, TimeFrame timeFrame)
         {
             return timeFrame switch
             {
-                TimeFrames.Daily => (await GetAllDailyData(symbol, timeFrame, _firstTradeDate)).OrderBy(_ => _.Time).ToList(),
+                TimeFrame.Daily => (await GetAllDailyData(symbol, timeFrame, _firstTradeDate)).OrderBy(_ => _.Time).ToList(),
                 _ => throw new NotImplementedException(),
             };
         }
 
-        private async Task<IEnumerable<CandleStick>> GetAllDailyData(string symbol, TimeFrames timeFrame, DateTime startTime)
+        private async Task<IEnumerable<CandleStick>> GetAllDailyData(string symbol, TimeFrame timeFrame, DateTime startTime)
         {
             var candles = (await GetData(symbol, timeFrame, startTime));
             var diff = candles.First().Time - DateTime.Now;
@@ -77,12 +77,12 @@ namespace CycleFinder.Data
 
         private async Task<bool> CheckConnection()
         {
-            return await client.GetStringAsync(_rootUrl + Endpoints[Models.Endpoints.Connectivity]) == "{}";
+            return await client.GetStringAsync(_rootUrl + Endpoints[Models.Endpoint.Connectivity]) == "{}";
         }
 
-        private string BuildMarketDataRequest(string symbol, TimeFrames timeframe, DateTime? startTime, DateTime? endTime)
+        private string BuildMarketDataRequest(string symbol, TimeFrame timeframe, DateTime? startTime, DateTime? endTime)
         {
-            var sb = new StringBuilder(_rootUrl + Endpoints[Models.Endpoints.MarketData] + "?");
+            var sb = new StringBuilder(_rootUrl + Endpoints[Models.Endpoint.MarketData] + "?");
             if (String.IsNullOrEmpty(symbol)) throw new Exception("Symbol cannot be null");
 
             sb.Append($"symbol={symbol}");

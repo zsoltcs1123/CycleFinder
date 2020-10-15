@@ -2,6 +2,7 @@
 using CycleFinder.Models;
 using CycleFinder.Models.Candles;
 using CycleFinder.Models.Markers;
+using CycleFinder.Models.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,52 +25,46 @@ namespace CycleFinder.Calculations.Services
             _colorGeneratorFactory = colorGeneratorFactory;
         }
 
-        public IEnumerable<ICandleStickMarker> GetMarkers(CandleStickMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
+        public IEnumerable<ICandleStickMarker> GetMarkers(CandleMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
         {
-            var ret = new List<ICandleStickMarker>();
-            if (spec.Extremes == Extremes.High)
+            if (!spec.IsValid)
             {
-                if (spec.IncludeNone) 
-                {
-                    ret.AddRange(GenerateHighMarkers(FilterExtremes(Extremes.High, candles, order, limit)));
-                    return ret;
-                }
-
-                if (spec.IncluePrimaryStaticCycles) ret.AddRange(GenerateHighMarkersWithTurns(FilterExtremes(Extremes.High, candles, order, limit)));
-            }
-            else if (spec.Extremes == Extremes.Low)
-            {
-                if (spec.IncludeNone) return GenerateLowMarkers(FilterExtremes(Extremes.Low, candles, order, limit));
-                if (spec.IncluePrimaryStaticCycles) return GenerateLowMarkersWithTurns(FilterExtremes(Extremes.Low, candles, order, limit));
-                else return null;
+                throw new Exception("Specification is not valid");
             }
 
-            return ret;
-        }
-
-        private IEnumerable<CandleStick> FilterExtremes(Extremes extreme, IEnumerable<CandleStick> candles, int order, int? limit)
-        {
-            return extreme switch
+            return spec switch
             {
-                Extremes.Low => _localExtremeCalculator.GetLocalMinima(candles, order).TakeLast(limit),
-                Extremes.High => _localExtremeCalculator.GetLocalMaxima(candles, order).TakeLast(limit),
+                ExtremeCandleMarkerSpecification s when s.Extreme == Extreme.Low => CreateLowCandleMarkers(FilterExtremes(s.Extreme, candles, order, limit)),
+                ExtremeCandleMarkerSpecification s when s.Extreme == Extreme.High => CreateHighCandleMarkers(FilterExtremes(s.Extreme, candles, order, limit)),
+                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.Low => CreateLowMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit)),
+                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.High => CreateHighMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit)),
                 _ => null,
             };
         }
 
-        private IEnumerable<ICandleStickMarker> GenerateHighMarkers(IEnumerable<CandleStick> highCandles)
+        private IEnumerable<CandleStick> FilterExtremes(Extreme extreme, IEnumerable<CandleStick> candles, int order, int? limit)
+        {
+            return extreme switch
+            {
+                Extreme.Low => _localExtremeCalculator.GetLocalMinima(candles, order).TakeLast(limit),
+                Extreme.High => _localExtremeCalculator.GetLocalMaxima(candles, order).TakeLast(limit),
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private IEnumerable<ICandleStickMarker> CreateHighCandleMarkers(IEnumerable<CandleStick> highCandles)
         {
             var cg = _colorGeneratorFactory();
             return highCandles.Select(_ => new HighCandleMarker(_, cg.GetRandomColor()));
         }
 
-        private IEnumerable<ICandleStickMarker> GenerateLowMarkers(IEnumerable<CandleStick> lowCandles)
+        private IEnumerable<ICandleStickMarker> CreateLowCandleMarkers(IEnumerable<CandleStick> lowCandles)
         {
             var cg = _colorGeneratorFactory();
             return lowCandles.Select(_ => new LowCandleMarker(_, cg.GetRandomColor()));
         }
 
-        private IEnumerable<ICandleStickMarker> GenerateHighMarkersWithTurns(IEnumerable<CandleStick> highCandles)
+        private IEnumerable<ICandleStickMarker> CreateHighMarkersWithTurns(IEnumerable<CandleStick> highCandles)
         {
             var candlesWithTurns = highCandles.Select(candle =>
                 new CandleWithTurns(candle, GilmoreGeometry.GetPrimaryStaticDaysFromDate(candle.Time).Values
@@ -94,7 +89,7 @@ namespace CycleFinder.Calculations.Services
             return ret;
         }
 
-        private IEnumerable<ICandleStickMarker> GenerateLowMarkersWithTurns(IEnumerable<CandleStick> lowCandles)
+        private IEnumerable<ICandleStickMarker> CreateLowMarkersWithTurns(IEnumerable<CandleStick> lowCandles)
         {
             var candlesWithTurns = lowCandles.Select(candle =>
                 new CandleWithTurns(candle, GilmoreGeometry.GetPrimaryStaticDaysFromDate(candle.Time).Values

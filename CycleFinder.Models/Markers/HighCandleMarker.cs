@@ -1,19 +1,16 @@
 ﻿using CycleFinder.Models.Candles;
-using System;
 using System.Drawing;
 
 namespace CycleFinder.Models.Markers
 {
-    public class HighCandleMarker : CandleMarkerBase
+    public class HighCandleMarker : EventMarker
     {
-        public override MarkerPositions Position => MarkerPositions.AboveBar;
+        public override MarkerPosition Position => MarkerPosition.AboveBar;
 
-        public override MarkerShapes Shape => MarkerShapes.ArrowDown;
+        public override MarkerShape Shape => MarkerShape.ArrowDown;
 
-        public HighCandleMarker(CandleStick candle, Color color, int? id = null, int? turnId = null)
+        public HighCandleMarker(CandleStick candle, Color color, int? id = null, int? turnId = null) : base(candle, color)
         {
-            Candle = candle;
-            Color = color;
             Text = turnId.HasValue ? $"TURN #{id}/{turnId}" : $"HIGH {(id == null ? "" : "#")}{id}";
         }
     }

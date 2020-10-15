@@ -35,7 +35,7 @@ namespace CycleFinder.Controllers
             Cache = cache;
         }
 
-        protected Task<IEnumerable<CandleStick>> GetOrAddAllData(string symbol) => Cache.GetOrAddAsync(symbol, () => Repository.GetAllData(symbol, TimeFrames.Daily));
+        protected Task<IEnumerable<CandleStick>> GetOrAddAllData(string symbol) => Cache.GetOrAddAsync(symbol, () => Repository.GetAllData(symbol, TimeFrame.Daily));
         protected bool CheckSymbolExists(string symbol) => GetSymbols().Result.FirstOrDefault(_ => _.Name == symbol) != null;
 
 
