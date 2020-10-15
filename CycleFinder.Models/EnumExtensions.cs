@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
-namespace CycleFinder.Extensions
+namespace CycleFinder.Models
 {
-    public static class ExtensionMethods
+    public static class EnumExtensions
     {
         public static string GetDescription<T>(this T e) where T : IConvertible
         {

@@ -36,7 +36,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         candleSeries.setData(cdata);
 
         //Get lows
-        fetch('https://localhost:5001/api/CandleStickMarker/GetHighsWithTurns?symbol=BTCUSDT')
+        fetch('https://localhost:5001/api/CandleStickMarker/GetLowsWithPlanetPositions?symbol=BTCUSDT')
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));
@@ -46,7 +46,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                     candleSeries.update({ time: whitespaces[i].time })
                 }*/
 
-                const markers = data.map(d => {
+                const markers = data.filter(l => !l.isInTheFuture).map(d => {
                     return {
                         time: d.time,
                         position: d.position,

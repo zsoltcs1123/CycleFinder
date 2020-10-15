@@ -1,6 +1,7 @@
 ﻿using CycleFinder.Calculations.Extensions;
 using CycleFinder.Models;
 using CycleFinder.Models.Candles;
+using CycleFinder.Models.Ephemeris;
 using CycleFinder.Models.Markers;
 using CycleFinder.Models.Specifications;
 using System;
@@ -38,9 +39,11 @@ namespace CycleFinder.Calculations.Services
                 ExtremeCandleMarkerSpecification s when s.Extreme == Extreme.High => CreateHighCandleMarkers(FilterExtremes(s.Extreme, candles, order, limit)),
                 ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.Low => CreateLowMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit)),
                 ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.High => CreateHighMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit)),
+                ExtremeCandleWithPlanetsMarkerSpecification s when s.Extreme == Extreme.High => CreateLowMarkersWithPlanets(FilterExtremes(s.Extreme, candles, order, limit), s.Ephemerides, s.Planets),
                 _ => null,
             };
         }
+
 
         private IEnumerable<CandleStick> FilterExtremes(Extreme extreme, IEnumerable<CandleStick> candles, int order, int? limit)
         {
@@ -114,5 +117,14 @@ namespace CycleFinder.Calculations.Services
             }
             return ret;
         }
+
+        private IEnumerable<ICandleStickMarker> CreateLowMarkersWithPlanets(IEnumerable<CandleStick> lowCandles, Ephemerides ephemerides, Planet planets)
+        {
+            var cg = _colorGeneratorFactory();
+            return lowCandles.Select(_ => new LowCandleMarker(_, cg.GetRandomColor(), GetCoordinatesForPlanets(planets, ephemerides, _.Time)));
+        }
+
+        private Dictionary<Planet, Coordinates> GetCoordinatesForPlanets(Planet planets, Ephemerides ephemerides, DateTime time)
+            => planets.GetFlags().ToDictionary(planet => planet, planet => ephemerides.Coordinates[time][planet]);
     }
 }

@@ -6,5 +6,6 @@ namespace CycleFinder.Models.Specifications
 {
     public class PlanetaryEventMarkerSpecification : CandleMarkerSpecification
     {
+        public override bool IsValid => throw new NotImplementedException();
     }
 }

@@ -1,11 +1,11 @@
-﻿using CycleFinder.Calculations.Services;
+﻿using CycleFinder.Calculations.Extensions;
+using CycleFinder.Calculations.Services;
 using CycleFinder.Extensions;
 using CycleFinder.Models;
 using CycleFinder.Models.Ephemeris;
 using LazyCache;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 

@@ -1,5 +1,9 @@
 ﻿using CycleFinder.Models.Candles;
+using CycleFinder.Models.Ephemeris;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 
 namespace CycleFinder.Models.Markers
 {
@@ -13,6 +17,19 @@ namespace CycleFinder.Models.Markers
         {
             Text = turnId.HasValue ? $"TURN #{id}/{turnId}" : $"LOW {(id == null ? "" : "#")}{id}";
 
+        }
+
+        public LowCandleMarker(CandleStick candle, Color color, IDictionary<Planet, Coordinates> coordinates) : base(candle, color) 
+        {
+            var nl = Environment.NewLine;
+            StringBuilder sb = new StringBuilder($"LOW{nl}");
+
+            foreach (var kvp in coordinates)
+            {
+                sb.Append($"{kvp.Key}: {kvp.Value.Longitude}{nl}");
+            }
+
+            Text = sb.ToString();
         }
     }
 }

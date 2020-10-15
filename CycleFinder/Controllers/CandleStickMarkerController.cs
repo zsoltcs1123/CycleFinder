@@ -111,7 +111,7 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            var spec = new ExtremeCandleWithPlanetMarkerSpecification
+            var spec = new ExtremeCandleWithPlanetsMarkerSpecification
             {
                 Extreme = Extreme.Low,
                 IncludeLongitudinalReturns = true,
@@ -134,7 +134,7 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            var spec = new ExtremeCandleWithPlanetMarkerSpecification
+            var spec = new ExtremeCandleWithPlanetsMarkerSpecification
             {
                 Extreme = Extreme.High,
                 IncludeLongitudinalReturns = true,
@@ -159,12 +159,12 @@ namespace CycleFinder.Controllers
 
             var specs = new[]
 {
-                new ExtremeCandleWithPlanetMarkerSpecification
+                new ExtremeCandleWithPlanetsMarkerSpecification
                 {
                     Extreme = Extreme.Low,
                     IncludeLongitudinalReturns = true,
                 },
-                new ExtremeCandleWithPlanetMarkerSpecification
+                new ExtremeCandleWithPlanetsMarkerSpecification
                 {
                     Extreme = Extreme.High,
                     IncludeLongitudinalReturns = true,
