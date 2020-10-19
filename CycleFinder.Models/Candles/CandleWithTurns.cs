@@ -5,12 +5,12 @@ namespace CycleFinder.Models.Candles
     public class CandleWithTurns
     {
         public CandleStick Candle { get; }
-        public IEnumerable<CandleStick> StaticTurns { get; }
+        public IEnumerable<CandleStick> Turns { get; }
 
         public CandleWithTurns(CandleStick candle, IEnumerable<CandleStick> turns)
         {
             Candle = candle;
-            StaticTurns = turns;
+            Turns = turns;
         }
     }
 }
