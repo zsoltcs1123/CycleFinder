@@ -6,6 +6,7 @@ using CycleFinder.Models.Ephemeris;
 using LazyCache;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -66,5 +67,20 @@ namespace CycleFinder.Data
         private IQueryable<EphemerisEntry> FilterByTime(DateTime startTime) => _ephemerisEntryContext.DailyEphemeris.Where(entry => entry.Time >= startTime);
 
         private Coordinates GetCoordinateFromEntry(EphemerisEntry entry, Planet planet) => _planetSelector(planet, entry);
+
+        public async Task<IEnumerable<EphemerisEntry>> GetEntries(DateTime startTime)
+        {
+            var earliestStartTime = _cache.GetOrAdd("EarliestEphemStartTime", () => startTime);
+
+            var earliestEphemId = $"Ephem_{earliestStartTime}";
+            var currentEphemId = $"Ephem_{startTime}";
+
+            if (startTime < earliestStartTime)
+            {
+                _cache.Remove(earliestEphemId);
+            }
+
+            return await _cache.GetOrAddAsync(currentEphemId, () => FilterByTime(startTime).ToListAsync());
+        }
     }
 }

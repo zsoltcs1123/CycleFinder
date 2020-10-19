@@ -18,17 +18,15 @@ namespace CycleFinder.Controllers
     [Route("api/[controller]/[action]", Name = "[controller]_[action]")]
     public class CandleStickMarkerController : CandleStickController
     {
-        private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
         private readonly ICandleStickMarkerCalculator _candleStickMarkerCalculator;
 
         public CandleStickMarkerController(
             ILogger<CandleStickController> logger,
-            ICandleStickRepository repository,
+            ICandleStickRepository candleStickRepository,
             IAppCache cache,
             IEphemerisEntryRepository ephemerisEntryRepository,
-            ICandleStickMarkerCalculator candleStickMarkerCalculator) : base(logger, repository, cache)
+            ICandleStickMarkerCalculator candleStickMarkerCalculator) : base(logger, candleStickRepository, ephemerisEntryRepository, cache)
         {
-            _ephemerisEntryRepository = ephemerisEntryRepository;
             _candleStickMarkerCalculator = candleStickMarkerCalculator;
         }
 

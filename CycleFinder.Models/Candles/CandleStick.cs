@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CycleFinder.Models.Ephemeris;
+using System;
 
 namespace CycleFinder.Models.Candles
 {
@@ -11,6 +12,8 @@ namespace CycleFinder.Models.Candles
         public double Low { get;}
         public double Close { get; }
         public double Volume { get; }
+
+        public EphemerisEntry EphemerisEntry { get; set; }
 
         public CandleStick(double time, double open, double high, double low, double close, double volume)
         {
