@@ -112,7 +112,7 @@ namespace CycleFinder.Controllers
             var spec = new ExtremeCandleWithPlanetsMarkerSpecification
             {
                 Extreme = Extreme.Low,
-                IncludeLongitudinalReturns = true,
+                IncludeLongitudinalReturns = false,
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);

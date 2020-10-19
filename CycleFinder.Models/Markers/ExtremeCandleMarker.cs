@@ -21,16 +21,16 @@ namespace CycleFinder.Models.Markers
             Text = turnId.HasValue ? $"TURN #{id}/{turnId}" : $"{(_type == Extreme.High ? "HIGH" : "LOW")} {(id == null ? "" : "#")}{id}";
         }
 
-        public ExtremeCandleMarker(CandleStick candle, Extreme type, Color color, IDictionary<Planet, Coordinates> coordinates) : base(candle, color)
+        public ExtremeCandleMarker(CandleStick candle, Extreme type, Color color) : base(candle, color)
         {
             _type = type;
 
             var nl = Environment.NewLine;
             StringBuilder sb = new StringBuilder($"{(_type == Extreme.High ? "HIGH" : "LOW")}{nl}");
 
-            foreach (var kvp in coordinates)
+            foreach (var coordinate in Candle.PlanetaryCoordinates)
             {
-                sb.Append($"{kvp.Key}: {kvp.Value.Longitude}{nl}");
+                sb.Append($"{coordinate.Key}: {coordinate.Value.Longitude}{nl}");
             }
 
             Text = sb.ToString();

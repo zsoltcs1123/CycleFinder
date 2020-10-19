@@ -1,5 +1,6 @@
 ﻿using CycleFinder.Models.Ephemeris;
 using System;
+using System.Collections.Generic;
 
 namespace CycleFinder.Models.Candles
 {
@@ -13,7 +14,7 @@ namespace CycleFinder.Models.Candles
         public double Close { get; }
         public double Volume { get; }
 
-        public EphemerisEntry EphemerisEntry { get; set; }
+        public Dictionary<Planet, Coordinates> PlanetaryCoordinates { get; private set; }
 
         public CandleStick(double time, double open, double high, double low, double close, double volume)
         {
@@ -35,6 +36,23 @@ namespace CycleFinder.Models.Candles
         public override string ToString()
         {
             return $"Date:{Time}|Open:{Open}|High:{High}|Low:{Low}|Close:{Close}|Volume:{Volume}";
+        }
+
+        public void SetEmphemerisEntry(EphemerisEntry entry)
+        {
+            PlanetaryCoordinates = new Dictionary<Planet, Coordinates>
+            {
+                {Planet.Moon, entry.Moon },
+                {Planet.Sun, entry.Sun },
+                {Planet.Mercury, entry.Mercury },
+                {Planet.Venus, entry.Venus },
+                {Planet.Mars, entry.Mars },
+                {Planet.Jupiter, entry.Jupiter },
+                {Planet.Saturn, entry.Saturn },
+                {Planet.Uranus, entry.Uranus },
+                {Planet.Neptune, entry.Neptune },
+                {Planet.Pluto, entry.Pluto },
+            };
         }
     }
 }

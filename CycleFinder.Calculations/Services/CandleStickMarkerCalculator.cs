@@ -116,10 +116,12 @@ namespace CycleFinder.Calculations.Services
 
             if (!spec.IncludeLongitudinalReturns)
             {
-                return extremeCandles.Select(_ => new ExtremeCandleMarker(_, spec.Extreme, cg.GetRandomColor(), GetCoordinatesForPlanets(spec.Planets, spec.Ephemerides, _.Time)));
+                return extremeCandles.Select(_ => new ExtremeCandleMarker(_, spec.Extreme, cg.GetRandomColor()));
             }
 
-            var ret = new List<ICandleStickMarker>();
+            return null;
+
+/*            var ret = new List<ICandleStickMarker>();
             foreach (var candle in candles)
             {
                 var color = cg.GetRandomColor();
@@ -140,7 +142,7 @@ namespace CycleFinder.Calculations.Services
 
             }
             //TODO consolidate markers i.e if the dates are the same, their texts should be appended
-            return ret;
+            return ret;*/
         }
 
         private Dictionary<Planet, Coordinates> GetCoordinatesForPlanets(Planet planets, Ephemerides ephemerides, DateTime time)
