@@ -135,6 +135,7 @@ namespace CycleFinder.Controllers
             {
                 Extreme = Extreme.High,
                 IncludeLongitudinalReturns = false,
+                Planets = PlanetFromString(planet) ?? Planet.All,
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);
@@ -210,6 +211,8 @@ namespace CycleFinder.Controllers
             "pluto" => Planet.Pluto,
             _ => null,
         };
+
+
 
         private bool CheckPlanetExists(Planet? planet) => planet.HasValue;
     }

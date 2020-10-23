@@ -124,40 +124,17 @@ namespace CycleFinder.Calculations.Services
             if (!spec.IncludeLongitudinalReturns)
             {
                 return extremeCandles
-                    .Select(_ => new ExtremeCandleMarker(_, spec.Extreme, cg.GetRandomColor(), GetCoordinatesFromEphemerisEntry(ephem.FirstOrDefault(entry => entry.Time == _.Time))));
+                    .Select(_ => new ExtremeCandleMarker(_, spec.Extreme, cg.GetRandomColor(), GetCoordinatesFromEphemerisEntry(ephem.FirstOrDefault(entry => entry.Time == _.Time), spec.Planets)));
             }
 
+            //TODO
             return null;
-
-/*            var ret = new List<ICandleStickMarker>();
-            foreach (var candle in candles)
-            {
-                var color = cg.GetRandomColor();
-                var coordinatesPerPlanet = GetCoordinatesForPlanets(spec.Planets, spec.Ephemerides, candle.Time);
-                ret.Add(new ExtremeCandleMarker(candle, spec.Extreme, color, coordinatesPerPlanet));
-
-
-                foreach (var kvp in coordinatesPerPlanet)
-                {
-                    var planet = kvp.Key;
-                    var coordinates = kvp.Value;
-
-                    var nextReturn = spec.Ephemerides.Coordinates.FirstOrDefault(_ => _longitudeComparer.AreEqual(planet, _.Value[planet].Longitude, coordinates.Longitude));
-                    var nextCandle = candles.FirstOrDefault(_ => _.Time == nextReturn.Key);
-
-                    ret.Add(new LongitudinalReturnMarker(nextCandle, color, planet, coordinates.Longitude));
-                }
-
-            }
-            //TODO consolidate markers i.e if the dates are the same, their texts should be appended
-            return ret;*/
         }
 
-        private Dictionary<Planet, Coordinates> GetCoordinatesForPlanets(Planet planets, Ephemerides ephemerides, DateTime time)
-            => planets.GetFlags().ToDictionary(planet => planet, planet => ephemerides.Coordinates[time][planet]);
 
-        private Dictionary<Planet, Coordinates> GetCoordinatesFromEphemerisEntry(EphemerisEntry entry)
+        private Dictionary<Planet, Coordinates> GetCoordinatesFromEphemerisEntry(EphemerisEntry entry, Planet planets)
         {
+            var flags = planets.GetFlags();
             return new Dictionary<Planet, Coordinates>
             {
                 {Planet.Moon, entry.Moon },
@@ -170,7 +147,7 @@ namespace CycleFinder.Calculations.Services
                 {Planet.Uranus, entry.Uranus },
                 {Planet.Neptune, entry.Neptune },
                 {Planet.Pluto, entry.Pluto },
-            };
+            }.Where(_ => flags.Contains(_.Key)).ToDictionary(_ => _.Key, _ => _.Value);
         }
     }
 }

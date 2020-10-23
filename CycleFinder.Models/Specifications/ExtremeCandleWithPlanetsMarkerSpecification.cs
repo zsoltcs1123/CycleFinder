@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using CycleFinder.Models.Ephemeris;
-
-namespace CycleFinder.Models.Specifications
+﻿namespace CycleFinder.Models.Specifications
 {
     public class ExtremeCandleWithPlanetsMarkerSpecification : CandleMarkerSpecification
     {
