@@ -74,14 +74,16 @@ namespace CycleFinder.Data
             var earliestStartTime = _cache.GetOrAdd("EarliestEphemStartTime", () => startTime);
 
             var earliestEphemId = $"Ephem_{earliestStartTime}";
-            var currentEphemId = $"Ephem_{startTime}";
 
             if (startTime < earliestStartTime)
             {
                 _cache.Remove(earliestEphemId);
+                earliestStartTime = startTime;
             }
+            
+            var ret = await _cache.GetOrAddAsync(earliestEphemId, () => FilterByTime(earliestStartTime).ToListAsync());
 
-            return await _cache.GetOrAddAsync(currentEphemId, () => FilterByTime(startTime).ToListAsync());
+            return startTime > earliestStartTime ? ret.Where(_ => _.Time >= startTime) : ret;
         }
     }
 }

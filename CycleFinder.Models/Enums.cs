@@ -61,6 +61,21 @@ namespace CycleFinder.Models
         SlowPlanetsWithPlut = SlowPlanets | Pluto
     }
 
+    public enum AspectType
+    {
+        [Description("cj")]
+        Conjunction,
+        [Description("op")]
+        Opposition,
+        [Description("sq")]
+        Square,
+        [Description("tri")]
+        Trine,
+        [Description("sex")]
+        Sextile
+    }
+
+
     public enum Extreme
     {
         High,

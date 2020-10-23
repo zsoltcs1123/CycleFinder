@@ -21,5 +21,7 @@ namespace CycleFinder.Calculations.Services
         };
 
         public bool AreEqual(Planet planet, double longitude1, double longitude2) => System.Math.Abs(longitude1 - longitude2) <= _tolerances[planet];
+
+        public bool AreEqual(double longitude1, double longitude2, double orb) => System.Math.Abs(longitude1 - longitude2) <= orb;
     }
 }
