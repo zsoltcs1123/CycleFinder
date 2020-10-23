@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CycleFinder.Models.Candles;
 using CycleFinder.Models.Specifications;
+using System;
 
 namespace CycleFinder.Controllers
 {
@@ -124,9 +125,9 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15,
             [FromQuery] int? limit = null)
         {
-            var planetEnum = PlanetFromString(planet);
+            var planetEnum = PlanetsFromString(planet);
 
-            if (!CheckPlanetExists(planetEnum))
+            if (planetEnum == Planet.None)
             {
                 return NotFound();
             }
@@ -135,7 +136,7 @@ namespace CycleFinder.Controllers
             {
                 Extreme = Extreme.High,
                 IncludeLongitudinalReturns = false,
-                Planets = PlanetFromString(planet) ?? Planet.All,
+                Planets = planetEnum,
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);
@@ -148,9 +149,9 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15,
             [FromQuery] int? limit = null)
         {
-            var planetEnum = PlanetFromString(planet);
+            var planetEnum = PlanetsFromString(planet);
 
-            if (!CheckPlanetExists(planetEnum))
+            if (planetEnum == Planet.None)
             {
                 return NotFound();
             }
@@ -212,7 +213,22 @@ namespace CycleFinder.Controllers
             _ => null,
         };
 
+        private Planet PlanetsFromString(string planet)
+        {
+            if (String.IsNullOrEmpty(planet)) return Planet.All;
 
+            var ret = Planet.None;
+
+            foreach (string s in planet.Split(","))
+            {
+                var planetEnum = PlanetFromString(s);
+                if (planetEnum.HasValue)
+                {
+                    ret |= planetEnum.Value;
+                }
+            }
+            return ret;
+        }
 
         private bool CheckPlanetExists(Planet? planet) => planet.HasValue;
     }
