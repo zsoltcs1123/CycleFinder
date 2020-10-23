@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CycleFinder.Models.Ephemeris
 {
@@ -9,5 +10,8 @@ namespace CycleFinder.Models.Ephemeris
         public double Latitude { get; set; }
         public double Declination { get; set; }
         public double Speed { get; set; }
+
+        [NotMapped]
+        public bool IsRetrograde => Speed < 0;
     }
 }
