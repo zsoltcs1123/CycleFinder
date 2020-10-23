@@ -10,5 +10,10 @@ namespace CycleFinder.Calculations.Extensions
             TimeSpan diff = date.ToUniversalTime() - origin;
             return System.Math.Floor(diff.TotalSeconds);
         }
+
+        public static DateTime FromUnixTimeStamp(long timeStamp)
+        {
+            return DateTime.UnixEpoch.AddSeconds(timeStamp);
+        }
     }
 }

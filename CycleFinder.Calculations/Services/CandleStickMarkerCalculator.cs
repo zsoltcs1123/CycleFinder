@@ -16,23 +16,44 @@ namespace CycleFinder.Calculations.Services
     public class CandleStickMarkerCalculator : ICandleStickMarkerCalculator
     {
         private readonly Func<IRandomColorGenerator> _colorGeneratorFactory;
-        private readonly ILongitudeComparer _longitudeComparer;
         private readonly ILocalExtremeCalculator _localExtremeCalculator;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
+        private readonly IAspectCalculator _aspectCalculator;
 
         public CandleStickMarkerCalculator(
-            ILongitudeComparer longitudeComparer, 
             ILocalExtremeCalculator localExtremeCalculator,
             IEphemerisEntryRepository ephemerisEntryRepository,
+            IAspectCalculator aspectCalculator,
             Func<IRandomColorGenerator> colorGeneratorFactory)
         {
-            _longitudeComparer = longitudeComparer;
             _localExtremeCalculator = localExtremeCalculator;
             _ephemerisEntryRepository = ephemerisEntryRepository;
+            _aspectCalculator = aspectCalculator;
             _colorGeneratorFactory = colorGeneratorFactory;
         }
 
-        public async Task<IEnumerable<ICandleStickMarker>> GetMarkers(CandleMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
+
+        public async Task<IEnumerable<ICandleStickMarker>> GetMarkers(MarkerSpecification spec)
+        {
+            if (!spec.IsValid)
+            {
+                throw new Exception("Specification is not valid");
+            }
+
+            return spec switch
+            {
+                AspectMarkerSpecification s => await GetAspectMarkers(s),
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        private async Task<IEnumerable<EventMarker>> GetAspectMarkers(AspectMarkerSpecification spec)
+        {
+            var cg = _colorGeneratorFactory();
+            return (await _aspectCalculator.GetAspects(spec.From, spec.Planet1, spec.Planet2)).Select(_ => new EventMarker(_.Time, cg.GetRandomColor(), _.Text));
+        }
+
+        public async Task<IEnumerable<ICandleStickMarker>> GetMarkers(MarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
         {
             if (!spec.IsValid)
             {

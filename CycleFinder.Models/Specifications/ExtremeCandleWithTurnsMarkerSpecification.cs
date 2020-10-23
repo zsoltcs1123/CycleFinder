@@ -1,6 +1,6 @@
 ﻿namespace CycleFinder.Models.Specifications
 {
-    public class ExtremeCandleWithTurnsMarkerSpecification : CandleMarkerSpecification
+    public class ExtremeCandleWithTurnsMarkerSpecification : MarkerSpecification
     {
         public Extreme Extreme { get; set; }
         public bool IncluePrimaryStaticCycles { get; set; }

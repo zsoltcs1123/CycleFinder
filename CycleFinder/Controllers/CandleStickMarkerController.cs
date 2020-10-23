@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using CycleFinder.Models.Candles;
 using CycleFinder.Models.Specifications;
 using System;
+using CycleFinder.Calculations.Services.Ephemeris;
+using CycleFinder.Calculations.Extensions;
 
 namespace CycleFinder.Controllers
 {
@@ -20,14 +22,17 @@ namespace CycleFinder.Controllers
     public class CandleStickMarkerController : CandleStickController
     {
         private readonly ICandleStickMarkerCalculator _candleStickMarkerCalculator;
+        private readonly IAspectCalculator _aspectCalculator;
 
         public CandleStickMarkerController(
             ILogger<CandleStickController> logger,
             ICandleStickRepository candleStickRepository,
             IAppCache cache,
-            ICandleStickMarkerCalculator candleStickMarkerCalculator) : base(logger, candleStickRepository, cache)
+            ICandleStickMarkerCalculator candleStickMarkerCalculator,
+            IAspectCalculator aspectCalculator) : base(logger, candleStickRepository, cache)
         {
             _candleStickMarkerCalculator = candleStickMarkerCalculator;
+            _aspectCalculator = aspectCalculator;
         }
 
         [HttpGet]
@@ -173,11 +178,29 @@ namespace CycleFinder.Controllers
             return await ProcessSpecs(specs, symbol, order, limit);
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetAspects(
+            [FromQuery] long from,
+            [FromQuery] string planet)
+        {
+            var planets = PlanetsFromString(planet).GetFlags().ToList();
+            
+            if (planets.Count() != 2)
+            {
+                return NotFound();
+            }
 
-        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(CandleMarkerSpecification spec, string symbol, int order, int? limit)
+            var spec = new AspectMarkerSpecification(DateTimeExtensions.FromUnixTimeStamp(from), planets[0], planets[1]);
+
+            return Ok((await _candleStickMarkerCalculator.GetMarkers(spec)).Select(_ => _.ToCandleStickMarkerDto()));
+        }
+
+
+
+        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(MarkerSpecification spec, string symbol, int order, int? limit)
             => await ProcessSpecs(new[] { spec }, symbol, order, limit);
 
-        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(IEnumerable<CandleMarkerSpecification> specs, string symbol, int order, int? limit)
+        private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(IEnumerable<MarkerSpecification> specs, string symbol, int order, int? limit)
         {
             if (!CheckSymbolExists(symbol))
             {
@@ -195,7 +218,7 @@ namespace CycleFinder.Controllers
             return Ok(ret.OrderBy(_ => _.Time));
         }
 
-        private async Task<IEnumerable<CandleStickMarkerDto>> ExecuteSpec(CandleMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
+        private async Task<IEnumerable<CandleStickMarkerDto>> ExecuteSpec(MarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
              => (await _candleStickMarkerCalculator.GetMarkers(spec, candles, order, limit)).Select(_ => _.ToCandleStickMarkerDto());
 
         private Planet? PlanetFromString(string planet) => planet switch

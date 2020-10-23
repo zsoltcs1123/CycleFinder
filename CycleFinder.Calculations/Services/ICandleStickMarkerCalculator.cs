@@ -8,6 +8,7 @@ namespace CycleFinder.Calculations.Services
 {
     public interface ICandleStickMarkerCalculator
     {
-        public Task<IEnumerable<ICandleStickMarker>> GetMarkers(CandleMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit);
+        public Task<IEnumerable<ICandleStickMarker>> GetMarkers(MarkerSpecification spec);
+        public Task<IEnumerable<ICandleStickMarker>> GetMarkers(MarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit);
     }
 }

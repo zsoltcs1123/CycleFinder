@@ -1,6 +1,6 @@
 ﻿namespace CycleFinder.Models.Specifications
 {
-    public abstract class CandleMarkerSpecification
+    public abstract class MarkerSpecification
     {
         public abstract bool IsValid { get; }
     }

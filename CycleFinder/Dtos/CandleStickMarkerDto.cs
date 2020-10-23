@@ -1,4 +1,5 @@
-﻿using CycleFinder.Extensions;
+﻿using CycleFinder.Calculations.Extensions;
+using CycleFinder.Extensions;
 using CycleFinder.Models;
 using CycleFinder.Models.Markers;
 using System;
@@ -18,8 +19,8 @@ namespace CycleFinder.Dtos
 
         public CandleStickMarkerDto(ICandleStickMarker candleMarker)
         {
-            _time = candleMarker.Candle.Time;
-            Time = candleMarker.Candle.TimeInSeconds;
+            _time = candleMarker.Time;
+            Time = (long)candleMarker.Time.ToUnixTimestamp();
             Color = candleMarker.Color.ToHexString();
             Text = candleMarker.Text;
             Position = candleMarker.Position.GetDescription();

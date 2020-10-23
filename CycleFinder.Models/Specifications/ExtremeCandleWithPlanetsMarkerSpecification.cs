@@ -1,6 +1,6 @@
 ﻿namespace CycleFinder.Models.Specifications
 {
-    public class ExtremeCandleWithPlanetsMarkerSpecification : CandleMarkerSpecification
+    public class ExtremeCandleWithPlanetsMarkerSpecification : MarkerSpecification
     {
         public Extreme Extreme { get; set; }
         public bool IncludeLongitudinalReturns { get; set; }
