@@ -17,18 +17,15 @@ namespace CycleFinder.Models.Markers
         public virtual MarkerShape Shape => MarkerShape.Circle;
 
 
-        public EventMarker(CandleStick candle, Color color, string text = null)
+        public EventMarker(DateTime time)
         {
-            Time = candle.Time;
-            Color = color;
-            Text = text;
+            Time = time;
         }
 
-        public EventMarker(DateTime time, Color color, string text)
+        public EventMarker(DateTime time, Color color)
         {
             Time = time;
             Color = color;
-            Text = text;
         }
     }
 }

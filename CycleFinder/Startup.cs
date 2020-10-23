@@ -31,6 +31,7 @@ namespace CycleFinder
             services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
             services.AddSingleton<ILongitudeComparer, LongitudeComparer>();
             services.AddScoped<ICandleStickMarkerCalculator, CandleStickMarkerCalculator>();
+            services.AddScoped<IAspectCalculator, AspectCalculator>();
 
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));

@@ -15,13 +15,13 @@ namespace CycleFinder.Models.Markers
 
         public override MarkerShape Shape => _type == Extreme.High ? MarkerShape.ArrowDown : MarkerShape.ArrowUp;
 
-        public ExtremeCandleMarker(CandleStick candle, Extreme type, Color color, int? id = null, int? turnId = null) : base(candle, color)
+        public ExtremeCandleMarker(CandleStick candle, Extreme type, Color color, int? id = null, int? turnId = null) : base(candle.Time, color)
         {
             _type = type;
             Text = turnId.HasValue ? $"TURN #{id}/{turnId}" : $"{(_type == Extreme.High ? "HIGH" : "LOW")} {(id == null ? "" : "#")}{id}";
         }
 
-        public ExtremeCandleMarker(CandleStick candle, Extreme type, Color color, IDictionary<Planet, Coordinates> planetaryCoordinates) : base(candle, color)
+        public ExtremeCandleMarker(CandleStick candle, Extreme type, Color color, IDictionary<Planet, Coordinates> planetaryCoordinates) : base(candle.Time, color)
         {
             _type = type;
 

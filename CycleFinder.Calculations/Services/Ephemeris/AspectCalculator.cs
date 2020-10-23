@@ -39,10 +39,13 @@ namespace CycleFinder.Calculations.Services.Ephemeris
 
             foreach (var entry in ephem)
             {
-                var aspectType = GetAspectType(GetCircularDifference(_planetSelector(planet1, entry).Longitude, _planetSelector(planet2, entry).Longitude), _orb);
+                var coord1 = _planetSelector(planet1, entry);
+                var coord2 = _planetSelector(planet2, entry);
+
+                var aspectType = GetAspectType(GetCircularDifference(coord1.Longitude, coord2.Longitude), _orb);
                 if (aspectType != null)
                 {
-                    ret.Add(new Aspect(entry.Time, planet1, planet2, aspectType.Value));
+                    ret.Add(new Aspect(entry.Time, (planet1, coord1.IsRetrograde), (planet2, coord2.IsRetrograde), aspectType.Value));
                 }
             }
 
@@ -55,11 +58,14 @@ namespace CycleFinder.Calculations.Services.Ephemeris
         {
             return diff switch
             {
-                double d when 0 - orb > d && 0 + orb < d => AspectType.Conjunction,
-                double d when 180 - orb > d && 180 + orb < d => AspectType.Opposition,
-                double d when 120 - orb > d && 120 + orb < d => AspectType.Trine,
-                double d when 90 - orb > d && 90 + orb < d => AspectType.Square,
-                double d when 60 - orb > d && 60 + orb < d => AspectType.Sextile,
+                double d when 0 - orb < d && 0 + orb > d => AspectType.Conjunction,
+                double d when 180 - orb < d && 180 + orb > d => AspectType.Opposition,
+                double d when 120 - orb < d && 120 + orb > d => AspectType.Trine,
+                double d when 240 - orb < d && 240 + orb > d => AspectType.Trine,
+                double d when 90 - orb < d && 90 + orb > d => AspectType.Square,
+                double d when 270 - orb < d && 270 + orb > d => AspectType.Square,
+                double d when 60 - orb < d && 60 + orb > d => AspectType.Sextile,
+                double d when 300 - orb < d && 300 + orb > d => AspectType.Sextile,
                 _ => null,
             };
         }

@@ -183,7 +183,8 @@ namespace CycleFinder.Controllers
             [FromQuery] long from,
             [FromQuery] string planet)
         {
-            var planets = PlanetsFromString(planet).GetFlags().ToList();
+            //Enum.HasFlag always true for None (0) 
+            var planets = PlanetsFromString(planet).GetFlags().Where(_ => _ != Planet.None).ToList();
             
             if (planets.Count() != 2)
             {
@@ -240,7 +241,7 @@ namespace CycleFinder.Controllers
         {
             if (String.IsNullOrEmpty(planet)) return Planet.All;
 
-            var ret = Planet.None;
+            Planet ret = Planet.None;
 
             foreach (string s in planet.Split(","))
             {

@@ -8,7 +8,7 @@ namespace CycleFinder.Models.Markers
 {
     public class LongitudinalReturnMarker : EventMarker
     {
-        public LongitudinalReturnMarker(CandleStick candle, Color color, Planet planet, double longitude): base(candle, color)
+        public LongitudinalReturnMarker(CandleStick candle, Color color, Planet planet, double longitude): base(candle.Time, color)
         {
             Text = $"{planet.GetDescription()}: {longitude}";
         }
