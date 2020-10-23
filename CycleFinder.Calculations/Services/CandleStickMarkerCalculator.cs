@@ -49,7 +49,7 @@ namespace CycleFinder.Calculations.Services
 
         private async Task<IEnumerable<EventMarker>> GetAspectMarkers(AspectMarkerSpecification spec)
         {
-            return (await _aspectCalculator.GetAspects(spec.From, spec.Planet1, spec.Planet2)).Select(_ => new AspectMarker(_));
+            return (await _aspectCalculator.GetAspects(spec.From, spec.Planet1, spec.Planet2, spec.AspectType)).Select(_ => new AspectMarker(_));
         }
 
         public async Task<IEnumerable<ICandleStickMarker>> GetMarkers(MarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)

@@ -32,7 +32,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }
 
-        public async Task<IEnumerable<Aspect>> GetAspects(DateTime startTime, Planet planet1, Planet planet2)
+        public async Task<IEnumerable<Aspect>> GetAspects(DateTime startTime, Planet planet1, Planet planet2, AspectType aspectType)
         {
             var ephem = await _ephemerisEntryRepository.GetEntries(startTime);
             var ret = new List<Aspect>();
@@ -42,10 +42,10 @@ namespace CycleFinder.Calculations.Services.Ephemeris
                 var coord1 = _planetSelector(planet1, entry);
                 var coord2 = _planetSelector(planet2, entry);
 
-                var aspectType = GetAspectType(GetCircularDifference(coord1.Longitude, coord2.Longitude), _orb);
-                if (aspectType != null)
+                var aspect = GetAspectType(GetCircularDifference(coord1.Longitude, coord2.Longitude), _orb);
+                if (aspect != null && aspectType.HasFlag(aspect))
                 {
-                    ret.Add(new Aspect(entry.Time, (planet1, coord1.IsRetrograde), (planet2, coord2.IsRetrograde), aspectType.Value));
+                    ret.Add(new Aspect(entry.Time, (planet1, coord1.IsRetrograde), (planet2, coord2.IsRetrograde), aspect.Value));
                 }
             }
 

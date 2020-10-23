@@ -8,6 +8,6 @@ namespace CycleFinder.Calculations.Services.Ephemeris
 {
     public interface IAspectCalculator
     {
-        public Task<IEnumerable<Aspect>> GetAspects(DateTime startTime, Planet planet1, Planet planet2);
+        public Task<IEnumerable<Aspect>> GetAspects(DateTime startTime, Planet planet1, Planet planet2, AspectType aspectType);
     }
 }

@@ -18,10 +18,10 @@ namespace CycleFinder.Models.Markers
             };
 
             Text = $"{aspect.Planet1.Planet.GetDescription()}" +
-            $" {(aspect.Planet1.IsRetrograde ? " (R)" : "")}" +
+            $" {(aspect.Planet1.IsRetrograde ? "(R)" : "")}" +
             $" {aspect.AspectType.GetDescription()} " +
             $"{aspect.Planet2.Planet.GetDescription()} " +
-            $"{(aspect.Planet2.IsRetrograde ? " (R)" : "")}";
+            $"{(aspect.Planet2.IsRetrograde ? "(R)" : "")}";
         }
     }
 }

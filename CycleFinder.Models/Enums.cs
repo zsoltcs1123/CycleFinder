@@ -63,16 +63,20 @@ namespace CycleFinder.Models
 
     public enum AspectType
     {
+        None = 0,
+
         [Description("cj")]
-        Conjunction,
+        Conjunction = 1 << 0,
         [Description("op")]
-        Opposition,
+        Opposition = 1 << 1,
         [Description("sq")]
-        Square,
+        Square = 1 << 2,
         [Description("tri")]
-        Trine,
+        Trine = 1 << 3,
         [Description("sex")]
-        Sextile
+        Sextile = 1 << 4,
+
+        All = ~None,
     }
 
 

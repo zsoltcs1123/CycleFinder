@@ -36,7 +36,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         candleSeries.setData(cdata);
 
         //Get lows
-        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${cdata[0].time}&planet=mercury,saturn`)
+        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${cdata[0].time}&planet=ve,ju&aspect=cj,op,sq,tri`)
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));

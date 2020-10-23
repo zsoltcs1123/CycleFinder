@@ -22,17 +22,14 @@ namespace CycleFinder.Controllers
     public class CandleStickMarkerController : CandleStickController
     {
         private readonly ICandleStickMarkerCalculator _candleStickMarkerCalculator;
-        private readonly IAspectCalculator _aspectCalculator;
 
         public CandleStickMarkerController(
             ILogger<CandleStickController> logger,
             ICandleStickRepository candleStickRepository,
             IAppCache cache,
-            ICandleStickMarkerCalculator candleStickMarkerCalculator,
-            IAspectCalculator aspectCalculator) : base(logger, candleStickRepository, cache)
+            ICandleStickMarkerCalculator candleStickMarkerCalculator) : base(logger, candleStickRepository, cache)
         {
             _candleStickMarkerCalculator = candleStickMarkerCalculator;
-            _aspectCalculator = aspectCalculator;
         }
 
         [HttpGet]
@@ -181,17 +178,19 @@ namespace CycleFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetAspects(
             [FromQuery] long from,
-            [FromQuery] string planet)
+            [FromQuery] string planet,
+            [FromQuery] string aspect)
         {
             //Enum.HasFlag always true for None (0) 
             var planets = PlanetsFromString(planet).GetFlags().Where(_ => _ != Planet.None).ToList();
-            
+            var aspectTypes = AspectTypesFromString(aspect);
+
             if (planets.Count() != 2)
             {
                 return NotFound();
             }
 
-            var spec = new AspectMarkerSpecification(DateTimeExtensions.FromUnixTimeStamp(from), planets[0], planets[1]);
+            var spec = new AspectMarkerSpecification(DateTimeExtensions.FromUnixTimeStamp(from), planets[0], planets[1], aspectTypes);
 
             return Ok((await _candleStickMarkerCalculator.GetMarkers(spec)).Select(_ => _.ToCandleStickMarkerDto()));
         }
@@ -222,22 +221,8 @@ namespace CycleFinder.Controllers
         private async Task<IEnumerable<CandleStickMarkerDto>> ExecuteSpec(MarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
              => (await _candleStickMarkerCalculator.GetMarkers(spec, candles, order, limit)).Select(_ => _.ToCandleStickMarkerDto());
 
-        private Planet? PlanetFromString(string planet) => planet switch
-        {
-            "moon" => Planet.Moon,
-            "sun" => Planet.Sun,
-            "mercury" => Planet.Mercury,
-            "venus" => Planet.Venus,
-            "mars" => Planet.Mars,
-            "jupiter" => Planet.Jupiter,
-            "saturn" => Planet.Saturn,
-            "uranus" => Planet.Uranus,
-            "neptune" => Planet.Neptune,
-            "pluto" => Planet.Pluto,
-            _ => null,
-        };
 
-        private Planet PlanetsFromString(string planet)
+        private static Planet PlanetsFromString(string planet)
         {
             if (String.IsNullOrEmpty(planet)) return Planet.All;
 
@@ -253,6 +238,48 @@ namespace CycleFinder.Controllers
             }
             return ret;
         }
+
+        private static Planet? PlanetFromString(string planet) => planet switch
+        {
+            "mo" => Planet.Moon,
+            "su" => Planet.Sun,
+            "me" => Planet.Mercury,
+            "ve" => Planet.Venus,
+            "ma" => Planet.Mars,
+            "ju" => Planet.Jupiter,
+            "sa" => Planet.Saturn,
+            "ur" => Planet.Uranus,
+            "ne" => Planet.Neptune,
+            "pl" => Planet.Pluto,
+            _ => null,
+        };
+
+        private static AspectType AspectTypesFromString(string planet)
+        {
+            if (String.IsNullOrEmpty(planet)) return AspectType.All;
+
+            AspectType ret = AspectType.None;
+
+            foreach (string s in planet.Split(","))
+            {
+                var planetEnum = AspectTypeFromString(s);
+                if (planetEnum.HasValue)
+                {
+                    ret |= planetEnum.Value;
+                }
+            }
+            return ret;
+        }
+
+        private static AspectType? AspectTypeFromString(string aspect) => aspect switch
+        {
+            "cj" => AspectType.Conjunction,
+            "op" => AspectType.Opposition,
+            "sex" => AspectType.Sextile,
+            "tri" => AspectType.Trine,
+            "sq" => AspectType.Square,
+            _ => null,
+        };
 
         private bool CheckPlanetExists(Planet? planet) => planet.HasValue;
     }
