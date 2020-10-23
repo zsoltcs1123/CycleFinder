@@ -30,7 +30,7 @@ namespace CycleFinder.Models.Markers
 
             foreach (var coordinate in planetaryCoordinates)
             {
-                sb.Append($"{coordinate.Key}: {coordinate.Value.Longitude}{nl}");
+                sb.Append($"{coordinate.Key}{(coordinate.Value.IsRetrograde ? " (R)" :"")}: {coordinate.Value.Longitude}{nl}");
             }
 
             Text = sb.ToString();
