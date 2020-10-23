@@ -1,4 +1,5 @@
-﻿using CycleFinder.Models;
+﻿using CycleFinder.Calculations.Math;
+using CycleFinder.Models;
 using CycleFinder.Models.Candles;
 using System.Collections.Generic;
 using System.Linq;

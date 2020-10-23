@@ -1,5 +1,4 @@
-﻿using CycleFinder.Models;
-using CycleFinder.Models.Candles;
+﻿using CycleFinder.Models.Candles;
 using CycleFinder.Models.Markers;
 using CycleFinder.Models.Specifications;
 using System.Collections.Generic;

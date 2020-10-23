@@ -13,6 +13,7 @@ using CycleFinder.Calculations;
 using CycleFinder.Services;
 using System.Drawing;
 using CycleFinder.Models.Candles;
+using CycleFinder.Calculations.Services;
 
 namespace CycleFinder.Controllers
 {

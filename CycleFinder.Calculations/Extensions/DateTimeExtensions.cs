@@ -8,7 +8,7 @@ namespace CycleFinder.Calculations.Extensions
         {
             DateTime origin = DateTime.UnixEpoch;
             TimeSpan diff = date.ToUniversalTime() - origin;
-            return Math.Floor(diff.TotalSeconds);
+            return System.Math.Floor(diff.TotalSeconds);
         }
     }
 }

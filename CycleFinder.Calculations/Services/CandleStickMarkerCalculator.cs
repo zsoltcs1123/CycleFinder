@@ -1,4 +1,5 @@
 ﻿using CycleFinder.Calculations.Extensions;
+using CycleFinder.Calculations.Math;
 using CycleFinder.Models;
 using CycleFinder.Models.Candles;
 using CycleFinder.Models.Ephemeris;

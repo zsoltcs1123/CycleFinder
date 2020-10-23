@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CycleFinder.Calculations
+namespace CycleFinder.Calculations.Math
 {
     public static class GilmoreGeometry
     {

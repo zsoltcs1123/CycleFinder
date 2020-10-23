@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CycleFinder.Data
+namespace CycleFinder.Calculations.Services
 {
     public interface IEphemerisEntryRepository
     {
