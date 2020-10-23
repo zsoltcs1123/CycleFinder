@@ -24,8 +24,7 @@ namespace CycleFinder.Controllers
             ILogger<CandleStickController> logger,
             ICandleStickRepository candleStickRepository,
             IAppCache cache,
-            IEphemerisEntryRepository ephemerisEntryRepository,
-            ICandleStickMarkerCalculator candleStickMarkerCalculator) : base(logger, candleStickRepository, ephemerisEntryRepository, cache)
+            ICandleStickMarkerCalculator candleStickMarkerCalculator) : base(logger, candleStickRepository, cache)
         {
             _candleStickMarkerCalculator = candleStickMarkerCalculator;
         }
@@ -135,7 +134,7 @@ namespace CycleFinder.Controllers
             var spec = new ExtremeCandleWithPlanetsMarkerSpecification
             {
                 Extreme = Extreme.High,
-                IncludeLongitudinalReturns = true,
+                IncludeLongitudinalReturns = false,
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);
@@ -188,14 +187,14 @@ namespace CycleFinder.Controllers
 
             foreach (var spec in specs)
             {
-                ret.AddRange(ExecuteSpec(spec, data, order, limit));
+                ret.AddRange(await ExecuteSpec(spec, data, order, limit));
             }
 
             return Ok(ret.OrderBy(_ => _.Time));
         }
 
-        private IEnumerable<CandleStickMarkerDto> ExecuteSpec(CandleMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
-             => _candleStickMarkerCalculator.GetMarkers(spec, candles, order, limit).Select(_ => _.ToCandleStickMarkerDto());
+        private async Task<IEnumerable<CandleStickMarkerDto>> ExecuteSpec(CandleMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
+             => (await _candleStickMarkerCalculator.GetMarkers(spec, candles, order, limit)).Select(_ => _.ToCandleStickMarkerDto());
 
         private Planet? PlanetFromString(string planet) => planet switch
         {

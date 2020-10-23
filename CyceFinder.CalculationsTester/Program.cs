@@ -6,7 +6,7 @@ namespace CyceFinder.CalculationsTester
     {
         static void Main(string[] args)
         {
-            foreach (int i in CycleFinder.Calculations.GenericMath.FindLocalMinima(new double[] { 1, 2, 1, 0, 2, 5, 10 }, 3))
+            foreach (int i in CycleFinder.Calculations.Math.GenericMath.FindLocalMinima(new double[] { 1, 2, 1, 0, 2, 5, 10 }, 3))
             {
                 Console.WriteLine(i);
             }

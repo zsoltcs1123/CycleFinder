@@ -1,5 +1,6 @@
 ﻿using CycleFinder.Calculations.Extensions;
 using CycleFinder.Calculations.Math;
+using CycleFinder.Calculations.Services.Ephemeris;
 using CycleFinder.Models;
 using CycleFinder.Models.Candles;
 using CycleFinder.Models.Ephemeris;
@@ -8,6 +9,7 @@ using CycleFinder.Models.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services
 {
@@ -16,18 +18,21 @@ namespace CycleFinder.Calculations.Services
         private readonly Func<IRandomColorGenerator> _colorGeneratorFactory;
         private readonly ILongitudeComparer _longitudeComparer;
         private readonly ILocalExtremeCalculator _localExtremeCalculator;
+        private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 
         public CandleStickMarkerCalculator(
             ILongitudeComparer longitudeComparer, 
             ILocalExtremeCalculator localExtremeCalculator,
+            IEphemerisEntryRepository ephemerisEntryRepository,
             Func<IRandomColorGenerator> colorGeneratorFactory)
         {
             _longitudeComparer = longitudeComparer;
             _localExtremeCalculator = localExtremeCalculator;
+            _ephemerisEntryRepository = ephemerisEntryRepository;
             _colorGeneratorFactory = colorGeneratorFactory;
         }
 
-        public IEnumerable<ICandleStickMarker> GetMarkers(CandleMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
+        public async Task<IEnumerable<ICandleStickMarker>> GetMarkers(CandleMarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
         {
             if (!spec.IsValid)
             {
@@ -36,10 +41,10 @@ namespace CycleFinder.Calculations.Services
 
             return spec switch
             {
-                ExtremeCandleMarkerSpecification s  => CreateExtremeMarkers(FilterExtremes(s.Extreme, candles, order, limit), s.Extreme),
-                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.Low => CreateLowMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit)),
-                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.High => CreateHighMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit)),
-                ExtremeCandleWithPlanetsMarkerSpecification s => CreateExtremeMarkersWithPlanets(candles, FilterExtremes(s.Extreme, candles, order, limit), s),
+                ExtremeCandleMarkerSpecification s  => await Task.Run(() => CreateExtremeMarkers(FilterExtremes(s.Extreme, candles, order, limit), s.Extreme)),
+                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.Low => await Task.Run(() => CreateLowMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit))),
+                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.High => await Task.Run(() => CreateHighMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit))),
+                ExtremeCandleWithPlanetsMarkerSpecification s => await CreateExtremeMarkersWithPlanets(candles, FilterExtremes(s.Extreme, candles, order, limit), s),
                 _ => null,
             };
         }
@@ -111,13 +116,15 @@ namespace CycleFinder.Calculations.Services
             return ret;
         }
 
-        private IEnumerable<ICandleStickMarker> CreateExtremeMarkersWithPlanets(IEnumerable<CandleStick> candles, IEnumerable<CandleStick> extremeCandles, ExtremeCandleWithPlanetsMarkerSpecification spec)
+        private async Task<IEnumerable<ICandleStickMarker>> CreateExtremeMarkersWithPlanets(IEnumerable<CandleStick> candles, IEnumerable<CandleStick> extremeCandles, ExtremeCandleWithPlanetsMarkerSpecification spec)
         {
             var cg = _colorGeneratorFactory();
+            var ephem = await _ephemerisEntryRepository.GetEntries(candles.First().Time);
 
             if (!spec.IncludeLongitudinalReturns)
             {
-                return extremeCandles.Select(_ => new ExtremeCandleMarker(_, spec.Extreme, cg.GetRandomColor()));
+                return extremeCandles
+                    .Select(_ => new ExtremeCandleMarker(_, spec.Extreme, cg.GetRandomColor(), GetCoordinatesFromEphemerisEntry(ephem.FirstOrDefault(entry => entry.Time == _.Time))));
             }
 
             return null;
@@ -148,5 +155,22 @@ namespace CycleFinder.Calculations.Services
 
         private Dictionary<Planet, Coordinates> GetCoordinatesForPlanets(Planet planets, Ephemerides ephemerides, DateTime time)
             => planets.GetFlags().ToDictionary(planet => planet, planet => ephemerides.Coordinates[time][planet]);
+
+        private Dictionary<Planet, Coordinates> GetCoordinatesFromEphemerisEntry(EphemerisEntry entry)
+        {
+            return new Dictionary<Planet, Coordinates>
+            {
+                {Planet.Moon, entry.Moon },
+                {Planet.Sun, entry.Sun },
+                {Planet.Mercury, entry.Mercury },
+                {Planet.Venus, entry.Venus },
+                {Planet.Mars, entry.Mars },
+                {Planet.Jupiter, entry.Jupiter },
+                {Planet.Saturn, entry.Saturn },
+                {Planet.Uranus, entry.Uranus },
+                {Planet.Neptune, entry.Neptune },
+                {Planet.Pluto, entry.Pluto },
+            };
+        }
     }
 }

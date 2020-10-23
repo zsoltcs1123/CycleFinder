@@ -24,32 +24,23 @@ namespace CycleFinder.Controllers
     {
         protected readonly ILogger<CandleStickController> Logger;
         protected readonly ICandleStickRepository CandleStickRepository;
-        protected readonly IEphemerisEntryRepository EphemerisEntryRepository;
         protected readonly IAppCache Cache;
 
         public CandleStickController(
             ILogger<CandleStickController> logger, 
             ICandleStickRepository candleStickRepository, 
-            IEphemerisEntryRepository ephemerisEntryRepository,
             IAppCache cache)
         {
             Logger = logger;
             CandleStickRepository = candleStickRepository;
-            EphemerisEntryRepository = ephemerisEntryRepository;
             Cache = cache;
         }
 
         protected Task<IEnumerable<CandleStick>> GetOrAddAllData(string symbol)
         {
-            return Cache.GetOrAddAsync(symbol, () => GetAndMapData(symbol));
+            return Cache.GetOrAddAsync($"candles_{symbol}_{TimeFrame.Daily.GetDescription()}", () => CandleStickRepository.GetAllData(symbol, TimeFrame.Daily));
         }
 
-        private async Task<IEnumerable<CandleStick>> GetAndMapData(string symbol)
-        {
-            var data = await CandleStickRepository.GetAllData(symbol, TimeFrame.Daily);
-            var ephem = await EphemerisEntryRepository.GetEntries(data.First().Time);
-            return data.Select(_ => _.AddEphemerisEntry(ephem.FirstOrDefault(entry => entry.Time == _.Time)));
-        }
 
         protected bool CheckSymbolExists(string symbol) => GetSymbols().Result.FirstOrDefault(_ => _.Name == symbol) != null;
 

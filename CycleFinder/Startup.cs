@@ -1,4 +1,5 @@
 using CycleFinder.Calculations.Services;
+using CycleFinder.Calculations.Services.Ephemeris;
 using CycleFinder.Data;
 using CycleFinder.Extensions;
 using CycleFinder.Services;
@@ -29,7 +30,7 @@ namespace CycleFinder
             services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
             services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
             services.AddSingleton<ILongitudeComparer, LongitudeComparer>();
-            services.AddSingleton<ICandleStickMarkerCalculator, CandleStickMarkerCalculator>();
+            services.AddScoped<ICandleStickMarkerCalculator, CandleStickMarkerCalculator>();
 
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));

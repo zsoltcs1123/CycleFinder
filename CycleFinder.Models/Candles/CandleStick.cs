@@ -37,22 +37,5 @@ namespace CycleFinder.Models.Candles
         {
             return $"Date:{Time}|Open:{Open}|High:{High}|Low:{Low}|Close:{Close}|Volume:{Volume}";
         }
-
-        public void SetEmphemerisEntry(EphemerisEntry entry)
-        {
-            PlanetaryCoordinates = new Dictionary<Planet, Coordinates>
-            {
-                {Planet.Moon, entry.Moon },
-                {Planet.Sun, entry.Sun },
-                {Planet.Mercury, entry.Mercury },
-                {Planet.Venus, entry.Venus },
-                {Planet.Mars, entry.Mars },
-                {Planet.Jupiter, entry.Jupiter },
-                {Planet.Saturn, entry.Saturn },
-                {Planet.Uranus, entry.Uranus },
-                {Planet.Neptune, entry.Neptune },
-                {Planet.Pluto, entry.Pluto },
-            };
-        }
     }
 }
