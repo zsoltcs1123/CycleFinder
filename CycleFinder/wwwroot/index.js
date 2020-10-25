@@ -21,7 +21,7 @@ chart.applyOptions({
 
 
 //Get all data
-fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
+fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=SPX')
     .then(res => res.json())
     .then(data => {
         const cdata = data.map(d => {
@@ -36,7 +36,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         candleSeries.setData(cdata);
 
         //Get lows
-        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${cdata[0].time}&planet=ve,ju&aspect=cj,op,sq,tri`)
+        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${cdata[0].time}&planet=su,ju`)
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));

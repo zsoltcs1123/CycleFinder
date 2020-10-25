@@ -4,6 +4,7 @@ using CycleFinder.Calculations.Services.Ephemeris;
 using CycleFinder.Models;
 using CycleFinder.Models.Candles;
 using CycleFinder.Models.Ephemeris;
+using CycleFinder.Models.Extensions;
 using CycleFinder.Models.Markers;
 using CycleFinder.Models.Specifications;
 using System;

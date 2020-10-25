@@ -14,6 +14,7 @@ using CycleFinder.Models.Specifications;
 using System;
 using CycleFinder.Calculations.Services.Ephemeris;
 using CycleFinder.Calculations.Extensions;
+using CycleFinder.Models.Extensions;
 
 namespace CycleFinder.Controllers
 {
@@ -278,6 +279,8 @@ namespace CycleFinder.Controllers
             "sex" => AspectType.Sextile,
             "tri" => AspectType.Trine,
             "sq" => AspectType.Square,
+            "ssex" => AspectType.SemiSextile,
+            "icj" => AspectType.Inconjunct,
             _ => null,
         };
 

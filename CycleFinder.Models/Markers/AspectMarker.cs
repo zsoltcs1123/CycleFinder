@@ -1,4 +1,5 @@
 ﻿using CycleFinder.Models.Ephemeris;
+using CycleFinder.Models.Extensions;
 using System.Drawing;
 
 namespace CycleFinder.Models.Markers
@@ -14,6 +15,8 @@ namespace CycleFinder.Models.Markers
                 AspectType.Sextile => Color.Cyan,
                 AspectType.Square => Color.Red,
                 AspectType.Trine => Color.Green,
+                AspectType.SemiSextile => Color.BlueViolet,
+                AspectType.Inconjunct => Color.Orange,
                 _ => Color.Black,
             };
 

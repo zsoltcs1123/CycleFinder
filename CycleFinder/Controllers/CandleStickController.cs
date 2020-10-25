@@ -14,6 +14,7 @@ using CycleFinder.Services;
 using System.Drawing;
 using CycleFinder.Models.Candles;
 using CycleFinder.Calculations.Services;
+using CycleFinder.Models.Extensions;
 
 namespace CycleFinder.Controllers
 {

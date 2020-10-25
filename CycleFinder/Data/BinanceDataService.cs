@@ -1,6 +1,7 @@
 ﻿using CycleFinder.Extensions;
 using CycleFinder.Models;
 using CycleFinder.Models.Candles;
+using CycleFinder.Models.Extensions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -38,7 +39,7 @@ namespace CycleFinder.Data
 
         public async Task<IEnumerable<Symbol>> ListSymbols()
         {
-            var url = _rootUrl + Endpoints[Models.Endpoint.ExchangeInfo];
+            var url = _rootUrl + Endpoints[Endpoint.ExchangeInfo];
             LogRequest(url);
 
             var result = JObject.Parse(await client.GetStringAsync(url));

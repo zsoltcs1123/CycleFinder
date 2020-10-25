@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
-namespace CycleFinder.Models
+namespace CycleFinder.Models.Extensions
 {
     public static class EnumExtensions
     {

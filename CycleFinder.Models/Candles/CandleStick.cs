@@ -1,4 +1,5 @@
 ﻿using CycleFinder.Models.Ephemeris;
+using CycleFinder.Models.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -26,6 +27,9 @@ namespace CycleFinder.Models.Candles
             Close = close;
             Volume = volume;
         }
+
+        public CandleStick(DateTime time, double open, double high, double low, double close, double volume) : this(time.ToUnixTimestamp(), open, high, low, close, volume) { }
+
 
         public CandleStick(double timeInSeconds)
         {

@@ -59,13 +59,17 @@ namespace CycleFinder.Calculations.Services.Ephemeris
             return diff switch
             {
                 double d when 0 - orb < d && 0 + orb > d => AspectType.Conjunction,
-                double d when 180 - orb < d && 180 + orb > d => AspectType.Opposition,
+                double d when 30 - orb < d && 30 + orb > d => AspectType.SemiSextile,
+                double d when 330 - orb < d && 330 + orb > d => AspectType.SemiSextile,
+                double d when 60 - orb < d && 60 + orb > d => AspectType.Sextile,
+                double d when 300 - orb < d && 300 + orb > d => AspectType.Sextile,
                 double d when 120 - orb < d && 120 + orb > d => AspectType.Trine,
                 double d when 240 - orb < d && 240 + orb > d => AspectType.Trine,
                 double d when 90 - orb < d && 90 + orb > d => AspectType.Square,
                 double d when 270 - orb < d && 270 + orb > d => AspectType.Square,
-                double d when 60 - orb < d && 60 + orb > d => AspectType.Sextile,
-                double d when 300 - orb < d && 300 + orb > d => AspectType.Sextile,
+                double d when 150 - orb < d && 150 + orb > d => AspectType.Inconjunct,
+                double d when 210 - orb < d && 210 + orb > d => AspectType.Inconjunct,
+                double d when 180 - orb < d && 180 + orb > d => AspectType.Opposition,
                 _ => null,
             };
         }

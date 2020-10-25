@@ -75,6 +75,10 @@ namespace CycleFinder.Models
         Trine = 1 << 3,
         [Description("sex")]
         Sextile = 1 << 4,
+        [Description("ssex")]
+        SemiSextile = 1 << 5,
+        [Description("icj")]
+        Inconjunct = 1 << 6,
 
         All = ~None,
     }

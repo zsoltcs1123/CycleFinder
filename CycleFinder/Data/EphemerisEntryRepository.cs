@@ -1,9 +1,8 @@
-﻿using CycleFinder.Calculations.Extensions;
-using CycleFinder.Calculations.Services;
+﻿using CycleFinder.Calculations.Services;
 using CycleFinder.Calculations.Services.Ephemeris;
-using CycleFinder.Extensions;
 using CycleFinder.Models;
 using CycleFinder.Models.Ephemeris;
+using CycleFinder.Models.Extensions;
 using LazyCache;
 using Microsoft.EntityFrameworkCore;
 using System;
