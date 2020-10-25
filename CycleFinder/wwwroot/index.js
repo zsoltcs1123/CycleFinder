@@ -35,6 +35,17 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=SPX')
         });
         candleSeries.setData(cdata);
 
+        const lineSeries = chart.addLineSeries();
+
+        // set data
+        lineSeries.setData([
+            { time: '2020-09-01', value: 3210 },
+            { time: '2020-09-02', value: 3215 },
+            { time: '2020-09-03', value: 3230 },
+            { time: '2020-09-04', value: 3245 },
+            { time: '2020-09-05', value: 3250 },
+        ]);
+
         //Get lows
         fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${cdata[0].time}&planet=su,ju`)
             .then(res => res.json())

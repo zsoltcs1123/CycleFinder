@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CycleFinder.Calculations.Math;
+using System;
 
 namespace CyceFinder.CalculationsTester
 {
@@ -6,10 +7,12 @@ namespace CyceFinder.CalculationsTester
     {
         static void Main(string[] args)
         {
-            foreach (int i in CycleFinder.Calculations.Math.GenericMath.FindLocalMinima(new double[] { 1, 2, 1, 0, 2, 5, 10 }, 3))
-            {
-                Console.WriteLine(i);
-            }
+            var table = new W24TimeTable();
+            var asd = table.FindRow(295);
+
+            var priceTable = new W24Table(100, 100);
+
+            var price = priceTable.GetRow(asd.Value);
         }
     }
 }
