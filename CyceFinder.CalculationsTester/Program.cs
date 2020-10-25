@@ -1,5 +1,6 @@
 ﻿using CycleFinder.Calculations.Math;
 using System;
+using System.Linq;
 
 namespace CyceFinder.CalculationsTester
 {
@@ -7,12 +8,14 @@ namespace CyceFinder.CalculationsTester
     {
         static void Main(string[] args)
         {
-            var table = new W24TimeTable();
-            var asd = table.FindRow(295);
+            var asd = W24Table.TimeTable.FindRow(295);
 
-            var priceTable = new W24Table(100, 100);
+            var priceTable = new W24Table(8432.5, 100,11,3);
+            double price = 8432.12;
 
-            var price = priceTable.GetRow(asd.Value);
+            var column = priceTable.FindColumn(price);
+
+            var prices = priceTable.GetRow(asd.Value).ToArray()[column.Value];
         }
     }
 }

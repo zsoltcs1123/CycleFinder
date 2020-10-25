@@ -18,5 +18,22 @@ namespace CycleFinder.Models.Ephemeris
         public Coordinates Neptune { get; set; }
         public Coordinates Pluto { get; set; }
 
+        public Coordinates GetCoordinatesByPlanet(Planet planet)
+        {
+            return planet switch
+            {
+                Planet.Moon => Moon,
+                Planet.Sun => Sun,
+                Planet.Mercury => Mercury,
+                Planet.Venus => Venus,
+                Planet.Mars => Mars,
+                Planet.Jupiter => Jupiter,
+                Planet.Saturn => Saturn,
+                Planet.Uranus => Uranus,
+                Planet.Neptune => Neptune,
+                Planet.Pluto => Pluto,
+                _ => null,
+            };
+        }
     }
 }

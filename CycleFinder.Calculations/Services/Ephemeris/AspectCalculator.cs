@@ -11,22 +11,6 @@ namespace CycleFinder.Calculations.Services.Ephemeris
         private static readonly double _orb = 1.00;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 
-        private static readonly Func<Planet, EphemerisEntry, Coordinates> _planetSelector =
-            (planet, entry) => planet switch
-                {
-                    Planet.Moon => entry.Moon,
-                    Planet.Sun => entry.Sun,
-                    Planet.Mercury => entry.Mercury,
-                    Planet.Venus => entry.Venus,
-                    Planet.Mars => entry.Mars,
-                    Planet.Jupiter => entry.Jupiter,
-                    Planet.Saturn => entry.Saturn,
-                    Planet.Uranus => entry.Uranus,
-                    Planet.Neptune => entry.Neptune,
-                    Planet.Pluto => entry.Pluto,
-                    _ => null,
-                };
-
         public AspectCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
@@ -39,8 +23,8 @@ namespace CycleFinder.Calculations.Services.Ephemeris
 
             foreach (var entry in ephem)
             {
-                var coord1 = _planetSelector(planet1, entry);
-                var coord2 = _planetSelector(planet2, entry);
+                var coord1 = entry.GetCoordinatesByPlanet(planet1);
+                var coord2 = entry.GetCoordinatesByPlanet(planet2); 
 
                 var aspect = GetAspectType(GetCircularDifference(coord1.Longitude, coord2.Longitude), _orb);
                 if (aspect != null && aspectType.HasFlag(aspect))

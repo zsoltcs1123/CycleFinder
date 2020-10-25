@@ -2,12 +2,12 @@
 using CycleFinder.Models.Ephemeris;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services.Ephemeris
 {
     public interface IPlanetaryLineCalculator
     {
-        public IEnumerable<PlanetaryLine> GetPlanetaryLines(Planet planet, DateTime from, int octaves = 1);
+        public Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, int octaves = 4);
     }
 }
