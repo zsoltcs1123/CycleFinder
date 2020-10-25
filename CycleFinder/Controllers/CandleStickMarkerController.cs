@@ -12,9 +12,8 @@ using System.Threading.Tasks;
 using CycleFinder.Models.Candles;
 using CycleFinder.Models.Specifications;
 using System;
-using CycleFinder.Calculations.Services.Ephemeris;
-using CycleFinder.Calculations.Extensions;
 using CycleFinder.Models.Extensions;
+using CycleFinder.Services;
 
 namespace CycleFinder.Controllers
 {
@@ -23,14 +22,17 @@ namespace CycleFinder.Controllers
     public class CandleStickMarkerController : CandleStickController
     {
         private readonly ICandleStickMarkerCalculator _candleStickMarkerCalculator;
+        private readonly IQueryParameterProcessor _parameterProcessor;
 
         public CandleStickMarkerController(
             ILogger<CandleStickController> logger,
             ICandleStickRepository candleStickRepository,
             IAppCache cache,
-            ICandleStickMarkerCalculator candleStickMarkerCalculator) : base(logger, candleStickRepository, cache)
+            ICandleStickMarkerCalculator candleStickMarkerCalculator,
+            IQueryParameterProcessor queryParameterProcessor) : base(logger, candleStickRepository, cache)
         {
             _candleStickMarkerCalculator = candleStickMarkerCalculator;
+            _parameterProcessor = queryParameterProcessor;
         }
 
         [HttpGet]
@@ -105,9 +107,9 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15, 
             [FromQuery] int? limit = null)
         {
-            var planetEnum = PlanetFromString(planet);
+            var planetEnum = _parameterProcessor.PlanetsFromString(planet);
 
-            if (!CheckPlanetExists(planetEnum))
+            if (planetEnum == Planet.None)
             {
                 return NotFound();
             }
@@ -128,7 +130,7 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15,
             [FromQuery] int? limit = null)
         {
-            var planetEnum = PlanetsFromString(planet);
+            var planetEnum = _parameterProcessor.PlanetsFromString(planet);
 
             if (planetEnum == Planet.None)
             {
@@ -152,7 +154,7 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15,
             [FromQuery] int? limit = null)
         {
-            var planetEnum = PlanetsFromString(planet);
+            var planetEnum = _parameterProcessor.PlanetsFromString(planet);
 
             if (planetEnum == Planet.None)
             {
@@ -183,7 +185,7 @@ namespace CycleFinder.Controllers
             [FromQuery] string aspect)
         {
             //Enum.HasFlag always true for None (0) 
-            var planets = PlanetsFromString(planet).GetFlags().Where(_ => _ != Planet.None).ToList();
+            var planets = _parameterProcessor.PlanetsFromString(planet).GetFlags().Where(_ => _ != Planet.None).ToList();
             var aspectTypes = AspectTypesFromString(aspect);
 
             if (planets.Count() != 2)
@@ -195,7 +197,6 @@ namespace CycleFinder.Controllers
 
             return Ok((await _candleStickMarkerCalculator.GetMarkers(spec)).Select(_ => _.ToCandleStickMarkerDto()));
         }
-
 
 
         private async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> ProcessSpecs(MarkerSpecification spec, string symbol, int order, int? limit)
@@ -221,39 +222,6 @@ namespace CycleFinder.Controllers
 
         private async Task<IEnumerable<CandleStickMarkerDto>> ExecuteSpec(MarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
              => (await _candleStickMarkerCalculator.GetMarkers(spec, candles, order, limit)).Select(_ => _.ToCandleStickMarkerDto());
-
-
-        private static Planet PlanetsFromString(string planet)
-        {
-            if (String.IsNullOrEmpty(planet)) return Planet.All;
-
-            Planet ret = Planet.None;
-
-            foreach (string s in planet.Split(","))
-            {
-                var planetEnum = PlanetFromString(s);
-                if (planetEnum.HasValue)
-                {
-                    ret |= planetEnum.Value;
-                }
-            }
-            return ret;
-        }
-
-        private static Planet? PlanetFromString(string planet) => planet switch
-        {
-            "mo" => Planet.Moon,
-            "su" => Planet.Sun,
-            "me" => Planet.Mercury,
-            "ve" => Planet.Venus,
-            "ma" => Planet.Mars,
-            "ju" => Planet.Jupiter,
-            "sa" => Planet.Saturn,
-            "ur" => Planet.Uranus,
-            "ne" => Planet.Neptune,
-            "pl" => Planet.Pluto,
-            _ => null,
-        };
 
         private static AspectType AspectTypesFromString(string planet)
         {

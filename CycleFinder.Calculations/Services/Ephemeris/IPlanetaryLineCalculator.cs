@@ -8,6 +8,6 @@ namespace CycleFinder.Calculations.Services.Ephemeris
 {
     public interface IPlanetaryLineCalculator
     {
-        public Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, int octaves = 4);
+        public Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, int upperOctaves = 1, int lowerOctaves = 1);
     }
 }

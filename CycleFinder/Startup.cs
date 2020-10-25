@@ -2,6 +2,7 @@ using CycleFinder.Calculations.Services;
 using CycleFinder.Calculations.Services.Ephemeris;
 using CycleFinder.Data;
 using CycleFinder.Extensions;
+using CycleFinder.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace CycleFinder
             services.AddSingleton<ILongitudeComparer, LongitudeComparer>();
             services.AddScoped<ICandleStickMarkerCalculator, CandleStickMarkerCalculator>();
             services.AddScoped<IAspectCalculator, AspectCalculator>();
+            services.AddScoped<IQueryParameterProcessor, QueryParameterProcessor>();
 
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));

@@ -17,10 +17,11 @@ namespace CycleFinder.Calculations.Services.Ephemeris
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }
 
-        public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, int octaves = 3)
+        public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, int upperOctaves = 1, int lowerOctaves = 1)
         {
             var ephem = await _ephemerisEntryRepository.GetEntries(from);
-            var priceTable = new W24Table(100, 100);
+            var priceTable = new W24Table(currentPrice,100);
+
             var colIndex = priceTable.FindColumn(currentPrice); //current octave
             var column = priceTable.GetColumn(colIndex.Value).ToArray();
 

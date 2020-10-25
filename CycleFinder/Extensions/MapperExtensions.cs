@@ -1,6 +1,6 @@
 ﻿using CycleFinder.Dtos;
-using CycleFinder.Models;
 using CycleFinder.Models.Candles;
+using CycleFinder.Models.Ephemeris;
 using CycleFinder.Models.Markers;
 
 namespace CycleFinder.Extensions
@@ -16,6 +16,12 @@ namespace CycleFinder.Extensions
             this ICandleStickMarker candleMarker)
         {
             return new CandleStickMarkerDto(candleMarker);
+        }
+
+        public static PlanetaryLineDto ToPlanetaryLinesDto(
+            this PlanetaryLine pLine)
+        {
+            return new PlanetaryLineDto(pLine);
         }
     }
 }
