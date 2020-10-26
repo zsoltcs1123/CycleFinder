@@ -24,7 +24,7 @@ namespace CycleFinder
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ICandleStickRepository, CsvDataService>();
+            services.AddScoped<ICandleStickRepository, BinanceDataService>();
             services.AddScoped<IEphemerisEntryRepository, EphemerisEntryRepository>();
             services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
             services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
@@ -32,6 +32,7 @@ namespace CycleFinder
             services.AddScoped<ICandleStickMarkerCalculator, CandleStickMarkerCalculator>();
             services.AddScoped<IAspectCalculator, AspectCalculator>();
             services.AddScoped<IQueryParameterProcessor, QueryParameterProcessor>();
+            services.AddScoped<IPlanetaryLinesCalculator, PlanetaryLineCalculator>();
 
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));

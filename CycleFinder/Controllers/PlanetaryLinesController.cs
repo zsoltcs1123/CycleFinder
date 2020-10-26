@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CycleFinder.Calculations.Services.Ephemeris;
 using CycleFinder.Dtos;
-using CycleFinder.Models;
 using CycleFinder.Models.Extensions;
 using CycleFinder.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CycleFinder.Controllers
@@ -17,16 +14,16 @@ namespace CycleFinder.Controllers
     public class PlanetaryLinesController : ControllerBase
     {
         private readonly IQueryParameterProcessor _parameterProcessor;
-        private readonly IPlanetaryLineCalculator _planetaryLineCalculator;
+        private readonly IPlanetaryLinesCalculator _planetaryLinesCalculator;
 
-        public PlanetaryLinesController(IQueryParameterProcessor parameterProcessor, IPlanetaryLineCalculator planetaryLineCalculator)
+        public PlanetaryLinesController(IQueryParameterProcessor parameterProcessor, IPlanetaryLinesCalculator planetaryLinesCalculator)
         {
             _parameterProcessor = parameterProcessor;
-            _planetaryLineCalculator = planetaryLineCalculator;
+            _planetaryLinesCalculator = planetaryLinesCalculator;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PlanetaryLineDto>>> GetPlanetaryLines(
+        public async Task<ActionResult<IEnumerable<PlanetaryLinesDto>>> GetPlanetaryLines(
             [FromQuery] string planet, 
             [FromQuery] double currentPrice, 
             [FromQuery] long from, 
@@ -40,8 +37,8 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            return Ok((await _planetaryLineCalculator.GetPlanetaryLines(planetEnum.Value, currentPrice, DateTimeExtensions.FromUnixTimeStamp(from), upperOctaves, lowerOctaves))
-                .Select(pLine => new PlanetaryLineDto(pLine)));
+            return Ok((await _planetaryLinesCalculator.GetPlanetaryLines(planetEnum.Value, currentPrice, DateTimeExtensions.FromUnixTimeStamp(from), upperOctaves, lowerOctaves))
+                .Select(pLine => new PlanetaryLinesDto(pLine)));
         }
     }
 }

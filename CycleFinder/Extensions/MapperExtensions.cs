@@ -18,10 +18,10 @@ namespace CycleFinder.Extensions
             return new CandleStickMarkerDto(candleMarker);
         }
 
-        public static PlanetaryLineDto ToPlanetaryLinesDto(
+        public static PlanetaryLinesDto ToPlanetaryLinesDto(
             this PlanetaryLine pLine)
         {
-            return new PlanetaryLineDto(pLine);
+            return new PlanetaryLinesDto(pLine);
         }
     }
 }

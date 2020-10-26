@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services.Ephemeris
 {
-    public class PlanetaryLineCalculator : IPlanetaryLineCalculator
+    public class PlanetaryLineCalculator : IPlanetaryLinesCalculator
     {
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 

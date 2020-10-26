@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services.Ephemeris
 {
-    public interface IPlanetaryLineCalculator
+    public interface IPlanetaryLinesCalculator
     {
         public Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, int upperOctaves = 1, int lowerOctaves = 1);
     }

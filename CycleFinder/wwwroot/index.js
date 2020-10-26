@@ -21,41 +21,32 @@ chart.applyOptions({
 
 
 //Get all data
-fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=SPX')
+fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
     .then(res => res.json())
     .then(data => {
-        const cdata = data.map(d => {
-            return {
-                time: d.time,
-                open: d.open,
-                high: d.high,
-                low: d.low,
-                close: d.close
-            }
-        });
-        candleSeries.setData(cdata);
+        
+        candleSeries.setData(data);
 
-        const lineSeries = chart.addLineSeries();
-
-        // set data
-        lineSeries.setData([
-            { time: '2020-09-01', value: 3210 },
-            { time: '2020-09-02', value: 3215 },
-            { time: '2020-09-03', value: 3230 },
-            { time: '2020-09-04', value: 3245 },
-            { time: '2020-09-05', value: 3250 },
-        ]);
-
-        //Get lows
-        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${cdata[0].time}&planet=su,ju`)
+        //get planetary lines
+        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=sa&currentPrice=${data[data.length-2].open}&from=${data[0].time}`)
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));
 
-                /*var i;
-                for (i = 0; i < whitespaces.length; i++) {
-                    candleSeries.update({ time: whitespaces[i].time })
-                }*/
+                var i;
+                for (i = 0; i < data.length; i++) {
+                    const lineSeries = chart.addLineSeries();
+                    lineSeries.setData(data[i].lineValues);
+                }
+            })
+            .catch(err => log(err))
+
+
+        //Get aspects
+        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${cdata[0].time}&planet=su,ju`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(JSON.stringify(data, null, '\t'));
 
                 const markers = data.filter(l => !l.isInTheFuture).map(d => {
                     return {
