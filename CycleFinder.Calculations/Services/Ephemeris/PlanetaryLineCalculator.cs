@@ -19,32 +19,15 @@ namespace CycleFinder.Calculations.Services.Ephemeris
 
         public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, int upperOctaves = 1, int lowerOctaves = 1)
         {
-            var ephem = await _ephemerisEntryRepository.GetEntries(from);
-            var priceTable = new W24Table(currentPrice,100);
+            var ephem = (await _ephemerisEntryRepository.GetEntries(from)).ToArray();
+            var priceTable = new W24Calculator(currentPrice,100);
 
-            var colIndex = priceTable.FindColumn(currentPrice); //current octave
-            var column = priceTable.GetColumn(colIndex.Value).ToArray();
-
-            var ret = ephem.Select(entry => (entry.Time, CalculatePriceFromLongitude(entry.GetCoordinatesByPlanet(planet).Longitude, column)));
-
-            return new List<PlanetaryLine>() { new PlanetaryLine(planet, ret) };
-        }
-
-        private int CalculatePriceFromLongitude(double longitude, int[] column)
-        {
-            if (longitude < 0.5)
+            for (int i=0; i<ephem.Length; i++)
             {
-                longitude = 360 + longitude;
+
             }
 
-            var rowIndex = W24Table.TimeTable.FindRow((int)System.Math.Round(longitude, 0));
-
-            if (!rowIndex.HasValue)
-            {
-                return 0;
-            }
-
-            return column[rowIndex.Value];
+            return new List<PlanetaryLine>() { new PlanetaryLine(planet, null) };
         }
     }
 }

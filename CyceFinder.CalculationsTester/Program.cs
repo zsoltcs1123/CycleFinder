@@ -8,14 +8,8 @@ namespace CyceFinder.CalculationsTester
     {
         static void Main(string[] args)
         {
-            var asd = W24Table.TimeTable.FindRow(295);
-
-            var priceTable = new W24Table(8432.5, 100,11,3);
-            double price = 8432.12;
-
-            var column = priceTable.FindColumn(price);
-
-            var prices = priceTable.GetRow(asd.Value).ToArray()[column.Value];
+            var prices = new W24Calculator(8345.21, 100).ConvertLongitudesToPrices(new double[] { 23.99, 24.02, 24.1, 23.98, 23.97, 23.99, 24, 24.03 });
+        
         }
     }
 }
