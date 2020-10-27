@@ -1,8 +1,8 @@
 const log = console.log;
 
 const chartProterties = {
-    width:1500,
-    height:600,
+    width:1800,
+    height:900,
     timeScale:{
         timeVisible:true,
         secondsVisible:false,
@@ -28,6 +28,8 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         candleSeries.setData(data);
 
         //get planetary lines
+
+
         fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=sa&currentPrice=${data[data.length-2].open}&from=${data[0].time}`)
             .then(res => res.json())
             .then(data => {
@@ -35,7 +37,42 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
 
                 var i;
                 for (i = 0; i < data.length; i++) {
-                    const lineSeries = chart.addLineSeries();
+                    const lineSeries = chart.addLineSeries({
+                        color: data[i].color,
+                        lineWidth: 2,
+                    });
+                    lineSeries.setData(data[i].lineValues);
+                }
+            })
+            .catch(err => log(err))
+
+        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=ne&currentPrice=${data[data.length-2].open}&from=${data[0].time}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(JSON.stringify(data, null, '\t'));
+
+                var i;
+                for (i = 0; i < data.length; i++) {
+                    const lineSeries = chart.addLineSeries({
+                        color: data[i].color,
+                        lineWidth: 2,
+                    });
+                    lineSeries.setData(data[i].lineValues);
+                }
+            })
+            .catch(err => log(err))
+
+        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=ju&currentPrice=${data[data.length-2].open}&from=${data[0].time}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(JSON.stringify(data, null, '\t'));
+
+                var i;
+                for (i = 0; i < data.length; i++) {
+                    const lineSeries = chart.addLineSeries({
+                        color: data[i].color,
+                        lineWidth: 2,
+                    });
                     lineSeries.setData(data[i].lineValues);
                 }
             })

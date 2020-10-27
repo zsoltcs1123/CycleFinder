@@ -5,28 +5,18 @@ namespace CycleFinder.Calculations.Math
     public class W24Calculator 
     {
         private double _keyNumber;
-
-        public int InitialPriceOctave { get; }
+        private int _initialPriceOctave;
 
         public W24Calculator(double initialPrice, double increment)
         {
             _keyNumber = increment * 24;
-            InitialPriceOctave = (int)(initialPrice / _keyNumber);
+            _initialPriceOctave = (int)(initialPrice / _keyNumber);
         }
 
-        public double ConvertLongitudeToPrice(double longitude, int? octave = null)
-        {
-            double ratio = longitude / 24;
-            double timeRatio = System.Math.Round(TruncateIntegerPart(ratio), 3);
-            double basePrice = timeRatio * _keyNumber;
-
-            return basePrice + (octave ?? InitialPriceOctave * _keyNumber);
-        }
-
-        public IEnumerable<double> ConvertLongitudesToPrices(double[] longitudes)
+        public double[] ConvertLongitudesToPrices(double[] longitudes)
         {
             double previousTimeRatio, currentTimeRatio, truncatedCurrentTimeRatio;
-            int currentOctave = InitialPriceOctave;
+            int currentOctave = _initialPriceOctave;
 
             var ret = new List<double>();
 
@@ -53,7 +43,7 @@ namespace CycleFinder.Calculations.Math
 
                 ret.Add(basePrice + (currentOctave * _keyNumber));
             }
-            return ret;
+            return ret.ToArray();
         }
 
         private static double TruncateDecimals(double num) => System.Math.Truncate(num);
