@@ -23,6 +23,9 @@ namespace CycleFinder.Calculations.Services.Ephemeris
 
             var ret = new List<PlanetaryLine>();
 
+            //TODO shorter cycles(moon, sun, mercury, venus, mars don't display enough data due to steepness
+            //TODO make this work for all price ranges and increments
+
             foreach (var price in new PriceOctaveCalculator(currentPrice, 100, 8, 0).Octaves)
             {
                 var w24calc = new W24Calculator(price, 100);

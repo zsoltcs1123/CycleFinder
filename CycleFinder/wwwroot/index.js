@@ -47,8 +47,10 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         candleSeries.setData(data);
 
         //get planetary lines
+        getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
         getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('me', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('ur', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
 
 
 
