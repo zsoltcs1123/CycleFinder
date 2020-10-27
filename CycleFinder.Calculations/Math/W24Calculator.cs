@@ -29,11 +29,11 @@ namespace CycleFinder.Calculations.Math
                 {
                     previousTimeRatio = GetTimeRatio(longitudes[i - 1]);
                     var octaveShift = (TruncateDecimals(previousTimeRatio) - TruncateDecimals(currentTimeRatio));
-                    if  (octaveShift < 0)
+                    if  (octaveShift == -1 || octaveShift == 14)
                     {
                         currentOctave++;
                     }
-                    else if (octaveShift > 0)
+                    else if (octaveShift ==1 || octaveShift == -14)
                     {
                         currentOctave--;
                     }

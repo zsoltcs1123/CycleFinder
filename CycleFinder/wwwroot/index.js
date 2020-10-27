@@ -78,9 +78,41 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
             })
             .catch(err => log(err))
 
+        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=ur&currentPrice=${data[data.length-2].open}&from=${data[0].time}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(JSON.stringify(data, null, '\t'));
+
+                var i;
+                for (i = 0; i < data.length; i++) {
+                    const lineSeries = chart.addLineSeries({
+                        color: data[i].color,
+                        lineWidth: 2,
+                    });
+                    lineSeries.setData(data[i].lineValues);
+                }
+            })
+            .catch(err => log(err))
+
+        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=pl&currentPrice=${data[data.length - 2].open}&from=${data[0].time}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(JSON.stringify(data, null, '\t'));
+
+                var i;
+                for (i = 0; i < data.length; i++) {
+                    const lineSeries = chart.addLineSeries({
+                        color: data[i].color,
+                        lineWidth: 2,
+                    });
+                    lineSeries.setData(data[i].lineValues);
+                }
+            })
+            .catch(err => log(err))
+
 
         //Get aspects
-        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${cdata[0].time}&planet=su,ju`)
+        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${data[0].time}&planet=me,su`)
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));
