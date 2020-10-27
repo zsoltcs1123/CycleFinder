@@ -16,7 +16,8 @@ namespace CycleFinder.Calculations.Math
             octaves.AddRange(Enumerable.Range(1, lowerOctaves).Select(_ => initialPrice - _ * keyNumber));
             octaves.Add(initialPrice);
             octaves.AddRange(Enumerable.Range(1, upperOctaves).Select(_ => initialPrice + _ * keyNumber));
-            Octaves = octaves.Where(_ => _ > 0).ToList();
+            //Octaves = octaves.Where(_ => _ > 0).ToList();
+            Octaves = octaves;
             Octaves.Sort();
         }
     }

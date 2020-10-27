@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services.Ephemeris
 {
-    public class PlanetaryLineCalculator : IPlanetaryLinesCalculator
+    public class PlanetaryLinesCalculator : IPlanetaryLinesCalculator
     {
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 
-        public PlanetaryLineCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
+        public PlanetaryLinesCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }
 
-        public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, int upperOctaves = 1, int lowerOctaves = 1)
+        public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, DateTime to, int upperOctaves = 1, int lowerOctaves = 1)
         {
-            var ephem = (await _ephemerisEntryRepository.GetEntries(from)).ToArray();
+            var ephem = (await _ephemerisEntryRepository.GetEntries(from)).Where(entry => entry.Time <= to).ToArray();
 
             var ret = new List<PlanetaryLine>();
 
@@ -32,7 +32,10 @@ namespace CycleFinder.Calculations.Services.Ephemeris
                 var values = new List<(DateTime, double)>();
                 for (int i = 0; i < ephem.Length; i++)
                 {
-                    values.Add((ephem[i].Time, prices[i]));
+                    if (prices[i].HasValue)
+                    {
+                        values.Add((ephem[i].Time, prices[i].Value));
+                    }
                 }
 
                 ret.Add(new PlanetaryLine(planet, values));

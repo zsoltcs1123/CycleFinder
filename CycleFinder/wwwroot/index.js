@@ -13,6 +13,25 @@ const domElement = document.getElementById('tvchart');
 const chart = LightweightCharts.createChart(domElement, chartProterties);
 const candleSeries = chart.addCandlestickSeries();
 
+function getPlanetaryLines(planet, currentPrice, from) {
+
+    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(JSON.stringify(data, null, '\t'));
+
+            var i;
+            for (i = 0; i < data.length; i++) {
+                const lineSeries = chart.addLineSeries({
+                    color: data[i].color,
+                    lineWidth: 2,
+                });
+                lineSeries.setData(data[i].lineValues);
+            }
+        })
+        .catch(err => log(err))
+}
+
 chart.applyOptions({
     crosshair: {
         mode: 0,
@@ -28,87 +47,10 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         candleSeries.setData(data);
 
         //get planetary lines
+        getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('me', data[data.length - 2].open, data[0].time)
 
 
-        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=sa&currentPrice=${data[data.length-2].open}&from=${data[0].time}`)
-            .then(res => res.json())
-            .then(data => {
-                console.log(JSON.stringify(data, null, '\t'));
-
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    const lineSeries = chart.addLineSeries({
-                        color: data[i].color,
-                        lineWidth: 2,
-                    });
-                    lineSeries.setData(data[i].lineValues);
-                }
-            })
-            .catch(err => log(err))
-
-        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=ne&currentPrice=${data[data.length-2].open}&from=${data[0].time}`)
-            .then(res => res.json())
-            .then(data => {
-                console.log(JSON.stringify(data, null, '\t'));
-
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    const lineSeries = chart.addLineSeries({
-                        color: data[i].color,
-                        lineWidth: 2,
-                    });
-                    lineSeries.setData(data[i].lineValues);
-                }
-            })
-            .catch(err => log(err))
-
-        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=ju&currentPrice=${data[data.length-2].open}&from=${data[0].time}`)
-            .then(res => res.json())
-            .then(data => {
-                console.log(JSON.stringify(data, null, '\t'));
-
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    const lineSeries = chart.addLineSeries({
-                        color: data[i].color,
-                        lineWidth: 2,
-                    });
-                    lineSeries.setData(data[i].lineValues);
-                }
-            })
-            .catch(err => log(err))
-
-        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=ur&currentPrice=${data[data.length-2].open}&from=${data[0].time}`)
-            .then(res => res.json())
-            .then(data => {
-                console.log(JSON.stringify(data, null, '\t'));
-
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    const lineSeries = chart.addLineSeries({
-                        color: data[i].color,
-                        lineWidth: 2,
-                    });
-                    lineSeries.setData(data[i].lineValues);
-                }
-            })
-            .catch(err => log(err))
-
-        fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=pl&currentPrice=${data[data.length - 2].open}&from=${data[0].time}`)
-            .then(res => res.json())
-            .then(data => {
-                console.log(JSON.stringify(data, null, '\t'));
-
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    const lineSeries = chart.addLineSeries({
-                        color: data[i].color,
-                        lineWidth: 2,
-                    });
-                    lineSeries.setData(data[i].lineValues);
-                }
-            })
-            .catch(err => log(err))
 
 
         //Get aspects

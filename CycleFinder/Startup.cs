@@ -32,7 +32,7 @@ namespace CycleFinder
             services.AddScoped<ICandleStickMarkerCalculator, CandleStickMarkerCalculator>();
             services.AddScoped<IAspectCalculator, AspectCalculator>();
             services.AddScoped<IQueryParameterProcessor, QueryParameterProcessor>();
-            services.AddScoped<IPlanetaryLinesCalculator, PlanetaryLineCalculator>();
+            services.AddScoped<IPlanetaryLinesCalculator, PlanetaryLinesCalculator>();
 
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));

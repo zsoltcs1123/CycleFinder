@@ -13,12 +13,12 @@ namespace CycleFinder.Calculations.Math
             _initialPriceOctave = (int)(initialPrice / _keyNumber);
         }
 
-        public double[] ConvertLongitudesToPrices(double[] longitudes)
+        public double?[] ConvertLongitudesToPrices(double[] longitudes)
         {
             double previousTimeRatio, currentTimeRatio, truncatedCurrentTimeRatio;
             int currentOctave = _initialPriceOctave;
 
-            var ret = new List<double>();
+            var ret = new List<double?>();
 
             for (int i = 0; i < longitudes.Length; i++)
             {
@@ -40,8 +40,13 @@ namespace CycleFinder.Calculations.Math
                 }
 
                 double basePrice = truncatedCurrentTimeRatio * _keyNumber;
+                double finalPrice = basePrice + (currentOctave * _keyNumber);
 
-                ret.Add(basePrice + (currentOctave * _keyNumber));
+                if (finalPrice > 0)
+                {
+                    ret.Add(finalPrice);
+                }
+                else ret.Add(null);
             }
             return ret.ToArray();
         }
