@@ -1,22 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using CycleFinder.Models;
+using CycleFinder.Models.Ephemeris;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace CycleFinder.Calculations.Math
+namespace CycleFinder.Calculations.Services
 {
-    public class W24Calculator 
+    public class W24Calculator : IW24Calculator
     {
-        private double _keyNumber;
-        private int _initialPriceOctave;
-
-        public W24Calculator(double initialPrice, double increment)
+        public double?[] ConvertLongitudesToPrices(double[] longitudes, double currentPrice, double increment)
         {
-            _keyNumber = increment * 24;
-            _initialPriceOctave = (int)(initialPrice / _keyNumber);
-        }
+            double keyNumber = increment * 24;
+            int initialPriceOctave = TruncateDecimals(currentPrice / keyNumber);
 
-        public double?[] ConvertLongitudesToPrices(double[] longitudes)
-        {
             double previousTimeRatio, currentTimeRatio, truncatedCurrentTimeRatio;
-            int currentOctave = _initialPriceOctave;
+            int currentOctave = initialPriceOctave;
 
             var ret = new List<double?>();
 
@@ -39,8 +36,8 @@ namespace CycleFinder.Calculations.Math
                     }
                 }
 
-                double basePrice = truncatedCurrentTimeRatio * _keyNumber;
-                double finalPrice = basePrice + (currentOctave * _keyNumber);
+                double basePrice = truncatedCurrentTimeRatio * keyNumber;
+                double finalPrice = basePrice + (currentOctave * keyNumber);
 
                 if (finalPrice > 0)
                 {
@@ -51,7 +48,26 @@ namespace CycleFinder.Calculations.Math
             return ret.ToArray();
         }
 
-        private static double TruncateDecimals(double num) => System.Math.Truncate(num);
+        public IEnumerable<W24PriceLevel> GetPriceLevels(double maxValue, double increment, double minValue = 0)
+        {
+            double keyNumber = increment * 24;
+
+            int maxOctave = TruncateDecimals(maxValue / keyNumber);
+            int minOctave = TruncateDecimals(minValue / keyNumber);
+
+            var _24lines = Enumerable.Range(minOctave, maxOctave).Select(n => new W24PriceLevel(n*keyNumber, keyNumber, W24LineType._24Line)).ToList();
+
+            var imLines = _24lines.Select(line => new []
+            {
+                new W24PriceLevel(line.Value + (keyNumber * 0.25), keyNumber, W24LineType.IntermediateLine),
+                new W24PriceLevel(line.Value + (keyNumber * 0.5), keyNumber, W24LineType.IntermediateLine),
+                new W24PriceLevel(line.Value + (keyNumber * 0.75), keyNumber, W24LineType.IntermediateLine) 
+            });
+
+            return _24lines.Concat(imLines.SelectMany(line => line));
+        }
+
+        private static int TruncateDecimals(double num) => (int)System.Math.Truncate(num);
         private static double TruncateIntegerPart(double num) => System.Math.Round(num - System.Math.Truncate(num),3);
         private static double GetTimeRatio(double longitude) => longitude / 24;
 

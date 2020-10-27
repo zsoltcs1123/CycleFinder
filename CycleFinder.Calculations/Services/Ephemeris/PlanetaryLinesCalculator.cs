@@ -11,10 +11,12 @@ namespace CycleFinder.Calculations.Services.Ephemeris
     public class PlanetaryLinesCalculator : IPlanetaryLinesCalculator
     {
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
+        private readonly IW24Calculator _w24Calculator;
 
-        public PlanetaryLinesCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
+        public PlanetaryLinesCalculator(IEphemerisEntryRepository ephemerisEntryRepository, IW24Calculator w24Calculator)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
+            _w24Calculator = w24Calculator;
         }
 
         public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, DateTime to, int upperOctaves = 1, int lowerOctaves = 1)
@@ -28,9 +30,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris
 
             foreach (var price in new PriceOctaveCalculator(currentPrice, 100, 8, 0).Octaves)
             {
-                var w24calc = new W24Calculator(price, 100);
-
-                var prices = w24calc.ConvertLongitudesToPrices(ephem.Select(entry => entry.GetCoordinatesByPlanet(planet).Longitude).ToArray());
+                var prices = _w24Calculator.ConvertLongitudesToPrices(ephem.Select(entry => entry.GetCoordinatesByPlanet(planet).Longitude).ToArray(), price, 100);
 
                 var values = new List<(DateTime, double)>();
                 for (int i = 0; i < ephem.Length; i++)

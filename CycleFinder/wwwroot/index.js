@@ -32,6 +32,10 @@ function getPlanetaryLines(planet, currentPrice, from) {
         .catch(err => log(err))
 }
 
+function getAspects(p1, p2, from) {
+
+}
+
 chart.applyOptions({
     crosshair: {
         mode: 0,
@@ -52,8 +56,25 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         getPlanetaryLines('ur', data[data.length - 2].open, data[0].time)
         getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
 
+        //Get w24 lines
 
+        var maxValue = data[data.length - 1].high * 2
+        fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=100`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(JSON.stringify(data, null, '\t'));
 
+                var i;
+                for (i = 0; i < data.length; i++) {
+                    candleSeries.createPriceLine({
+                        price: data[i].price,
+                        color: data[i].lineColor,
+                        lineWidth: data[i].lineWidth,
+                        lineStyle: LightweightCharts.LineStyle.Dashed
+                    });
+                }
+            })
+            .catch(err => log(err))
 
         //Get aspects
         fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${data[0].time}&planet=me,su`)

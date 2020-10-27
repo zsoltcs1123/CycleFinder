@@ -1,4 +1,5 @@
-﻿using CycleFinder.Dtos;
+﻿using CycleFinder.Controllers;
+using CycleFinder.Dtos;
 using CycleFinder.Models.Candles;
 using CycleFinder.Models.Ephemeris;
 using CycleFinder.Models.Markers;
@@ -22,6 +23,11 @@ namespace CycleFinder.Extensions
             this PlanetaryLine pLine)
         {
             return new PlanetaryLinesDto(pLine);
+        }
+
+        public static PriceLevelDto ToPriceLevelDto(this W24PriceLevel priceLevel)
+        {
+            return new PriceLevelDto(priceLevel);
         }
     }
 }

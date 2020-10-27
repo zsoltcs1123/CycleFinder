@@ -109,4 +109,10 @@ namespace CycleFinder.Models
         [Description("square")]
         Square
     }
+
+    public enum W24LineType
+    {
+        _24Line,
+        IntermediateLine,
+    }
 }
