@@ -51,14 +51,14 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
         candleSeries.setData(data);
 
         //get planetary lines
-        getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
         getPlanetaryLines('ur', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
+       // getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
+       // getPlanetaryLines('ve', data[data.length - 2].open, data[0].time)
+        //getPlanetaryLines('su', data[data.length - 2].open, data[0].time)
 
         //Get w24 lines
 
-        var maxValue = data[data.length - 1].high * 2
+        /*var maxValue = data[data.length - 1].high * 2
         fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=100`)
             .then(res => res.json())
             .then(data => {
@@ -74,10 +74,10 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
                     });
                 }
             })
-            .catch(err => log(err))
+            .catch(err => log(err))*/
 
         //Get aspects
-        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${data[0].time}&planet=me,su`)
+        /*fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${data[0].time}&planet=me,su`)
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));
@@ -94,7 +94,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
 
                 candleSeries.setMarkers(markers);
             })
-            .catch(err => log(err))
+            .catch(err => log(err))*/
     })
     .catch(err => log(err))
 
