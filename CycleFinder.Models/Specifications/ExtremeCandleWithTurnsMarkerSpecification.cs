@@ -5,8 +5,9 @@
         public Extreme Extreme { get; set; }
         public bool IncluePrimaryStaticCycles { get; set; }
         public bool IncludeSecondaryStaticCycles { get; set; }
+        public int? TurnsLimit { get; set; }
 
-        public override bool IsValid => Extreme == Extreme.Low || Extreme == Extreme.High && (IncludeSecondaryStaticCycles || IncludeSecondaryStaticCycles);
+        public override bool IsValid => Extreme == Extreme.Low || Extreme == Extreme.High && (IncluePrimaryStaticCycles || IncludeSecondaryStaticCycles);
 
     }
 }

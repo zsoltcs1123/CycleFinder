@@ -59,6 +59,56 @@ function getAspects(p1, p2, from) {
         .catch(err => log(err))
 }
 
+function getLowTurns(symbol, limit) {
+
+    fetch(`https://localhost:5001/api/CandleStickMarker/GetLowsWithTurns?symbol=${symbol}&limit=${limit}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(JSON.stringify(data, null, '\t'));
+
+            const markers = data.filter(l => !l.isInTheFuture).map(d => {
+                return {
+                    time: d.time,
+                    position: d.position,
+                    color: d.color,
+                    shape: d.shape,
+                    text: d.text,
+                }
+            });
+
+            //const uniqueMarkers = [...new Set(currentMarkers.concat(markers).map(item => item.time))]
+            currentMarkers = currentMarkers.concat(markers)
+
+            candleSeries.setMarkers(currentMarkers);
+        })
+        .catch(err => log(err))
+}
+
+function getHighTurns(symbol, limit) {
+
+    fetch(`https://localhost:5001/api/CandleStickMarker/GetHighsWithTurns?symbol=${symbol}&limit=${limit}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(JSON.stringify(data, null, '\t'));
+
+            const markers = data.filter(l => !l.isInTheFuture).map(d => {
+                return {
+                    time: d.time,
+                    position: d.position,
+                    color: d.color,
+                    shape: d.shape,
+                    text: d.text,
+                }
+            });
+
+            //const uniqueMarkers = [...new Set(currentMarkers.concat(markers).map(item => item.time))]
+            currentMarkers = currentMarkers.concat(markers)
+
+            candleSeries.setMarkers(currentMarkers);
+        })
+        .catch(err => log(err))
+}
+
 chart.applyOptions({
     crosshair: {
         mode: 0,
@@ -99,9 +149,13 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
             })
             .catch(err => log(err))
 
+        getLowTurns('BTCUSDT', 10)
+        getHighTurns('BTCUSDT', 10)
         //Get aspects
         //getAspects('me', 'su', data[0].time)
         //getAspects('me', 'sa', data[0].time)
+
+        
 
     })
     .catch(err => log(err))

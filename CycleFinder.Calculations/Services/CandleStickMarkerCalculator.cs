@@ -63,8 +63,8 @@ namespace CycleFinder.Calculations.Services
             return spec switch
             {
                 ExtremeCandleMarkerSpecification s  => await Task.Run(() => CreateExtremeMarkers(FilterExtremes(s.Extreme, candles, order, limit), s.Extreme)),
-                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.Low => await Task.Run(() => CreateLowMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit))),
-                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.High => await Task.Run(() => CreateHighMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit))),
+                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.Low => await Task.Run(() => CreateLowMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit),s)),
+                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.High => await Task.Run(() => CreateHighMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit), s)),
                 ExtremeCandleWithPlanetsMarkerSpecification s => await CreateExtremeMarkersWithPlanets(candles, FilterExtremes(s.Extreme, candles, order, limit), s),
                 _ => null,
             };
@@ -86,10 +86,10 @@ namespace CycleFinder.Calculations.Services
             return highCandles.Select(_ => new ExtremeCandleMarker(_, type, cg.GetRandomColor()));
         }
 
-        private IEnumerable<ICandleStickMarker> CreateHighMarkersWithTurns(IEnumerable<CandleStick> highCandles)
+        private IEnumerable<ICandleStickMarker> CreateHighMarkersWithTurns(IEnumerable<CandleStick> highCandles, ExtremeCandleWithTurnsMarkerSpecification s)
         {
             var candlesWithTurns = highCandles.Select(candle =>
-                new CandleWithTurns(candle, GilmoreGeometry.GetPrimaryStaticDaysFromDate(candle.Time).Values
+                new CandleWithTurns(candle, GilmoreGeometry.GetPrimaryStaticDaysFromDate(candle.Time, s.TurnsLimit).Values
                 .Select(date => highCandles.FirstOrDefault(c => c.Time == date) ?? new CandleStick(date.ToUnixTimestamp()))));
 
             var ret = new List<ICandleStickMarker>();
@@ -111,10 +111,10 @@ namespace CycleFinder.Calculations.Services
             return ret;
         }
 
-        private IEnumerable<ICandleStickMarker> CreateLowMarkersWithTurns(IEnumerable<CandleStick> lowCandles)
+        private IEnumerable<ICandleStickMarker> CreateLowMarkersWithTurns(IEnumerable<CandleStick> lowCandles, ExtremeCandleWithTurnsMarkerSpecification s)
         {
             var candlesWithTurns = lowCandles.Select(candle =>
-                new CandleWithTurns(candle, GilmoreGeometry.GetPrimaryStaticDaysFromDate(candle.Time).Values
+                new CandleWithTurns(candle, GilmoreGeometry.GetPrimaryStaticDaysFromDate(candle.Time, s.TurnsLimit).Values
                 .Select(date => lowCandles.FirstOrDefault(c => c.Time == date) ?? new CandleStick(date.ToUnixTimestamp()))));
 
             var ret = new List<ICandleStickMarker>();

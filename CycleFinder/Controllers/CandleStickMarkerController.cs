@@ -82,7 +82,8 @@ namespace CycleFinder.Controllers
             var spec = new ExtremeCandleWithTurnsMarkerSpecification
             {
                 Extreme = Extreme.Low,
-                IncluePrimaryStaticCycles = true
+                IncluePrimaryStaticCycles = true,
+                TurnsLimit = 3
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);
@@ -94,7 +95,8 @@ namespace CycleFinder.Controllers
             var spec = new ExtremeCandleWithTurnsMarkerSpecification
             {
                 Extreme = Extreme.High,
-                IncluePrimaryStaticCycles = true
+                IncluePrimaryStaticCycles = true,
+                TurnsLimit = 3
             };
 
             return await ProcessSpecs(spec, symbol, order, limit);
