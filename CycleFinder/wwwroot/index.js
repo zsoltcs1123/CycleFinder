@@ -12,6 +12,7 @@ const chartProterties = {
 const domElement = document.getElementById('tvchart');
 const chart = LightweightCharts.createChart(domElement, chartProterties);
 const candleSeries = chart.addCandlestickSeries();
+var currentMarkers = [];
 
 function getPlanetaryLines(planet, currentPrice, from) {
 
@@ -35,6 +36,27 @@ function getPlanetaryLines(planet, currentPrice, from) {
 
 function getAspects(p1, p2, from) {
 
+    fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${from}&planet=${p1},${p2}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(JSON.stringify(data, null, '\t'));
+
+            const markers = data.filter(l => !l.isInTheFuture).map(d => {
+                return {
+                    time: d.time,
+                    position: d.position,
+                    color: d.color,
+                    shape: d.shape,
+                    text: d.text,
+                }
+            });
+
+            //const uniqueMarkers = [...new Set(currentMarkers.concat(markers).map(item => item.time))]
+            currentMarkers = currentMarkers.concat(markers)
+
+            candleSeries.setMarkers(currentMarkers);
+        })
+        .catch(err => log(err))
 }
 
 chart.applyOptions({
@@ -78,24 +100,9 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
             .catch(err => log(err))
 
         //Get aspects
-        fetch(`https://localhost:5001/api/CandleStickMarker/GetAspects?from=${data[0].time}&planet=me,sa`)
-            .then(res => res.json())
-            .then(data => {
-                console.log(JSON.stringify(data, null, '\t'));
+        //getAspects('me', 'su', data[0].time)
+        //getAspects('me', 'sa', data[0].time)
 
-                const markers = data.filter(l => !l.isInTheFuture).map(d => {
-                    return {
-                        time: d.time,
-                        position: d.position,
-                        color: d.color,
-                        shape: d.shape,
-                        text: d.text,
-                    }
-                });
-
-                candleSeries.setMarkers(markers);
-            })
-            .catch(err => log(err))
     })
     .catch(err => log(err))
 
