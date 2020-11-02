@@ -52,7 +52,8 @@ function getAspects(p1, p2, from) {
             });
 
             //const uniqueMarkers = [...new Set(currentMarkers.concat(markers).map(item => item.time))]
-            currentMarkers = currentMarkers.concat(markers)
+            currentMarkers = (currentMarkers.concat(markers))
+                .sort((a, b) => (a.time > b.time) ? 1 : ((b.time > a.time ? -1 : 0)));
 
             candleSeries.setMarkers(currentMarkers);
         })
@@ -109,6 +110,32 @@ function getHighTurns(symbol, limit) {
         .catch(err => log(err))
 }
 
+function getMarkers(url) {
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            console.log(JSON.stringify(data, null, '\t'));
+
+            const markers = data.filter(l => !l.isInTheFuture).map(d => {
+                return {
+                    time: d.time,
+                    position: d.position,
+                    color: d.color,
+                    shape: d.shape,
+                    text: d.text,
+                }
+            });
+
+            //const uniqueMarkers = [...new Set(currentMarkers.concat(markers).map(item => item.time))]
+            currentMarkers = (currentMarkers.concat(markers))
+                .sort((a, b) => (a.time > b.time) ? 1 : ((b.time > a.time ? -1 : 0)));
+
+            candleSeries.setMarkers(currentMarkers);
+        })
+        .catch(err => log(err))
+}
+
 chart.applyOptions({
     crosshair: {
         mode: 0,
@@ -125,9 +152,10 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
 
         //get planetary lines
         getPlanetaryLines('ur', data[data.length - 2].open, data[0].time)
-        //getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
-       // getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
-        //getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
+        //getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('ne', data[data.length - 2].open, data[0].time)
 
         //Get w24 lines
 
@@ -149,13 +177,15 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT')
             })
             .catch(err => log(err))
 
-        getLowTurns('BTCUSDT', 10)
-        getHighTurns('BTCUSDT', 10)
+        //getLowTurns('BTCUSDT', 10)
+        //getHighTurns('BTCUSDT', 10)
         //Get aspects
-        //getAspects('me', 'su', data[0].time)
+        getAspects('me', 'su', data[0].time)
         //getAspects('me', 'sa', data[0].time)
 
-        
+        getMarkers('https://localhost:5001/api/CandleStickMarker/GetHighsWithTurns?symbol=BTCUSDT&limit=10')
+        getMarkers('https://localhost:5001/api/CandleStickMarker/GetLowsWithTurns?symbol=BTCUSDT&limit=10')
+        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=su&from=${data[0].time}`)
 
     })
     .catch(err => log(err))

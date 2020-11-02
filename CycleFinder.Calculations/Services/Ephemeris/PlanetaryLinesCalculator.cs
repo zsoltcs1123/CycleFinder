@@ -19,6 +19,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris
             _w24Calculator = w24Calculator;
         }
 
+        //TODO this is for slow planets
         public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, DateTime to, int upperOctaves = 1, int lowerOctaves = 1)
         {
             var ephem = (await _ephemerisEntryRepository.GetEntries(from)).Where(entry => entry.Time <= to).ToArray();
@@ -43,6 +44,24 @@ namespace CycleFinder.Calculations.Services.Ephemeris
 
                 ret.Add(new PlanetaryLine(planet, values));
             }
+            return ret;
+        }
+
+        //TODO this is for fast planets
+        public async Task<IEnumerable<W24Crossing>> GetW24Crossings(Planet planet, DateTime from)
+        {
+            var ephem = await _ephemerisEntryRepository.GetEntries(from);
+
+            var ret = new List<W24Crossing>();
+            foreach (var entry in ephem)
+            {
+                var longitude = entry.GetCoordinatesByPlanet(planet).Longitude;
+                if (_w24Calculator.AtW24Crossing(longitude))
+                {
+                    ret.Add(new W24Crossing(entry.Time, planet, longitude));
+                }
+            }
+
             return ret;
         }
     }

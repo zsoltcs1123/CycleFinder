@@ -17,7 +17,7 @@ namespace CycleFinder.Dtos
         {
             Color = (pLine.Planet switch
             {
-                Planet.Moon => System.Drawing.Color.Gray,
+                Planet.Moon => System.Drawing.Color.Silver,
                 Planet.Sun => System.Drawing.Color.Gold,
                 Planet.Mercury => System.Drawing.Color.Gray,
                 Planet.Venus => System.Drawing.Color.Pink,

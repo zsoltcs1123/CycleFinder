@@ -7,5 +7,6 @@ namespace CycleFinder.Calculations.Services
     {
         public double?[] ConvertLongitudesToPrices(double[] longitudes, double currentPrice, double increment);
         public IEnumerable<W24PriceLevel> GetPriceLevels(double maxValue, double increment, double minValue = 0);
+        public bool AtW24Crossing(double coordinate);
     }
 }

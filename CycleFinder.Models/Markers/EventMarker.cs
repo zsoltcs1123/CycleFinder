@@ -16,7 +16,6 @@ namespace CycleFinder.Models.Markers
 
         public virtual MarkerShape Shape => MarkerShape.Circle;
 
-
         public EventMarker(DateTime time)
         {
             Time = time;

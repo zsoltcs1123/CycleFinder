@@ -67,6 +67,11 @@ namespace CycleFinder.Calculations.Services
             return _24lines.Concat(imLines.SelectMany(line => line));
         }
 
+        public bool AtW24Crossing(double coordinate)
+        {
+            return System.Math.Round(coordinate / 24, 1) % 1 == 0;
+        }
+
         private static int TruncateDecimals(double num) => (int)System.Math.Truncate(num);
         private static double TruncateIntegerPart(double num) => System.Math.Round(num - System.Math.Truncate(num),3);
         private static double GetTimeRatio(double longitude) => longitude / 24;
@@ -91,6 +96,5 @@ namespace CycleFinder.Calculations.Services
             }
             return table;
         }
-
     }
 }
