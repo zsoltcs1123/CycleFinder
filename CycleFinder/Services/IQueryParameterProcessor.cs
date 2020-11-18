@@ -6,5 +6,6 @@ namespace CycleFinder.Services
     {
         public Planet PlanetsFromString(string planet);
         public Planet? PlanetFromString(string planet);
+        public TimeFrame? TimeFrameFromString(string timeFrame);
     }
 }

@@ -36,5 +36,15 @@ namespace CycleFinder.Services
             "pl" => Planet.Pluto,
             _ => null,
         };
+
+        public TimeFrame? TimeFrameFromString(string timeFrame) => timeFrame switch
+        {
+            "1M" => TimeFrame.Monthly,
+            "1W" => TimeFrame.Weekly,
+            "1d" => TimeFrame.Daily,
+            "4h" => TimeFrame.H4,
+            "1h" => TimeFrame.H1,
+            _ => null,
+        };
     }
 }

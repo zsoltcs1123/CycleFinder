@@ -14,6 +14,7 @@ using CycleFinder.Models.Specifications;
 using System;
 using CycleFinder.Models.Extensions;
 using CycleFinder.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace CycleFinder.Controllers
 {
@@ -22,17 +23,16 @@ namespace CycleFinder.Controllers
     public class CandleStickMarkerController : CandleStickController
     {
         private readonly ICandleStickMarkerCalculator _candleStickMarkerCalculator;
-        private readonly IQueryParameterProcessor _parameterProcessor;
 
         public CandleStickMarkerController(
             ILogger<CandleStickController> logger,
             ICandleStickRepository candleStickRepository,
             IAppCache cache,
             ICandleStickMarkerCalculator candleStickMarkerCalculator,
-            IQueryParameterProcessor queryParameterProcessor) : base(logger, candleStickRepository, cache)
+            IQueryParameterProcessor queryParameterProcessor,
+            IConfiguration configuration) : base(logger, candleStickRepository, queryParameterProcessor, cache, configuration)
         {
             _candleStickMarkerCalculator = candleStickMarkerCalculator;
-            _parameterProcessor = queryParameterProcessor;
         }
 
         [HttpGet]
@@ -109,7 +109,7 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15, 
             [FromQuery] int? limit = null)
         {
-            var planetEnum = _parameterProcessor.PlanetsFromString(planet);
+            var planetEnum = ParameterProcessor.PlanetsFromString(planet);
 
             if (planetEnum == Planet.None)
             {
@@ -132,7 +132,7 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15,
             [FromQuery] int? limit = null)
         {
-            var planetEnum = _parameterProcessor.PlanetsFromString(planet);
+            var planetEnum = ParameterProcessor.PlanetsFromString(planet);
 
             if (planetEnum == Planet.None)
             {
@@ -156,7 +156,7 @@ namespace CycleFinder.Controllers
             [FromQuery] int order = 15,
             [FromQuery] int? limit = null)
         {
-            var planetEnum = _parameterProcessor.PlanetsFromString(planet);
+            var planetEnum = ParameterProcessor.PlanetsFromString(planet);
 
             if (planetEnum == Planet.None)
             {
@@ -187,7 +187,7 @@ namespace CycleFinder.Controllers
             [FromQuery] string aspect)
         {
             //Enum.HasFlag always true for None (0) 
-            var planets = _parameterProcessor.PlanetsFromString(planet).GetFlags().Where(_ => _ != Planet.None).ToList();
+            var planets = ParameterProcessor.PlanetsFromString(planet).GetFlags().Where(_ => _ != Planet.None).ToList();
             var aspectTypes = AspectTypesFromString(aspect);
 
             if (planets.Count() != 2)
@@ -211,7 +211,7 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            var data = await GetOrAddAllData(symbol);
+            var data = await GetOrAddAllData(symbol, TimeFrame.Daily);
             var ret = new List<CandleStickMarkerDto>();
 
             foreach (var spec in specs)

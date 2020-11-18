@@ -23,9 +23,9 @@ namespace CycleFinder.Data
 
         protected Dictionary<Endpoint, string> Endpoints = new Dictionary<Endpoint, string>()
         {
-            { Models.Endpoint.Connectivity, "/api/v3/ping" },
-            { Models.Endpoint.MarketData, $"/api/v3/klines" },
-            { Models.Endpoint.ExchangeInfo, "/api/v3/exchangeInfo"},
+            { Endpoint.Connectivity, "/api/v3/ping" },
+            { Endpoint.MarketData, $"/api/v3/klines" },
+            { Endpoint.ExchangeInfo, "/api/v3/exchangeInfo"},
         };
 
         private static readonly HttpClient client = new HttpClient();
@@ -64,26 +64,35 @@ namespace CycleFinder.Data
             return timeFrame switch
             {
                 TimeFrame.Daily => (await GetAllDailyData(symbol, timeFrame, _firstTradeDate)).OrderBy(_ => _.Time).ToList(),
+                TimeFrame.H4 => (await GetAllIntradayData(symbol, timeFrame, _firstTradeDate)).OrderBy(_ => _.Time).ToList(),
                 _ => throw new NotImplementedException(),
             };
         }
 
         private async Task<IEnumerable<CandleStick>> GetAllDailyData(string symbol, TimeFrame timeFrame, DateTime startTime)
         {
-            var candles = (await GetData(symbol, timeFrame, startTime));
+            var candles = await GetData(symbol, timeFrame, startTime);
             var diff = candles.First().Time - DateTime.Now;
 
             return Math.Abs(diff.TotalDays) > _limit ?  (await GetAllDailyData(symbol, timeFrame, candles.Last().Time.AddDays(1))).Concat(candles).ToList() : candles;
         }
 
+        private async Task<IEnumerable<CandleStick>> GetAllIntradayData(string symbol, TimeFrame timeFrame, DateTime startTime)
+        {
+            var candles = await GetData(symbol, timeFrame, startTime);
+            var diff = candles.First().Time - DateTime.Now;
+
+            return Math.Abs(diff.TotalHours / 4) > _limit ? (await GetAllIntradayData(symbol, timeFrame, candles.Last().Time.AddHours(4))).Concat(candles).ToList() : candles;
+        }
+
         private async Task<bool> CheckConnection()
         {
-            return await client.GetStringAsync(_rootUrl + Endpoints[Models.Endpoint.Connectivity]) == "{}";
+            return await client.GetStringAsync(_rootUrl + Endpoints[Endpoint.Connectivity]) == "{}";
         }
 
         private string BuildMarketDataRequest(string symbol, TimeFrame timeframe, DateTime? startTime, DateTime? endTime)
         {
-            var sb = new StringBuilder(_rootUrl + Endpoints[Models.Endpoint.MarketData] + "?");
+            var sb = new StringBuilder(_rootUrl + Endpoints[Endpoint.MarketData] + "?");
             if (String.IsNullOrEmpty(symbol)) throw new Exception("Symbol cannot be null");
 
             sb.Append($"symbol={symbol}");

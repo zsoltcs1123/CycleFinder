@@ -25,6 +25,7 @@ namespace CycleFinder.Models.Markers
             };
 
             Text = $"{planet.GetDescription()} {longitude}";
+            Text = "";
         }
     }
 }

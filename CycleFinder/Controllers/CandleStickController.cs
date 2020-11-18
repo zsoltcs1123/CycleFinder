@@ -9,12 +9,10 @@ using Microsoft.Extensions.Logging;
 using CycleFinder.Dtos;
 using LazyCache;
 using CycleFinder.Extensions;
-using CycleFinder.Calculations;
-using CycleFinder.Services;
-using System.Drawing;
 using CycleFinder.Models.Candles;
-using CycleFinder.Calculations.Services;
 using CycleFinder.Models.Extensions;
+using Microsoft.Extensions.Configuration;
+using CycleFinder.Services;
 
 namespace CycleFinder.Controllers
 {
@@ -25,25 +23,46 @@ namespace CycleFinder.Controllers
     {
         protected readonly ILogger<CandleStickController> Logger;
         protected readonly ICandleStickRepository CandleStickRepository;
+        protected readonly IQueryParameterProcessor ParameterProcessor;
         protected readonly IAppCache Cache;
+        protected readonly bool CacheCandleStickData;
 
         public CandleStickController(
             ILogger<CandleStickController> logger, 
-            ICandleStickRepository candleStickRepository, 
-            IAppCache cache)
+            ICandleStickRepository candleStickRepository,
+            IQueryParameterProcessor queryParameterProcessor,
+            IAppCache cache, 
+            IConfiguration configuration)
         {
             Logger = logger;
             CandleStickRepository = candleStickRepository;
+            ParameterProcessor = queryParameterProcessor;
             Cache = cache;
+
+            bool.TryParse(configuration.GetSection("CacheSettings")["CacheCandleStickData"], out bool cacheCandleStickData);
+            CacheCandleStickData = cacheCandleStickData;
         }
 
-        protected Task<IEnumerable<CandleStick>> GetOrAddAllData(string symbol)
+        protected Task<IEnumerable<CandleStick>> GetOrAddAllData(string symbol, TimeFrame timeFrame)
         {
-            return Cache.GetOrAddAsync($"candles_{symbol}_{TimeFrame.Daily.GetDescription()}", () => CandleStickRepository.GetAllData(symbol, TimeFrame.Daily));
+            if (CacheCandleStickData)
+            {
+                return Cache.GetOrAddAsync($"candles_{symbol}_{timeFrame.GetDescription()}", () => CandleStickRepository.GetAllData(symbol, timeFrame));
+            }
+
+            return CandleStickRepository.GetAllData(symbol, timeFrame);
         }
 
 
         protected bool CheckSymbolExists(string symbol) => GetSymbols().Result.FirstOrDefault(_ => _.Name == symbol) != null;
+        protected bool CheckTimeFrameExists(string timeFrameStr, out TimeFrame? timeFrame)
+        {
+            var tf = ParameterProcessor.TimeFrameFromString(timeFrameStr);
+
+            timeFrame = tf ?? null;
+
+            return tf.HasValue;
+        }
 
 
         /// <summary>
@@ -61,14 +80,19 @@ namespace CycleFinder.Controllers
         /// <param name="symbol">Ticker symbol of the instrument.</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CandleStickDto>> > GetAllData([FromQuery]string symbol)
+        public async Task<ActionResult<IEnumerable<CandleStickDto>> > GetAllData([FromQuery]string symbol, [FromQuery]string timeFrame)
         {
             if (!CheckSymbolExists(symbol))
             {
                 return NotFound();
             }
 
-            return Ok((await GetOrAddAllData(symbol)).Select(_ => _.ToCandleStickDto()));
+            if (!CheckTimeFrameExists(timeFrame, out TimeFrame? tf))
+            {
+                return NotFound();
+            }
+
+            return Ok((await GetOrAddAllData(symbol, tf.Value)).Select(_ => _.ToCandleStickDto()));
         }
 
     }

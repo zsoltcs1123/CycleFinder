@@ -12,8 +12,10 @@ namespace CycleFinder.Models
         Weekly,
         [Description("1d")]
         Daily,
+        [Description("4h")]
+        H4,
         [Description("1h")]
-        Hourly,
+        H1,
     }
 
     public enum Endpoint
