@@ -20,7 +20,14 @@ namespace CycleFinder.Calculations.Services.Ephemeris
         }
 
         //TODO this is for slow planets
-        public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(Planet planet, double currentPrice, DateTime from, DateTime to, int upperOctaves = 1, int lowerOctaves = 1)
+        public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(
+            Planet planet, 
+            double currentPrice, 
+            DateTime from, 
+            DateTime to, 
+            TimeFrame timeFrame,
+            int upperOctaves = 1, 
+            int lowerOctaves = 1)
         {
             var ephem = (await _ephemerisEntryRepository.GetEntries(from)).Where(entry => entry.Time <= to).ToArray();
 
@@ -39,6 +46,15 @@ namespace CycleFinder.Calculations.Services.Ephemeris
                     if (prices[i].HasValue && prices[i] < maxPrice)
                     {
                         values.Add((ephem[i].Time, prices[i].Value));
+
+                        if (timeFrame == TimeFrame.H4)
+                        {
+                            values.Add((ephem[i].Time.AddHours(4), prices[i].Value));
+                            values.Add((ephem[i].Time.AddHours(8), prices[i].Value));
+                            values.Add((ephem[i].Time.AddHours(12), prices[i].Value));
+                            values.Add((ephem[i].Time.AddHours(16), prices[i].Value));
+                            values.Add((ephem[i].Time.AddHours(20), prices[i].Value));
+                        }
                     }
                 }
 

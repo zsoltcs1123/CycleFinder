@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CycleFinder.Calculations.Services.Ephemeris;
 using CycleFinder.Dtos;
 using CycleFinder.Extensions;
+using CycleFinder.Models;
 using CycleFinder.Models.Extensions;
 using CycleFinder.Models.Markers;
 using CycleFinder.Services;
@@ -25,11 +26,21 @@ namespace CycleFinder.Controllers
             _planetaryLinesCalculator = planetaryLinesCalculator;
         }
 
+        private bool CheckTimeFrameExists(string timeFrameStr, out TimeFrame? timeFrame)
+        {
+            var tf = _parameterProcessor.TimeFrameFromString(timeFrameStr);
+
+            timeFrame = tf ?? null;
+
+            return tf.HasValue;
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PlanetaryLinesDto>>> GetPlanetaryLines(
             [FromQuery] string planet, 
             [FromQuery] double currentPrice, 
             [FromQuery] long from, 
+            [FromQuery] string timeFrame,
             [FromQuery] int upperOctaves = 1,
             [FromQuery] int lowerOctaves = 1)
         {
@@ -40,10 +51,15 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            var fromDate = DateTimeExtensions.FromUnixTimeStamp(from);
-            var toDate = DateTime.UtcNow.AddYears(1); //Default 1 years into the future. maybe make this a query param
+            if (!CheckTimeFrameExists(timeFrame, out TimeFrame? tf))
+            {
+                return NotFound();
+            }
 
-            return Ok((await _planetaryLinesCalculator.GetPlanetaryLines(planetEnum.Value, currentPrice, fromDate, toDate, upperOctaves, lowerOctaves))
+            var fromDate = DateTimeExtensions.FromUnixTimeStamp(from);
+            var toDate = DateTime.UtcNow.AddDays(30); //Default 1 years into the future. maybe make this a query param
+
+            return Ok((await _planetaryLinesCalculator.GetPlanetaryLines(planetEnum.Value, currentPrice, fromDate, toDate, tf.Value, upperOctaves, lowerOctaves))
                 .Select(pLine => new PlanetaryLinesDto(pLine)));
         }
 
