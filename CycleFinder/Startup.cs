@@ -28,7 +28,6 @@ namespace CycleFinder
             services.AddScoped<IEphemerisEntryRepository, EphemerisEntryRepository>();
             services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
             services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
-            services.AddSingleton<ILongitudeComparer, LongitudeComparer>();
             services.AddScoped<ICandleStickMarkerCalculator, CandleStickMarkerCalculator>();
             services.AddScoped<IAspectCalculator, AspectCalculator>();
             services.AddScoped<IQueryParameterProcessor, QueryParameterProcessor>();
