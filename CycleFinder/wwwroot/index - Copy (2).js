@@ -16,7 +16,7 @@ var currentMarkers = [];
 
 function getPlanetaryLines(planet, currentPrice, from) {
 
-    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=4h&increment=100`)
+    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=4h&increment=0.000001`)
         .then(res => res.json())
         .then(data => {
             console.log(JSON.stringify(data, null, '\t'));
@@ -144,12 +144,18 @@ chart.applyOptions({
 
 
 //Get all data
-fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT&timeFrame=4h')
+fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=XRPBTC&timeFrame=4h')
     .then(res => res.json())
     .then(data => {
         
         candleSeries.setData(data);
 
+        candleSeries.applyOptions({
+            priceFormat: {
+                precision: 8,
+                type: 'volume',
+            },
+        });
 
         //get planetary lines
         getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
@@ -162,7 +168,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT&timeFram
         //Get w24 lines
 
         var maxValue = data[data.length - 1].high * 2
-        fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=100`)
+        fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=0.000001`)
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));

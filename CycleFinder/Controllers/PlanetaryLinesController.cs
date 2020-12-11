@@ -41,6 +41,7 @@ namespace CycleFinder.Controllers
             [FromQuery] double currentPrice, 
             [FromQuery] long from, 
             [FromQuery] string timeFrame,
+            [FromQuery] double increment,
             [FromQuery] int upperOctaves = 1,
             [FromQuery] int lowerOctaves = 1)
         {
@@ -59,7 +60,7 @@ namespace CycleFinder.Controllers
             var fromDate = DateTimeExtensions.FromUnixTimeStamp(from);
             var toDate = DateTime.UtcNow.AddDays(30); //Default 1 years into the future. maybe make this a query param
 
-            return Ok((await _planetaryLinesCalculator.GetPlanetaryLines(planetEnum.Value, currentPrice, fromDate, toDate, tf.Value, upperOctaves, lowerOctaves))
+            return Ok((await _planetaryLinesCalculator.GetPlanetaryLines(planetEnum.Value, currentPrice, fromDate, toDate, tf.Value, increment, upperOctaves, lowerOctaves))
                 .Select(pLine => new PlanetaryLinesDto(pLine)));
         }
 

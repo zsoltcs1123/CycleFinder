@@ -14,6 +14,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris
             DateTime from, 
             DateTime to, 
             TimeFrame timeFrame,
+            double increment,
             int upperOctaves = 1, 
             int lowerOctaves = 1);
 
