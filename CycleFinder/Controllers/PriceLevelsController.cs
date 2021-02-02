@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using CycleFinder.Calculations.Math;
-using CycleFinder.Calculations.Services;
 using CycleFinder.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +12,12 @@ namespace CycleFinder.Controllers
     public class PriceLevelsController : Controller
     {
         private readonly IW24Calculator _w24Calculator;
+        private readonly ISQ9Calculator _sq9Calculator;
 
-        public PriceLevelsController(IW24Calculator w24Calculator)
+        public PriceLevelsController(IW24Calculator w24Calculator, ISQ9Calculator sq9Calculator)
         {
             _w24Calculator = w24Calculator;
+            _sq9Calculator = sq9Calculator;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PriceLevelDto>>> GetW24PriceLevels(
@@ -25,6 +26,15 @@ namespace CycleFinder.Controllers
             [FromQuery] double minValue = 0)
         {
             return Ok(await Task.Run(() => _w24Calculator.GetPriceLevels(maxValue, increment, minValue).Select(_ => _.ToPriceLevelDto())));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PriceLevelDto>>> GetSQ9PriceLevels(
+            [FromQuery] double maxValue,
+            [FromQuery] int multiplier,
+            [FromQuery] double minValue = 1)
+        {
+            return Ok(await Task.Run(() => _sq9Calculator.GetPriceLevels(maxValue, multiplier, minValue).Select(_ => _.ToPriceLevelDto())));
         }
     }
 }

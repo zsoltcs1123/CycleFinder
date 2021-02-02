@@ -49,20 +49,20 @@ namespace CycleFinder.Calculations.Math
             return ret.ToArray();
         }
 
-        public IEnumerable<W24PriceLevel> GetPriceLevels(double maxValue, double increment, double minValue = 0)
+        public IEnumerable<PriceLevel> GetPriceLevels(double maxValue, double increment, double minValue = 0)
         {
             double keyNumber = increment * 24;
 
             int maxOctave = (maxValue / keyNumber).TruncateDecimals();
             int minOctave = (minValue / keyNumber).TruncateDecimals();
 
-            var _24lines = Enumerable.Range(minOctave, maxOctave).Select(n => new W24PriceLevel(n*keyNumber, keyNumber, W24LineType._24Line)).ToList();
+            var _24lines = Enumerable.Range(minOctave, maxOctave).Select(n => new PriceLevel(n*keyNumber, W24LineType._24Line)).ToList();
 
             var imLines = _24lines.Select(line => new []
             {
-                new W24PriceLevel(line.Value + (keyNumber * 0.25), keyNumber, W24LineType.IntermediateLine),
-                new W24PriceLevel(line.Value + (keyNumber * 0.5), keyNumber, W24LineType.IntermediateLine),
-                new W24PriceLevel(line.Value + (keyNumber * 0.75), keyNumber, W24LineType.IntermediateLine) 
+                new PriceLevel(line.Value + (keyNumber * 0.25), W24LineType.IntermediateLine),
+                new PriceLevel(line.Value + (keyNumber * 0.5), W24LineType.IntermediateLine),
+                new PriceLevel(line.Value + (keyNumber * 0.75), W24LineType.IntermediateLine) 
             });
 
             return _24lines.Concat(imLines.SelectMany(line => line));

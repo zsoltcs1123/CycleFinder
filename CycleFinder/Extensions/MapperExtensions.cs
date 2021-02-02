@@ -25,7 +25,7 @@ namespace CycleFinder.Extensions
             return new PlanetaryLinesDto(pLine);
         }
 
-        public static PriceLevelDto ToPriceLevelDto(this W24PriceLevel priceLevel)
+        public static PriceLevelDto ToPriceLevelDto(this PriceLevel priceLevel)
         {
             return new PriceLevelDto(priceLevel);
         }

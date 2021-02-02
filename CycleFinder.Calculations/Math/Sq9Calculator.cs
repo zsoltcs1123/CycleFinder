@@ -1,4 +1,5 @@
 ﻿using CycleFinder.Calculations.Extensions;
+using CycleFinder.Models.Ephemeris;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,21 +13,39 @@ namespace CycleFinder.Calculations.Math
 
         static SQ9Calculator()
         {
-            var start = 1;
-            var westVector = GenerateVector(start + 1 , 8);
-            var nwVector = GenerateVector(start + 2 , 8);
-            var northVector = GenerateVector(start + 3 , 8);
-            var neVector = GenerateVector(start + 4 , 8);
-            var eastVector = GenerateVector(start + 5 , 8);
-            var seVector = GenerateVector(start + 6 , 8);
-            var southVector = GenerateVector(start + 7 , 8);
-            var swVector = GenerateVector(start + 8 , 8);
+            var crosses = GenerateCrosses();
 
-            _cardinalCrosses = eastVector.Concat(westVector).Concat(northVector).Concat(southVector).ToArray();
-            _fixedCrosses = nwVector.Concat(neVector).Concat(seVector).Concat(swVector).ToArray();
+            _cardinalCrosses = GetCardinalCrosses(crosses);
+            _fixedCrosses = GetFixedCrosses(crosses);
         }
 
-        private static List<double> GenerateVector(double start, int rounds)
+        private static Dictionary<string, double[]> GenerateCrosses(int rounds = 8)
+        {
+            int start = 1;
+            return new Dictionary<string, double[]>()
+            {
+                {"w", GenerateVector(start + 1, rounds) },
+                {"nw", GenerateVector(start + 2, rounds) },
+                {"n", GenerateVector(start + 3, rounds) },
+                {"ne", GenerateVector(start + 4, rounds) },
+                {"e", GenerateVector(start + 5, rounds) },
+                {"se", GenerateVector(start + 6, rounds) },
+                {"s", GenerateVector(start + 7, rounds) },
+                {"sw", GenerateVector(start + 8, rounds) },
+            };
+        }
+
+        private static double[] GetCardinalCrosses(Dictionary<string, double[]> crosses)
+        {
+            return crosses["e"].Concat(crosses["w"]).Concat(crosses["s"]).Concat(crosses["n"]).ToArray();
+        }
+
+        private static double[] GetFixedCrosses(Dictionary<string, double[]> crosses)
+        {
+            return crosses["nw"].Concat(crosses["ne"]).Concat(crosses["sw"]).Concat(crosses["se"]).ToArray();
+        }
+
+        private static double[] GenerateVector(double start, int rounds = 8)
         {
             var lst = new List<double>
             {
@@ -38,15 +57,14 @@ namespace CycleFinder.Calculations.Math
                 var next = System.Math.Pow(System.Math.Sqrt(lst[i]) + 2, 2).TruncateDecimals();
                 if (next == 16)
                 {
-                    lst.Add(next-1);
+                    lst.Add(next - 1);
                 }
                 else
                 {
                     lst.Add(next);
                 }
             }
-
-            return lst;
+            return lst.ToArray();
         }
 
 
@@ -58,6 +76,25 @@ namespace CycleFinder.Calculations.Math
         public bool AtFixedCrossing(double longitude)
         {
             return _fixedCrosses.Contains(longitude.TruncateDecimals());
+        }
+
+        public IEnumerable<PriceLevel> GetPriceLevels(double maxValue, int multiplier, double minValue = 0)
+        {
+            //TODO figure out some way to check if multiplier is power of 10 (negative or positive)
+
+            double octaves = maxValue / (360 * multiplier);
+            int rounds = (octaves.TruncateIntegerPart() != 0 ? octaves.TruncateDecimals() + 1 : octaves.TruncateDecimals()) * 8;
+
+            //Todo filter out minvalue
+            var crosses = GenerateCrosses(rounds);
+
+            var cardinals = GetCardinalCrosses(crosses).Select(_ => _ * multiplier);
+            var fix = GetFixedCrosses(crosses).Select(_ => _ * multiplier);
+
+            return cardinals
+                .Select(_ => new PriceLevel(_, Models.W24LineType._24Line))
+                .Concat(fix.Select(_ => new PriceLevel(_, Models.W24LineType.IntermediateLine)))
+                .OrderBy(level => level.Value);
         }
     }
 }

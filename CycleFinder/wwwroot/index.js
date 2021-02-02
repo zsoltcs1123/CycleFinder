@@ -162,7 +162,7 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT&timeFram
         //Get w24 lines
 
         var maxValue = data[data.length - 1].high * 2
-        fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=100`)
+        fetch(`https://localhost:5001/api/PriceLevels/GetSQ9PriceLevels?maxValue=50000&multiplier=100`)
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));
