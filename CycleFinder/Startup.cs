@@ -1,3 +1,4 @@
+using CycleFinder.Calculations.Math;
 using CycleFinder.Calculations.Services;
 using CycleFinder.Calculations.Services.Ephemeris;
 using CycleFinder.Data;
@@ -24,15 +25,18 @@ namespace CycleFinder
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
+
             services.AddScoped<ICandleStickRepository, BinanceDataService>();
             services.AddScoped<IEphemerisEntryRepository, EphemerisEntryRepository>();
-            services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
-            services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
-            services.AddScoped<ICandleStickMarkerCalculator, CandleStickMarkerCalculator>();
-            services.AddScoped<IAspectCalculator, AspectCalculator>();
+            services.AddScoped<ICandleStickMarkerService, CandleStickMarkerService>();
+            services.AddScoped<IAspectService, AspectService>();
             services.AddScoped<IQueryParameterProcessor, QueryParameterProcessor>();
-            services.AddScoped<IPlanetaryLinesCalculator, PlanetaryLinesCalculator>();
-            services.AddScoped<IW24Calculator, W24Calculator>();
+            services.AddScoped<IPlanetaryLinesService, PlanetaryLinesService>();
+
+            services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
+            services.AddSingleton<IW24Calculator, W24Calculator>();
+            services.AddSingleton<ISQ9Calculator, SQ9Calculator>();
 
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));

@@ -16,7 +16,7 @@ var currentMarkers = [];
 
 function getPlanetaryLines(planet, currentPrice, from) {
 
-    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=4h&increment=100`)
+    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=1d&increment=100`)
         .then(res => res.json())
         .then(data => {
             console.log(JSON.stringify(data, null, '\t'));
@@ -152,12 +152,12 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT&timeFram
 
 
         //get planetary lines
-        getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('ne', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('ur', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('ma', data[data.length - 2].open, 1577836800)
+        //getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
+        //getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
+        //getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
+        //getPlanetaryLines('ne', data[data.length - 2].open, data[0].time)
+        //getPlanetaryLines('ur', data[data.length - 2].open, data[0].time)
+        //getPlanetaryLines('ma', data[data.length - 2].open, 1577836800)
 
         //Get w24 lines
 
@@ -183,16 +183,22 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT&timeFram
         //getHighTurns('BTCUSDT', 10)
         //Get aspects
         //getAspects('ju', 'pl', data[0].time)
-        //getAspects('me', 'sa', data[0].time)
+        //getAspects('me', 'su', data[0].time)
         //getAspects('me', 'ur', data[0].time)
+        //getAspects('ve', 'ju', data[0].time)
         //getAspects('me', 'sa', data[0].time)
 
         //getMarkers('https://localhost:5001/api/CandleStickMarker/GetHighsWithTurns?symbol=BTCUSDT&limit=10')
         //getMarkers('https://localhost:5001/api/CandleStickMarker/GetLowsWithTurns?symbol=BTCUSDT&limit=10')
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=ma&from=${data[0].time}`)
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=su&from=${data[0].time}`)
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=ve&from=${data[0].time}`)
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=me&from=${data[0].time}`)
+        //getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=ma&from=${data[0].time}`)
+        //getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=su&from=${data[0].time}`)
+        //getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=ve&from=${data[0].time}`)
+        //getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=me&from=${data[0].time}`)
+
+        //SQ9
+        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetSQ9Crossings?planet=su&from=${data[0].time}`)
+        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetSQ9Crossings?planet=ma&from=${data[0].time}`)
+
     })
     .catch(err => log(err))
 

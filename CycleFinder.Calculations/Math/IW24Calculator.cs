@@ -1,7 +1,7 @@
 ﻿using CycleFinder.Models.Ephemeris;
 using System.Collections.Generic;
 
-namespace CycleFinder.Calculations.Services
+namespace CycleFinder.Calculations.Math
 {
     public interface IW24Calculator
     {

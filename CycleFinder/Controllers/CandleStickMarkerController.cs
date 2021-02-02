@@ -22,13 +22,13 @@ namespace CycleFinder.Controllers
     [Route("api/[controller]/[action]", Name = "[controller]_[action]")]
     public class CandleStickMarkerController : CandleStickController
     {
-        private readonly ICandleStickMarkerCalculator _candleStickMarkerCalculator;
+        private readonly ICandleStickMarkerService _candleStickMarkerCalculator;
 
         public CandleStickMarkerController(
             ILogger<CandleStickController> logger,
             ICandleStickRepository candleStickRepository,
             IAppCache cache,
-            ICandleStickMarkerCalculator candleStickMarkerCalculator,
+            ICandleStickMarkerService candleStickMarkerCalculator,
             IQueryParameterProcessor queryParameterProcessor,
             IConfiguration configuration) : base(logger, candleStickRepository, queryParameterProcessor, cache, configuration)
         {

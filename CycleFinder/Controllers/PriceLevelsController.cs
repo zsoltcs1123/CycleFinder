@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CycleFinder.Calculations.Math;
 using CycleFinder.Calculations.Services;
 using CycleFinder.Extensions;
 using Microsoft.AspNetCore.Mvc;

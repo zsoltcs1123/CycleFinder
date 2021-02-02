@@ -14,17 +14,17 @@ using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services
 {
-    public class CandleStickMarkerCalculator : ICandleStickMarkerCalculator
+    public class CandleStickMarkerService : ICandleStickMarkerService
     {
         private readonly Func<IRandomColorGenerator> _colorGeneratorFactory;
         private readonly ILocalExtremeCalculator _localExtremeCalculator;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
-        private readonly IAspectCalculator _aspectCalculator;
+        private readonly IAspectService _aspectCalculator;
 
-        public CandleStickMarkerCalculator(
+        public CandleStickMarkerService(
             ILocalExtremeCalculator localExtremeCalculator,
             IEphemerisEntryRepository ephemerisEntryRepository,
-            IAspectCalculator aspectCalculator,
+            IAspectService aspectCalculator,
             Func<IRandomColorGenerator> colorGeneratorFactory)
         {
             _localExtremeCalculator = localExtremeCalculator;

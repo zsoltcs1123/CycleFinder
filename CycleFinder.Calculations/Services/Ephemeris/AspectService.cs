@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services.Ephemeris
 {
-    public class AspectCalculator : IAspectCalculator
+    public class AspectService : IAspectService
     {
         private static readonly double _orb = 1.00;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 
-        public AspectCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
+        public AspectService(IEphemerisEntryRepository ephemerisEntryRepository)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }

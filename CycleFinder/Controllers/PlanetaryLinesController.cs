@@ -18,9 +18,9 @@ namespace CycleFinder.Controllers
     public class PlanetaryLinesController : ControllerBase
     {
         private readonly IQueryParameterProcessor _parameterProcessor;
-        private readonly IPlanetaryLinesCalculator _planetaryLinesCalculator;
+        private readonly IPlanetaryLinesService _planetaryLinesCalculator;
 
-        public PlanetaryLinesController(IQueryParameterProcessor parameterProcessor, IPlanetaryLinesCalculator planetaryLinesCalculator)
+        public PlanetaryLinesController(IQueryParameterProcessor parameterProcessor, IPlanetaryLinesService planetaryLinesCalculator)
         {
             _parameterProcessor = parameterProcessor;
             _planetaryLinesCalculator = planetaryLinesCalculator;
@@ -82,5 +82,26 @@ namespace CycleFinder.Controllers
                 .Select(cross => new W24CrossingMarker(cross.Time, cross.Planet, cross.Position))
                 .Select(marker => marker.ToCandleStickMarkerDto()));
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PlanetaryLinesDto>>> GetSQ9Crossings(
+            [FromQuery] string planet,
+            [FromQuery] long from)
+        {
+            var planetEnum = _parameterProcessor.PlanetFromString(planet);
+
+            if (!planetEnum.HasValue)
+            {
+                return NotFound();
+            }
+
+            var fromDate = DateTimeExtensions.FromUnixTimeStamp(from);
+
+            return Ok((await _planetaryLinesCalculator.GetSQ9Crossings(planetEnum.Value, fromDate))
+                .Select(cross => new W24CrossingMarker(cross.Time, cross.Planet, cross.Position))
+                .Select(marker => marker.ToCandleStickMarkerDto()));
+        }
+
+
     }
 }

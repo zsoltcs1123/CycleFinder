@@ -8,15 +8,17 @@ using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services.Ephemeris
 {
-    public class PlanetaryLinesCalculator : IPlanetaryLinesCalculator
+    public class PlanetaryLinesService : IPlanetaryLinesService
     {
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
         private readonly IW24Calculator _w24Calculator;
+        private readonly ISQ9Calculator _sq9Calculator;
 
-        public PlanetaryLinesCalculator(IEphemerisEntryRepository ephemerisEntryRepository, IW24Calculator w24Calculator)
+        public PlanetaryLinesService(IEphemerisEntryRepository ephemerisEntryRepository, IW24Calculator w24Calculator, ISQ9Calculator sq9Calculator)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
             _w24Calculator = w24Calculator;
+            _sq9Calculator = sq9Calculator;
         }
 
         //TODO this is for slow planets
@@ -65,17 +67,34 @@ namespace CycleFinder.Calculations.Services.Ephemeris
         }
 
         //TODO this is for fast planets
-        public async Task<IEnumerable<W24Crossing>> GetW24Crossings(Planet planet, DateTime from)
+        public async Task<IEnumerable<HarmonicCrossing>> GetW24Crossings(Planet planet, DateTime from)
         {
             var ephem = await _ephemerisEntryRepository.GetEntries(from);
 
-            var ret = new List<W24Crossing>();
+            var ret = new List<HarmonicCrossing>();
             foreach (var entry in ephem)
             {
                 var longitude = entry.GetCoordinatesByPlanet(planet).Longitude;
                 if (_w24Calculator.AtW24Crossing(longitude))
                 {
-                    ret.Add(new W24Crossing(entry.Time, planet, longitude));
+                    ret.Add(new HarmonicCrossing(entry.Time, planet, longitude));
+                }
+            }
+
+            return ret;
+        }
+
+        public async Task<IEnumerable<HarmonicCrossing>> GetSQ9Crossings(Planet planet, DateTime from)
+        {
+            var ephem = await _ephemerisEntryRepository.GetEntries(from);
+
+            var ret = new List<HarmonicCrossing>();
+            foreach (var entry in ephem)
+            {
+                var longitude = entry.GetCoordinatesByPlanet(planet).Longitude;
+                if (_sq9Calculator.AtCardinalCrossing(longitude) || _sq9Calculator.AtFixedCrossing(longitude))
+                {
+                    ret.Add(new HarmonicCrossing(entry.Time, planet, longitude));
                 }
             }
 

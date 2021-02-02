@@ -2,15 +2,16 @@
 using CycleFinder.Models.Ephemeris;
 using System.Collections.Generic;
 using System.Linq;
+using CycleFinder.Calculations.Extensions;
 
-namespace CycleFinder.Calculations.Services
+namespace CycleFinder.Calculations.Math
 {
     public class W24Calculator : IW24Calculator
     {
         public double?[] ConvertLongitudesToPrices(double[] longitudes, double currentPrice, double increment)
         {
             double keyNumber = increment * 24;
-            int initialPriceOctave = TruncateDecimals(currentPrice / keyNumber);
+            int initialPriceOctave = (currentPrice / keyNumber).TruncateDecimals();
 
             double previousTimeRatio, currentTimeRatio, truncatedCurrentTimeRatio;
             int currentOctave = initialPriceOctave;
@@ -20,12 +21,12 @@ namespace CycleFinder.Calculations.Services
             for (int i = 0; i < longitudes.Length; i++)
             {
                 currentTimeRatio = GetTimeRatio(longitudes[i]);
-                truncatedCurrentTimeRatio = TruncateIntegerPart(currentTimeRatio);
+                truncatedCurrentTimeRatio = currentTimeRatio.TruncateDecimals();
 
                 if (i > 0)
                 {
                     previousTimeRatio = GetTimeRatio(longitudes[i - 1]);
-                    var octaveShift = (TruncateDecimals(previousTimeRatio) - TruncateDecimals(currentTimeRatio));
+                    var octaveShift = previousTimeRatio.TruncateDecimals() - currentTimeRatio.TruncateDecimals();
                     if  (octaveShift == -1 || octaveShift == 14)
                     {
                         currentOctave++;
@@ -52,8 +53,8 @@ namespace CycleFinder.Calculations.Services
         {
             double keyNumber = increment * 24;
 
-            int maxOctave = TruncateDecimals(maxValue / keyNumber);
-            int minOctave = TruncateDecimals(minValue / keyNumber);
+            int maxOctave = (maxValue / keyNumber).TruncateDecimals();
+            int minOctave = (minValue / keyNumber).TruncateDecimals();
 
             var _24lines = Enumerable.Range(minOctave, maxOctave).Select(n => new W24PriceLevel(n*keyNumber, keyNumber, W24LineType._24Line)).ToList();
 
@@ -72,29 +73,6 @@ namespace CycleFinder.Calculations.Services
             return System.Math.Round(coordinate / 24, 1) % 1 == 0;
         }
 
-        private static int TruncateDecimals(double num) => (int)System.Math.Truncate(num);
-        private static double TruncateIntegerPart(double num) => System.Math.Round(num - System.Math.Truncate(num),3);
         private static double GetTimeRatio(double longitude) => longitude / 24;
-
-        private static int[,] CreateTimeTable()
-        {
-            int[,] table = new int[24, 15];
-
-            table[0,0] = 0;
-
-            for (int row = 0; row < 24; row++)
-            {
-                if (row > 0)
-                {
-                    table[row, 0] = table[row - 1, 0] + 1;
-                }
-
-                for (int col = 1; col < 15; col++)
-                {
-                    table[row, col] = table[row, col - 1] + 1 * 24;
-                }
-            }
-            return table;
-        }
     }
 }

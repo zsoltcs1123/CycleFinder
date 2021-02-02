@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services.Ephemeris
 {
-    public interface IPlanetaryLinesCalculator
+    public interface IPlanetaryLinesService
     {
         public Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(
             Planet planet, 
@@ -18,6 +18,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris
             int upperOctaves = 1, 
             int lowerOctaves = 1);
 
-        public Task<IEnumerable<W24Crossing>> GetW24Crossings(Planet planet, DateTime from);
+        public Task<IEnumerable<HarmonicCrossing>> GetW24Crossings(Planet planet, DateTime from);
+        public Task<IEnumerable<HarmonicCrossing>> GetSQ9Crossings(Planet planet, DateTime from);
     }
 }

@@ -2,13 +2,13 @@
 
 namespace CycleFinder.Models.Ephemeris
 {
-    public class W24Crossing
+    public class HarmonicCrossing
     {
         public DateTime Time { get; }
         public Planet Planet { get; }
         public double Position { get; }
 
-        public W24Crossing(DateTime time, Planet planet, double position)
+        public HarmonicCrossing(DateTime time, Planet planet, double position)
         {
             Time = time;
             Planet = planet;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Services.Ephemeris
 {
-    public interface IAspectCalculator
+    public interface IAspectService
     {
         public Task<IEnumerable<Aspect>> GetAspects(DateTime startTime, Planet planet1, Planet planet2, AspectType aspectType);
     }
