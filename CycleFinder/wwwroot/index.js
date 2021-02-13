@@ -16,7 +16,7 @@ var currentMarkers = [];
 
 function getPlanetaryLines(planet, currentPrice, from) {
 
-    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=1d&increment=100`)
+    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=4h&increment=500`)
         .then(res => res.json())
         .then(data => {
             console.log(JSON.stringify(data, null, '\t'));
@@ -152,17 +152,20 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT&timeFram
 
 
         //get planetary lines
-        //getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
-        //getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
-        //getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
-        //getPlanetaryLines('ne', data[data.length - 2].open, data[0].time)
-        //getPlanetaryLines('ur', data[data.length - 2].open, data[0].time)
-        //getPlanetaryLines('ma', data[data.length - 2].open, 1577836800)
+        getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('ne', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('ur', data[data.length - 2].open, data[0].time)
+        getPlanetaryLines('ma', data[data.length - 2].open, 1577836800)
 
         //Get w24 lines
 
         var maxValue = data[data.length - 1].high * 2
-        fetch(`https://localhost:5001/api/PriceLevels/GetSQ9PriceLevels?maxValue=50000&multiplier=100`)
+        var w24url = 'https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=100'
+        var sq9url = `https://localhost:5001/api/PriceLevels/GetSQ9PriceLevels?maxValue=50000&multiplier=1000`
+
+        fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=500`)
             .then(res => res.json())
             .then(data => {
                 console.log(JSON.stringify(data, null, '\t'));
@@ -196,8 +199,8 @@ fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT&timeFram
         //getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=me&from=${data[0].time}`)
 
         //SQ9
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetSQ9Crossings?planet=su&from=${data[0].time}`)
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetSQ9Crossings?planet=ma&from=${data[0].time}`)
+        //getMarkers(`https://localhost:5001/api/PlanetaryLines/GetSQ9Crossings?planet=su&from=${data[0].time}`)
+        //getMarkers(`https://localhost:5001/api/PlanetaryLines/GetSQ9Crossings?planet=ma&from=${data[0].time}`)
 
     })
     .catch(err => log(err))

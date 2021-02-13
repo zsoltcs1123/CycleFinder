@@ -39,7 +39,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris
             //TODO shorter cycles(moon, sun, mercury, venus, mars don't display enough data due to steepness
             //TODO make this work for all price ranges and increments
             double maxPrice = currentPrice * 3;
-            foreach (var price in new PriceOctaveCalculator(currentPrice, increment, 8, 2).Octaves)
+            foreach (var price in new PriceOctaveCalculator(currentPrice, increment, 10, 2).Octaves)
             {
                 var prices = _w24Calculator.ConvertLongitudesToPrices(ephem.Select(entry => entry.GetCoordinatesByPlanet(planet).Longitude).ToArray(), price, increment);
 
@@ -56,6 +56,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris
                             values.Add((ephem[i].Time.AddHours(8), prices[i].Value));
                             values.Add((ephem[i].Time.AddHours(12), prices[i].Value));
                             values.Add((ephem[i].Time.AddHours(16), prices[i].Value));
+
                             values.Add((ephem[i].Time.AddHours(20), prices[i].Value));
                         }
                     }

@@ -11,34 +11,33 @@ namespace CycleFinder.Calculations.Math
         public double?[] ConvertLongitudesToPrices(double[] longitudes, double currentPrice, double increment)
         {
             double keyNumber = increment * 24;
-            int initialPriceOctave = (currentPrice / keyNumber).TruncateDecimals();
+            int initialOctave = (currentPrice / keyNumber).TruncateDecimals();
 
-            double previousTimeRatio, currentTimeRatio, truncatedCurrentTimeRatio;
-            int currentOctave = initialPriceOctave;
+            double currentTimeRatio, truncatedCurrentTimeRatio, currentOctave, previousTimeRatio;
 
             var ret = new List<double?>();
+            currentOctave = initialOctave;
 
             for (int i = 0; i < longitudes.Length; i++)
             {
                 currentTimeRatio = GetTimeRatio(longitudes[i]);
-                truncatedCurrentTimeRatio = currentTimeRatio.TruncateDecimals();
+                truncatedCurrentTimeRatio = currentTimeRatio.TruncateIntegerPart();
 
-                if (i > 0)
+                if (i > 1)
                 {
                     previousTimeRatio = GetTimeRatio(longitudes[i - 1]);
                     var octaveShift = previousTimeRatio.TruncateDecimals() - currentTimeRatio.TruncateDecimals();
-                    if  (octaveShift == -1 || octaveShift == 14)
+                    if (octaveShift == -1 || octaveShift == 14)
                     {
                         currentOctave++;
                     }
-                    else if (octaveShift ==1 || octaveShift == -14)
+                    else if (octaveShift == 1 || octaveShift == -14)
                     {
                         currentOctave--;
                     }
                 }
 
-                double basePrice = truncatedCurrentTimeRatio * keyNumber;
-                double finalPrice = basePrice + (currentOctave * keyNumber);
+                double finalPrice = (currentOctave + truncatedCurrentTimeRatio) * keyNumber;
 
                 if (finalPrice > 0)
                 {
