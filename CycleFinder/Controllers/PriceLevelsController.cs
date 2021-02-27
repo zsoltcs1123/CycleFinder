@@ -11,10 +11,10 @@ namespace CycleFinder.Controllers
     [Route("api/[controller]/[action]", Name = "[controller]_[action]")]
     public class PriceLevelsController : Controller
     {
-        private readonly IW24Calculator _w24Calculator;
+        private readonly IPriceTimeCalculator _w24Calculator;
         private readonly ISQ9Calculator _sq9Calculator;
 
-        public PriceLevelsController(IW24Calculator w24Calculator, ISQ9Calculator sq9Calculator)
+        public PriceLevelsController(IPriceTimeCalculator w24Calculator, ISQ9Calculator sq9Calculator)
         {
             _w24Calculator = w24Calculator;
             _sq9Calculator = sq9Calculator;

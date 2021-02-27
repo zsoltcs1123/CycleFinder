@@ -35,7 +35,9 @@ namespace CycleFinder
             services.AddScoped<IPlanetaryLinesService, PlanetaryLinesService>();
 
             services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
-            services.AddSingleton<IW24Calculator, W24Calculator>();
+
+            //TODO multiple implementations: https://www.infoworld.com/article/3597989/use-multiple-implementations-of-an-interface-in-aspnet-core.html
+            services.AddSingleton<IPriceTimeCalculator, W24Calculator>();
             services.AddSingleton<ISQ9Calculator, SQ9Calculator>();
 
 

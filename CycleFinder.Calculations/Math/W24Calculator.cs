@@ -6,7 +6,7 @@ using CycleFinder.Calculations.Extensions;
 
 namespace CycleFinder.Calculations.Math
 {
-    public class W24Calculator : IW24Calculator
+    public class W24Calculator : IPriceTimeCalculator
     {
         public double?[] ConvertLongitudesToPrices(double[] longitudes, double currentPrice, double increment)
         {
@@ -67,7 +67,7 @@ namespace CycleFinder.Calculations.Math
             return _24lines.Concat(imLines.SelectMany(line => line));
         }
 
-        public bool AtW24Crossing(double coordinate)
+        public bool AtHarmonicCrossing(double coordinate)
         {
             return System.Math.Round(coordinate / 24, 1) % 1 == 0;
         }

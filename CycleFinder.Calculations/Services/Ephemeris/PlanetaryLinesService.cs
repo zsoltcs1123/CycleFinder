@@ -11,10 +11,10 @@ namespace CycleFinder.Calculations.Services.Ephemeris
     public class PlanetaryLinesService : IPlanetaryLinesService
     {
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
-        private readonly IW24Calculator _w24Calculator;
+        private readonly IPriceTimeCalculator _w24Calculator;
         private readonly ISQ9Calculator _sq9Calculator;
 
-        public PlanetaryLinesService(IEphemerisEntryRepository ephemerisEntryRepository, IW24Calculator w24Calculator, ISQ9Calculator sq9Calculator)
+        public PlanetaryLinesService(IEphemerisEntryRepository ephemerisEntryRepository, IPriceTimeCalculator w24Calculator, ISQ9Calculator sq9Calculator)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
             _w24Calculator = w24Calculator;
@@ -76,7 +76,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris
             foreach (var entry in ephem)
             {
                 var longitude = entry.GetCoordinatesByPlanet(planet).Longitude;
-                if (_w24Calculator.AtW24Crossing(longitude))
+                if (_w24Calculator.AtHarmonicCrossing(longitude))
                 {
                     ret.Add(new HarmonicCrossing(entry.Time, planet, longitude));
                 }
