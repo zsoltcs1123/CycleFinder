@@ -43,15 +43,19 @@ function getSymbols() {
             list = $('#binance_symbols');
 
             for (i = 0; i < data.length; i++) {
-                let x = `
-                    <a href="#" class="list-group-item list-group-item-action">
-                        ${data[i].name}
-                    </a>
-                `;
-                list.append(x);
+                list.append('<a href="#" id="' + data[i].name + '" onclick ="onSymbolClick(event)"' 
+                    + ' class="list-group-item list-group-item-action">' + data[i].name + '</a>');
             }
         })
         .catch(err => log(err))
+}
+
+function onSymbolClick(e) {
+    e = e || window.event;
+    var target = e.target || e.srcElement;
+    console.log(target.id);
+    alert(target.id);
+    getAllData(target.id)
 }
 
 function getPlanetaryLines(planet, currentPrice, from) {
@@ -197,10 +201,10 @@ function getW24Lines() {
         .catch(err => log(err))
 }
 
-function getAllData() {
-    console.log('fetching data')
+function getAllData(id) {
+    console.log('fetching data' + id)
 
-    fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT&timeFrame=4h')
+    fetch(`https://localhost:5001/api/CandleStick/GetAllData?symbol=${id}&timeFrame=4h`)
         .then(res => res.json())
         .then(data => {
 
