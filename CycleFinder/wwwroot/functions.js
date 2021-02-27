@@ -1,5 +1,14 @@
 const log = console.log;
 
+$(document).ready(function () {
+
+    $('#ticker1').click(function (event) {
+        event.preventDefault();
+        getAllData();
+    });
+});
+
+
 const chartProterties = {
     width:1800,
     height:900,
@@ -14,9 +23,16 @@ const chart = LightweightCharts.createChart(domElement, chartProterties);
 const candleSeries = chart.addCandlestickSeries();
 var currentMarkers = [];
 
+chart.applyOptions({
+    crosshair: {
+        mode: 0,
+    },
+});
+
+
 function getPlanetaryLines(planet, currentPrice, from) {
 
-    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=4h&increment=0.000001`)
+    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=4h&increment=1000`)
         .then(res => res.json())
         .then(data => {
             console.log(JSON.stringify(data, null, '\t'));
@@ -136,71 +152,40 @@ function getMarkers(url) {
         .catch(err => log(err))
 }
 
-chart.applyOptions({
-    crosshair: {
-        mode: 0,
-    },
-});
+function getW24Lines() {
 
+    var maxValue = data[data.length - 1].high * 2
+    fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=1000`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(JSON.stringify(data, null, '\t'));
 
-//Get all data
-fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=XRPBTC&timeFrame=4h')
-    .then(res => res.json())
-    .then(data => {
-        
-        candleSeries.setData(data);
+            var i;
+            for (i = 0; i < data.length; i++) {
+                candleSeries.createPriceLine({
+                    price: data[i].price,
+                    color: data[i].lineColor,
+                    lineWidth: data[i].lineWidth,
+                    lineStyle: LightweightCharts.LineStyle.Dashed
+                });
+            }
+        })
+        .catch(err => log(err))
+}
 
-        candleSeries.applyOptions({
-            priceFormat: {
-                precision: 8,
-                type: 'volume',
-            },
-        });
+function getAllData() {
+    console.log('fetching data')
 
-        //get planetary lines
-        getPlanetaryLines('sa', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('ju', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('pl', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('ne', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('ur', data[data.length - 2].open, data[0].time)
-        getPlanetaryLines('ma', data[data.length - 2].open, 1577836800)
+    fetch('https://localhost:5001/api/CandleStick/GetAllData?symbol=BTCUSDT&timeFrame=4h')
+        .then(res => res.json())
+        .then(data => {
 
-        //Get w24 lines
+            candleSeries.setData(data);
 
-        var maxValue = data[data.length - 1].high * 2
-        fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=0.000001`)
-            .then(res => res.json())
-            .then(data => {
-                console.log(JSON.stringify(data, null, '\t'));
+        })
+        .catch(err => log(err))
+}
 
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    candleSeries.createPriceLine({
-                        price: data[i].price,
-                        color: data[i].lineColor,
-                        lineWidth: data[i].lineWidth,
-                        lineStyle: LightweightCharts.LineStyle.Dashed
-                    });
-                }
-            })
-            .catch(err => log(err))
-
-        //getLowTurns('BTCUSDT', 10)
-        //getHighTurns('BTCUSDT', 10)
-        //Get aspects
-        //getAspects('ju', 'pl', data[0].time)
-        //getAspects('me', 'sa', data[0].time)
-        //getAspects('me', 'ur', data[0].time)
-        //getAspects('me', 'sa', data[0].time)
-
-        //getMarkers('https://localhost:5001/api/CandleStickMarker/GetHighsWithTurns?symbol=BTCUSDT&limit=10')
-        //getMarkers('https://localhost:5001/api/CandleStickMarker/GetLowsWithTurns?symbol=BTCUSDT&limit=10')
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=ma&from=${data[0].time}`)
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=su&from=${data[0].time}`)
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=ve&from=${data[0].time}`)
-        getMarkers(`https://localhost:5001/api/PlanetaryLines/GetW24Crossings?planet=me&from=${data[0].time}`)
-    })
-    .catch(err => log(err))
 
 
 
