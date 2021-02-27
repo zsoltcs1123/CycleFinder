@@ -6,6 +6,10 @@ $(document).ready(function () {
         event.preventDefault();
         getAllData();
     });
+
+    $('#binance_usdt').click(function(event) {
+        getSymbols();
+    });
 });
 
 
@@ -29,6 +33,26 @@ chart.applyOptions({
     },
 });
 
+function getSymbols() {
+
+    fetch(`https://localhost:5001/api/CandleStick/GetSymbols`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(JSON.stringify(data, null, '\t'));
+
+            list = $('#binance_symbols');
+
+            for (i = 0; i < data.length; i++) {
+                let x = `
+                    <a href="#" class="list-group-item list-group-item-action">
+                        ${data[i].name}
+                    </a>
+                `;
+                list.append(x);
+            }
+        })
+        .catch(err => log(err))
+}
 
 function getPlanetaryLines(planet, currentPrice, from) {
 

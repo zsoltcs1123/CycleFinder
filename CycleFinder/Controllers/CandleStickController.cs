@@ -69,9 +69,13 @@ namespace CycleFinder.Controllers
         /// Gets all symbols available on the exchange.
         /// </summary>
         /// <returns></returns>
-        private async Task<IEnumerable<Symbol>> GetSymbols()
+        public async Task<IEnumerable<Symbol>> GetSymbols()
         {
-            return await Cache.GetOrAddAsync("symbols", () => CandleStickRepository.ListSymbols(), TimeSpan.FromDays(1));
+            //TODO: this does not belong here
+            //TODO: implement filtering
+            return (await Cache.GetOrAddAsync("symbols", () => CandleStickRepository.ListSymbols(), TimeSpan.FromDays(1)))
+                .Where(_ => _.QuoteAsset == "USDT")
+                .OrderBy(_ => _.Name);
         }
 
         /// <summary>
