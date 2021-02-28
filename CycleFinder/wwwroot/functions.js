@@ -1,4 +1,12 @@
 const log = console.log;
+var currentChartData = [];
+var w24l_on = false;
+var priceLines = [];
+
+Number.prototype.countDecimals = function () {
+    if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
+    return this.toString().split(".")[1].length || 0;
+}
 
 $(document).ready(function () {
 
@@ -14,8 +22,8 @@ $(document).ready(function () {
 
 
 const chartProterties = {
-    width:1800,
-    height:900,
+    width:1200,
+    height:510,
     timeScale:{
         timeVisible:true,
         secondsVisible:false,
@@ -24,7 +32,7 @@ const chartProterties = {
 
 const domElement = document.getElementById('tvchart');
 const chart = LightweightCharts.createChart(domElement, chartProterties);
-const candleSeries = chart.addCandlestickSeries();
+var candleSeries = chart.addCandlestickSeries();
 var currentMarkers = [];
 
 chart.applyOptions({
@@ -54,7 +62,6 @@ function onSymbolClick(e) {
     e = e || window.event;
     var target = e.target || e.srcElement;
     console.log(target.id);
-    alert(target.id);
     getAllData(target.id)
 }
 
@@ -182,32 +189,55 @@ function getMarkers(url) {
 
 function getW24Lines() {
 
-    var maxValue = data[data.length - 1].high * 2
-    fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=1000`)
+    if (w24l_on) {
+        for (i = 0; i < priceLines.length; i++) {
+            candleSeries.removePriceLine(priceLines[i]);
+        }
+        w24l_on = false;
+        return;
+    }
+
+    var currentPrice = currentChartData[currentChartData.length - 1].high
+    var maxValue = currentPrice * 3
+
+    var dec = currentPrice.countDecimals();
+/*var inc = dec == 1 ? Math.pow(10, dec - 4) : dec == 2 ? Math.pow(10, dec - 4) : dec == 3 ? Math.pow(10, dec - 3) : dec == 4 ? Math.pow(10, dec - 2) : Math.pow(10, dec - 2)*/
+    inc = Math.pow(10, dec - 4);
+    
+    fetch(`https://localhost:5001/api/PriceLevels/GetW24PriceLevels?maxValue=${maxValue}&increment=${inc}`)
         .then(res => res.json())
         .then(data => {
             console.log(JSON.stringify(data, null, '\t'));
 
             var i;
             for (i = 0; i < data.length; i++) {
+                var pline =
                 candleSeries.createPriceLine({
                     price: data[i].price,
                     color: data[i].lineColor,
                     lineWidth: data[i].lineWidth,
                     lineStyle: LightweightCharts.LineStyle.Dashed
                 });
+                priceLines.push(pline)
+
             }
+            w24l_on = true;
         })
         .catch(err => log(err))
 }
 
 function getAllData(id) {
     console.log('fetching data' + id)
+    chart.removeSeries(candleSeries);
+    w24l_on = false;
+    $("b_w24l").button('toggle')
 
-    fetch(`https://localhost:5001/api/CandleStick/GetAllData?symbol=${id}&timeFrame=4h`)
+    fetch(`https://localhost:5001/api/CandleStick/GetAllData?symbol=${id}&timeFrame=1d`)
         .then(res => res.json())
         .then(data => {
 
+            currentChartData = data;
+            candleSeries = chart.addCandlestickSeries();
             candleSeries.setData(data);
 
         })
