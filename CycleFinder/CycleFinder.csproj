@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="cyclefinderclient\src\components\Home.tsx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="LazyCache.AspNetCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.12" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.3" />
@@ -14,12 +18,24 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.2.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CycleFinder.Calculations\CycleFinder.Calculations.csproj" />
     <ProjectReference Include="..\CycleFinder.Models\CycleFinder.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="cyclefinderclient\src\components\Home.tsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="cyclefinderclient\src\components\Layout\" />
   </ItemGroup>
 
 
