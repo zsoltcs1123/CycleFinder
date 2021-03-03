@@ -38,9 +38,5 @@
     <TypeScriptCompile Include="cyclefinderclient\src\components\Home.tsx" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="cyclefinderclient\src\types\" />
-  </ItemGroup>
-
 
 </Project>
