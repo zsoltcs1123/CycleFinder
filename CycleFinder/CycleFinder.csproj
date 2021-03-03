@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="cyclefinderclient\src\components\Layout\" />
+    <Folder Include="cyclefinderclient\src\types\" />
   </ItemGroup>
 
 
