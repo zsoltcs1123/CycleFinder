@@ -16,7 +16,7 @@ var currentMarkers = [];
 
 function getPlanetaryLines(planet, currentPrice, from) {
 
-    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=4h&increment=0.000001`)
+    fetch(`https://localhost:5001/api/PlanetaryLines/GetPlanetaryLines?planet=${planet}&currentPrice=${currentPrice}&from=${from}&timeFrame=1d&increment=1000`)
         .then(res => res.json())
         .then(data => {
             console.log(JSON.stringify(data, null, '\t'));
