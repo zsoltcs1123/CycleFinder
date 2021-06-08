@@ -27,10 +27,10 @@ namespace CycleFinder
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-/*            services.AddSpaStaticFiles(configuration =>
+            services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "cyclefinderclient/build";
-            });*/
+            });
 
             services.AddFactory<IRandomColorGenerator, RandomColorGenerator>();
 
@@ -63,7 +63,7 @@ namespace CycleFinder
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-/*            app.UseSpaStaticFiles();
+            app.UseSpaStaticFiles();
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = Path.Join(env.ContentRootPath, "cyclefinderclient");
@@ -72,7 +72,7 @@ namespace CycleFinder
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
-            });*/
+            });
 
             app.UseRouting();
 
