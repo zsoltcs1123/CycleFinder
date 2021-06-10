@@ -3,6 +3,7 @@ using CycleFinder.Calculations.Services;
 using CycleFinder.Calculations.Services.Ephemeris;
 using CycleFinder.Data;
 using CycleFinder.Extensions;
+using CycleFinder.Middlewares;
 using CycleFinder.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,12 +59,15 @@ namespace CycleFinder
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseMiddleware<HttpRequestResponseLogger>();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

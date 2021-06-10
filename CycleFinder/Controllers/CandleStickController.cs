@@ -84,7 +84,7 @@ namespace CycleFinder.Controllers
         /// <param name="symbol">Ticker symbol of the instrument.</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CandleStickDto>> > GetAllData([FromQuery]string symbol, [FromQuery]string timeFrame)
+        public async Task<ActionResult<IEnumerable<CandleStickDto>>> GetAllData([FromQuery]string symbol, [FromQuery]string timeFrame)
         {
             if (!CheckSymbolExists(symbol))
             {
