@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="cyclefinderclient\src\components\Home.tsx" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="LazyCache.AspNetCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.12" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.3" />
@@ -32,10 +28,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CycleFinder.Calculations\CycleFinder.Calculations.csproj" />
     <ProjectReference Include="..\CycleFinder.Models\CycleFinder.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <TypeScriptCompile Include="cyclefinderclient\src\components\Home.tsx" />
   </ItemGroup>
 
 
