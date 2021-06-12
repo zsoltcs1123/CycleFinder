@@ -25,7 +25,11 @@ namespace CycleFinder.Middlewares
                     context.Request?.Path.Value,
                     context.Request.QueryString.ToString());
 
-            var originalBody = context.Response.Body;
+            await _next(context);
+
+            _logger.LogInformation("Request successfully served");
+
+            /*var originalBody = context.Response.Body;
             using var newBody = new MemoryStream();
             context.Response.Body = newBody;
 
@@ -40,7 +44,7 @@ namespace CycleFinder.Middlewares
                 _logger.LogInformation($"LoggingMiddleware: {bodyText}");
                 newBody.Seek(0, SeekOrigin.Begin);
                 await newBody.CopyToAsync(originalBody);
-            }
+            }*/
         }
     }
 }

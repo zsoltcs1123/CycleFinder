@@ -46,6 +46,16 @@ namespace CycleFinder
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));
             services.AddControllers();
             services.AddLazyCache();
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000",
+                                            "http://localhost");
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +68,8 @@ namespace CycleFinder
 
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseMiddleware<HttpRequestResponseLogger>();
 
