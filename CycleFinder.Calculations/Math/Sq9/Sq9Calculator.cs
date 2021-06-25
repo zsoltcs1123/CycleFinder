@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CycleFinder.Calculations.Math
+namespace CycleFinder.Calculations.Math.Sq9
 {
-    public class SQ9Calculator : ISQ9Calculator
+    public class SQ9Calculator : ISq9Calculator
     {
         private static readonly double[] _cardinalCrosses;
         private static readonly double[] _fixedCrosses;

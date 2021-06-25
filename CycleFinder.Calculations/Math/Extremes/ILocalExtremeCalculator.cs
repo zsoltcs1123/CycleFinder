@@ -2,7 +2,7 @@
 using CycleFinder.Models.Candles;
 using System.Collections.Generic;
 
-namespace CycleFinder.Calculations.Services
+namespace CycleFinder.Calculations.Math.Extremes
 {
     public interface ILocalExtremeCalculator
     {

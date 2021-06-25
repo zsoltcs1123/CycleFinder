@@ -1,6 +1,10 @@
-﻿using CycleFinder.Calculations.Extensions;
-using CycleFinder.Calculations.Math;
-using CycleFinder.Calculations.Services.Ephemeris;
+﻿using CycleFinder.Calculations.Ephemeris;
+using CycleFinder.Calculations.Ephemeris.Retrograde;
+using CycleFinder.Calculations.Extensions;
+using CycleFinder.Calculations.Math.Extremes;
+using CycleFinder.Calculations.Math.Gilmore;
+using CycleFinder.Calculations.Services;
+using CycleFinder.Calculations.Services.Ephemeris.Aspects;
 using CycleFinder.Models;
 using CycleFinder.Models.Candles;
 using CycleFinder.Models.Ephemeris;
@@ -12,25 +16,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CycleFinder.Calculations.Services
+namespace CycleFinder.Calculations.Markers
 {
     public class CandleStickMarkerService : ICandleStickMarkerService
     {
         private readonly Func<IRandomColorGenerator> _colorGeneratorFactory;
         private readonly ILocalExtremeCalculator _localExtremeCalculator;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
-        private readonly IAspectService _aspectCalculator;
+        private readonly IAspectCalculator _aspectCalculator;
+        private readonly IRetrogradeCalculcator _retrogradeCalculator;
 
         public CandleStickMarkerService(
             ILocalExtremeCalculator localExtremeCalculator,
             IEphemerisEntryRepository ephemerisEntryRepository,
-            IAspectService aspectCalculator,
-            Func<IRandomColorGenerator> colorGeneratorFactory)
+            IAspectCalculator aspectCalculator,
+            Func<IRandomColorGenerator> colorGeneratorFactory, IRetrogradeCalculcator retrogradeCalculator)
         {
             _localExtremeCalculator = localExtremeCalculator;
             _ephemerisEntryRepository = ephemerisEntryRepository;
             _aspectCalculator = aspectCalculator;
             _colorGeneratorFactory = colorGeneratorFactory;
+            _retrogradeCalculator = retrogradeCalculator;
         }
 
 
@@ -44,13 +50,21 @@ namespace CycleFinder.Calculations.Services
             return spec switch
             {
                 AspectMarkerSpecification s => await GetAspectMarkers(s),
+                RetrogradeMarkerSpecification s => await GetRetrogradeMarkers(s),
                 _ => throw new NotImplementedException()
             };
         }
 
+
         private async Task<IEnumerable<EventMarker>> GetAspectMarkers(AspectMarkerSpecification spec)
         {
             return (await _aspectCalculator.GetAspects(spec.From, spec.Planet1, spec.Planet2, spec.AspectType)).Select(_ => new AspectMarker(_));
+        }
+
+        private async Task<IEnumerable<EventMarker>> GetRetrogradeMarkers(RetrogradeMarkerSpecification spec)
+        {
+            return (await _retrogradeCalculator.GetRetrogradeCycles(spec.Planet, spec.From)).RetrogradeStatusByDays
+                .Select(_ => new RetrogradeMarker(_.Key, _.Value.RetrogradeStatus, _.Value.Coordinates.Longitude, _.Value.Coordinates.Speed));
         }
 
         public async Task<IEnumerable<ICandleStickMarker>> GetMarkers(MarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)
@@ -62,8 +76,8 @@ namespace CycleFinder.Calculations.Services
 
             return spec switch
             {
-                ExtremeCandleMarkerSpecification s  => await Task.Run(() => CreateExtremeMarkers(FilterExtremes(s.Extreme, candles, order, limit), s.Extreme)),
-                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.Low => await Task.Run(() => CreateLowMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit),s)),
+                ExtremeCandleMarkerSpecification s => await Task.Run(() => CreateExtremeMarkers(FilterExtremes(s.Extreme, candles, order, limit), s.Extreme)),
+                ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.Low => await Task.Run(() => CreateLowMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit), s)),
                 ExtremeCandleWithTurnsMarkerSpecification s when s.Extreme == Extreme.High => await Task.Run(() => CreateHighMarkersWithTurns(FilterExtremes(s.Extreme, candles, order, limit), s)),
                 ExtremeCandleWithPlanetsMarkerSpecification s => await CreateExtremeMarkersWithPlanets(candles, FilterExtremes(s.Extreme, candles, order, limit), s),
                 _ => null,

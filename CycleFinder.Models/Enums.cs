@@ -63,6 +63,18 @@ namespace CycleFinder.Models
         SlowPlanetsWithPlut = SlowPlanets | Pluto
     }
 
+    public enum RetrogradeStatus
+    {
+        [Description("D")]
+        Direct,
+        [Description("SD")]
+        StationaryDirect,
+        [Description("R")]
+        Retrograde,
+        [Description("SR")]
+        StationaryRetrograde
+    }
+
     public enum AspectType
     {
         None = 0,

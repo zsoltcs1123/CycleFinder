@@ -1,4 +1,5 @@
 ﻿using CycleFinder.Calculations.Math;
+using CycleFinder.Calculations.Math.Sq9;
 using CycleFinder.Models;
 using CycleFinder.Models.Ephemeris;
 using System;
@@ -6,15 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CycleFinder.Calculations.Services.Ephemeris
+namespace CycleFinder.Calculations.Ephemeris.PlanetaryLines
 {
-    public class PlanetaryLinesService : IPlanetaryLinesService
+    public class PlanetaryLinesCalculator : IPlanetaryLinesCalculator
     {
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
         private readonly IPriceTimeCalculator _w24Calculator;
-        private readonly ISQ9Calculator _sq9Calculator;
+        private readonly ISq9Calculator _sq9Calculator;
 
-        public PlanetaryLinesService(IEphemerisEntryRepository ephemerisEntryRepository, IPriceTimeCalculator w24Calculator, ISQ9Calculator sq9Calculator)
+        public PlanetaryLinesCalculator(IEphemerisEntryRepository ephemerisEntryRepository, IPriceTimeCalculator w24Calculator, ISq9Calculator sq9Calculator)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
             _w24Calculator = w24Calculator;
@@ -23,13 +24,13 @@ namespace CycleFinder.Calculations.Services.Ephemeris
 
         //TODO this is for slow planets
         public async Task<IEnumerable<PlanetaryLine>> GetPlanetaryLines(
-            Planet planet, 
-            double currentPrice, 
-            DateTime from, 
-            DateTime to, 
+            Planet planet,
+            double currentPrice,
+            DateTime from,
+            DateTime to,
             TimeFrame timeFrame,
             double increment,
-            int upperOctaves = 1, 
+            int upperOctaves = 1,
             int lowerOctaves = 1)
         {
             var ephem = (await _ephemerisEntryRepository.GetEntries(from)).Where(entry => entry.Time <= to).ToArray();

@@ -1,10 +1,10 @@
-﻿using CycleFinder.Calculations.Math;
+﻿using CycleFinder.Calculations.Math.Generic;
 using CycleFinder.Models;
 using CycleFinder.Models.Candles;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CycleFinder.Calculations.Services
+namespace CycleFinder.Calculations.Math.Extremes
 {
     public class LocalExtremeCalculator : ILocalExtremeCalculator
     {

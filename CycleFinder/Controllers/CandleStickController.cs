@@ -65,6 +65,7 @@ namespace CycleFinder.Controllers
         }
 
 
+        //TODO: this doesn't belong here
         /// <summary>
         /// Gets all symbols available on the exchange.
         /// </summary>

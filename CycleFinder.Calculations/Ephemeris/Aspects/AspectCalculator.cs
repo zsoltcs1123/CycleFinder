@@ -1,17 +1,18 @@
-﻿using CycleFinder.Models;
+﻿using CycleFinder.Calculations.Ephemeris;
+using CycleFinder.Models;
 using CycleFinder.Models.Ephemeris;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CycleFinder.Calculations.Services.Ephemeris
+namespace CycleFinder.Calculations.Services.Ephemeris.Aspects
 {
-    public class AspectService : IAspectService
+    public class AspectCalculator : IAspectCalculator
     {
         private static readonly double _orb = 1.00;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 
-        public AspectService(IEphemerisEntryRepository ephemerisEntryRepository)
+        public AspectCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }
@@ -24,7 +25,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris
             foreach (var entry in ephem)
             {
                 var coord1 = entry.GetCoordinatesByPlanet(planet1);
-                var coord2 = entry.GetCoordinatesByPlanet(planet2); 
+                var coord2 = entry.GetCoordinatesByPlanet(planet2);
 
                 var aspect = GetAspectType(GetCircularDifference(coord1.Longitude, coord2.Longitude), _orb);
                 if (aspect != null && aspectType.HasFlag(aspect))

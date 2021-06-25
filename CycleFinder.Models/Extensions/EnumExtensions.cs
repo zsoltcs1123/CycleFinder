@@ -45,5 +45,10 @@ namespace CycleFinder.Models.Extensions
                 }
             }
         }
+
+        public static bool HasMultipleValues<T>(this T e) where T:Enum
+        {
+            return !Enum.IsDefined(typeof(T), e);
+        }
     }
 }

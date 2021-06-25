@@ -1,4 +1,4 @@
-﻿using CycleFinder.Calculations.Services.Ephemeris;
+﻿using CycleFinder.Calculations.Ephemeris;
 using CycleFinder.Models.Ephemeris;
 using LazyCache;
 using Microsoft.EntityFrameworkCore;

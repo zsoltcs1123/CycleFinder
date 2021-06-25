@@ -4,7 +4,7 @@ using CycleFinder.Models.Specifications;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CycleFinder.Calculations.Services
+namespace CycleFinder.Calculations.Markers
 {
     public interface ICandleStickMarkerService
     {

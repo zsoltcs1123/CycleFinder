@@ -1,9 +1,9 @@
 ﻿using CycleFinder.Models.Ephemeris;
 using System.Collections.Generic;
 
-namespace CycleFinder.Calculations.Math
+namespace CycleFinder.Calculations.Math.Sq9
 {
-    public interface ISQ9Calculator
+    public interface ISq9Calculator
     {
         public bool AtCardinalCrossing(double longitude);
         public bool AtFixedCrossing(double longitude);

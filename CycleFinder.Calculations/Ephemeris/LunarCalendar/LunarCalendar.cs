@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CycleFinder.Calculations.Services.Ephemeris
+namespace CycleFinder.Calculations.Ephemeris.LunarCalendar
 {
     public class LunarCalendar : ILunarCalendar
     {

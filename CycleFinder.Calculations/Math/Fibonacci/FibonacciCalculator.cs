@@ -1,4 +1,4 @@
-﻿namespace CycleFinder.Calculations.Math
+﻿namespace CycleFinder.Calculations.Math.Fibonacci
 {
     public class FibonacciCalculator : IFibonacciCalculator
     {

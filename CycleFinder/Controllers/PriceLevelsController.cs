@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using CycleFinder.Calculations.Math;
+using CycleFinder.Calculations.Math.Sq9;
 using CycleFinder.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +13,9 @@ namespace CycleFinder.Controllers
     public class PriceLevelsController : Controller
     {
         private readonly IPriceTimeCalculator _w24Calculator;
-        private readonly ISQ9Calculator _sq9Calculator;
+        private readonly ISq9Calculator _sq9Calculator;
 
-        public PriceLevelsController(IPriceTimeCalculator w24Calculator, ISQ9Calculator sq9Calculator)
+        public PriceLevelsController(IPriceTimeCalculator w24Calculator, ISq9Calculator sq9Calculator)
         {
             _w24Calculator = w24Calculator;
             _sq9Calculator = sq9Calculator;

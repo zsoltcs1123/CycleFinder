@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CycleFinder.Calculations.Math
+namespace CycleFinder.Calculations.Math.Generic
 {
     public static class GenericMath
     {
@@ -36,7 +36,7 @@ namespace CycleFinder.Calculations.Math
                 bool isMinima = true;
                 for (int i = 1; i <= order && isMinima; i++)
                 {
-                    isMinima = arr[arr.Length - 1] < arr[(arr.Length-1) - i];
+                    isMinima = arr[arr.Length - 1] < arr[arr.Length - 1 - i];
                 }
                 return isMinima;
             }
@@ -71,7 +71,7 @@ namespace CycleFinder.Calculations.Math
 
             if (lastElementIsMinima(arr, order))
             {
-                mn.Add(arr.Length-1);
+                mn.Add(arr.Length - 1);
             }
 
             for (int i = 1; i < arr.Length; i++)
@@ -90,7 +90,7 @@ namespace CycleFinder.Calculations.Math
         /// <returns></returns>
         public static List<int> FindLocalMaxima(double[] arr, int order = 1)
         {
-            return FindLocalExtreme(arr, (e1, e2) => e1 > e2, order);            
+            return FindLocalExtreme(arr, (e1, e2) => e1 > e2, order);
         }
 
         private static List<int> FindLocalExtreme(double[] arr, Func<double, double, bool> comparerFunc, int order = 1)
@@ -118,7 +118,7 @@ namespace CycleFinder.Calculations.Math
                 bool isExtreme = true;
                 for (int i = 1; i <= order && isExtreme; i++)
                 {
-                    isExtreme = comparerFunc(arr[arr.Length - 1], arr[(arr.Length - 1) - i]);
+                    isExtreme = comparerFunc(arr[arr.Length - 1], arr[arr.Length - 1 - i]);
                 }
                 return isExtreme;
             }

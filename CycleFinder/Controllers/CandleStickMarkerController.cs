@@ -1,5 +1,4 @@
-﻿using CycleFinder.Calculations.Services;
-using CycleFinder.Data;
+﻿using CycleFinder.Data;
 using CycleFinder.Dtos;
 using CycleFinder.Extensions;
 using CycleFinder.Models;
@@ -15,6 +14,7 @@ using System;
 using CycleFinder.Models.Extensions;
 using CycleFinder.Services;
 using Microsoft.Extensions.Configuration;
+using CycleFinder.Calculations.Markers;
 
 namespace CycleFinder.Controllers
 {
@@ -190,12 +190,29 @@ namespace CycleFinder.Controllers
             var planets = ParameterProcessor.PlanetsFromString(planet).GetFlags().Where(_ => _ != Planet.None).ToList();
             var aspectTypes = AspectTypesFromString(aspect);
 
-            if (planets.Count() != 2)
+            if (planets.Count != 2)
             {
                 return NotFound();
             }
 
             var spec = new AspectMarkerSpecification(DateTimeExtensions.FromUnixTimeStamp(from), planets[0], planets[1], aspectTypes);
+
+            return Ok((await _candleStickMarkerCalculator.GetMarkers(spec)).Select(_ => _.ToCandleStickMarkerDto()));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetRetrogrades(
+            [FromQuery] string planet,
+            [FromQuery] long from)
+        {
+            var planetEnum = ParameterProcessor.PlanetFromString(planet);
+
+            if (!planetEnum.HasValue && planetEnum == Planet.None)
+            {
+                return NotFound();
+            }
+
+            var spec = new RetrogradeMarkerSpecification(DateTimeExtensions.FromUnixTimeStamp(from), planetEnum.Value);
 
             return Ok((await _candleStickMarkerCalculator.GetMarkers(spec)).Select(_ => _.ToCandleStickMarkerDto()));
         }

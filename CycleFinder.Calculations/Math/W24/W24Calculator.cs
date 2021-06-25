@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CycleFinder.Calculations.Extensions;
 
-namespace CycleFinder.Calculations.Math
+namespace CycleFinder.Calculations.Math.W24
 {
     public class W24Calculator : IPriceTimeCalculator
     {
@@ -55,13 +55,13 @@ namespace CycleFinder.Calculations.Math
             int maxOctave = (maxValue / keyNumber).TruncateDecimals();
             int minOctave = (minValue / keyNumber).TruncateDecimals();
 
-            var _24lines = Enumerable.Range(minOctave, maxOctave).Select(n => new PriceLevel(n*keyNumber, W24LineType._24Line)).ToList();
+            var _24lines = Enumerable.Range(minOctave, maxOctave).Select(n => new PriceLevel(n * keyNumber, W24LineType._24Line)).ToList();
 
-            var imLines = _24lines.Select(line => new []
+            var imLines = _24lines.Select(line => new[]
             {
-                new PriceLevel(line.Value + (keyNumber * 0.25), W24LineType.IntermediateLine),
-                new PriceLevel(line.Value + (keyNumber * 0.5), W24LineType.IntermediateLine),
-                new PriceLevel(line.Value + (keyNumber * 0.75), W24LineType.IntermediateLine) 
+                new PriceLevel(line.Value + keyNumber * 0.25, W24LineType.IntermediateLine),
+                new PriceLevel(line.Value + keyNumber * 0.5, W24LineType.IntermediateLine),
+                new PriceLevel(line.Value + keyNumber * 0.75, W24LineType.IntermediateLine)
             });
 
             return _24lines.Concat(imLines.SelectMany(line => line));

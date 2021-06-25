@@ -1,9 +1,10 @@
-﻿using System;
+﻿using CycleFinder.Calculations.Services;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace CycleFinder.Calculations.Services
+namespace CycleFinder.Calculations.Markers
 {
     public class RandomColorGenerator : IRandomColorGenerator
     {

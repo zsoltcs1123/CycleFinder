@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CycleFinder.Calculations.Services.Ephemeris;
+using CycleFinder.Calculations.Ephemeris.PlanetaryLines;
 using CycleFinder.Dtos;
 using CycleFinder.Extensions;
 using CycleFinder.Models;
@@ -18,9 +18,9 @@ namespace CycleFinder.Controllers
     public class PlanetaryLinesController : ControllerBase
     {
         private readonly IQueryParameterProcessor _parameterProcessor;
-        private readonly IPlanetaryLinesService _planetaryLinesCalculator;
+        private readonly IPlanetaryLinesCalculator _planetaryLinesCalculator;
 
-        public PlanetaryLinesController(IQueryParameterProcessor parameterProcessor, IPlanetaryLinesService planetaryLinesCalculator)
+        public PlanetaryLinesController(IQueryParameterProcessor parameterProcessor, IPlanetaryLinesCalculator planetaryLinesCalculator)
         {
             _parameterProcessor = parameterProcessor;
             _planetaryLinesCalculator = planetaryLinesCalculator;
