@@ -1,10 +1,6 @@
-﻿using CycleFinder.Calculations.Extensions;
-using CycleFinder.Extensions;
-using CycleFinder.Models;
-using CycleFinder.Models.Extensions;
+﻿using CycleFinder.Models.Extensions;
 using CycleFinder.Models.Markers;
 using System;
-using System.Drawing;
 
 namespace CycleFinder.Dtos
 {

@@ -65,10 +65,14 @@ namespace CycleFinder.Calculations.Markers
         {
             //TODO cache this
             //TODO implement max and 50% states
+            var color = spec.Planet.ToColor();
             return (await _retrogradeCalculator.GetRetrogradeCycles(spec.Planet, spec.From))
                 .SelectMany(_ => _.RetrogradeStatusByDay)
-                //.Where(_ => _.Value.RetrogradeStatus == RetrogradeStatus.StationaryDirect || _.Value.RetrogradeStatus == RetrogradeStatus.StationaryRetrograde)
-                .Select(_ => new RetrogradeMarker(_.Key, _.Value.RetrogradeStatus, _.Value.Coordinates.Longitude, _.Value.Coordinates.Speed));
+                .Where(_ => _.Value.RetrogradeStatus == RetrogradeStatus.StationaryDirect 
+                || _.Value.RetrogradeStatus == RetrogradeStatus.StationaryRetrograde 
+                || _.Value.RetrogradeStatus == RetrogradeStatus.MaxDirect
+                || _.Value.RetrogradeStatus == RetrogradeStatus.MaxRetrograde)
+                .Select(_ => new RetrogradeMarker(_.Key, color, _.Value.RetrogradeStatus, _.Value.Coordinates.Longitude, _.Value.Coordinates.Speed));
         }
 
         public async Task<IEnumerable<ICandleStickMarker>> GetMarkers(MarkerSpecification spec, IEnumerable<CandleStick> candles, int order, int? limit)

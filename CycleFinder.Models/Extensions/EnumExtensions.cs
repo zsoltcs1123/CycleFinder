@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 
@@ -49,6 +50,24 @@ namespace CycleFinder.Models.Extensions
         public static bool HasMultipleValues<T>(this T e) where T:Enum
         {
             return !Enum.IsDefined(typeof(T), e);
+        }
+
+        public static Color ToColor(this Planet planet)
+        {
+            return planet switch
+            {
+                Planet.Moon => Color.Silver,
+                Planet.Sun => Color.Gold,
+                Planet.Mercury => Color.Gray,
+                Planet.Venus => Color.Pink,
+                Planet.Mars => Color.Red,
+                Planet.Jupiter => Color.Orange,
+                Planet.Saturn => Color.Brown,
+                Planet.Uranus => Color.Green,
+                Planet.Neptune => Color.Purple,
+                Planet.Pluto => Color.Blue,
+                _ => Color.Black,
+            };
         }
     }
 }
