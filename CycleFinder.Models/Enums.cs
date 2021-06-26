@@ -67,12 +67,18 @@ namespace CycleFinder.Models
     {
         [Description("D")]
         Direct,
+        [Description("MAX D")]
+        MaxDirect,
         [Description("SD")]
         StationaryDirect,
         [Description("R")]
         Retrograde,
+        [Description("MAX R")]
+        MaxRetrograde,
         [Description("SR")]
-        StationaryRetrograde
+        StationaryRetrograde,
+        [Description("Unknown")]
+        Unknown,
     }
 
     public enum AspectType

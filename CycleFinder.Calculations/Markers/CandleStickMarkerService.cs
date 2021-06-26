@@ -63,7 +63,11 @@ namespace CycleFinder.Calculations.Markers
 
         private async Task<IEnumerable<EventMarker>> GetRetrogradeMarkers(RetrogradeMarkerSpecification spec)
         {
-            return (await _retrogradeCalculator.GetRetrogradeCycles(spec.Planet, spec.From)).RetrogradeStatusByDays
+            //TODO cache this
+            //TODO implement max and 50% states
+            return (await _retrogradeCalculator.GetRetrogradeCycles(spec.Planet, spec.From))
+                .SelectMany(_ => _.RetrogradeStatusByDay)
+                //.Where(_ => _.Value.RetrogradeStatus == RetrogradeStatus.StationaryDirect || _.Value.RetrogradeStatus == RetrogradeStatus.StationaryRetrograde)
                 .Select(_ => new RetrogradeMarker(_.Key, _.Value.RetrogradeStatus, _.Value.Coordinates.Longitude, _.Value.Coordinates.Speed));
         }
 

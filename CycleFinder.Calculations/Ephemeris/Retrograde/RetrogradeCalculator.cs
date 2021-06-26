@@ -1,7 +1,9 @@
-﻿using CycleFinder.Models;
+﻿using CycleFinder.Calculations.Math.Generic;
+using CycleFinder.Models;
 using CycleFinder.Models.Ephemeris;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CycleFinder.Calculations.Ephemeris.Retrograde
@@ -15,13 +17,49 @@ namespace CycleFinder.Calculations.Ephemeris.Retrograde
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }
 
-        public async Task<RetrogradeCycles> GetRetrogradeCycles(Planet planet, DateTime from)
+        public async Task<IEnumerable<RetrogradeCycle>> GetRetrogradeCycles(Planet planet, DateTime from)
         {
             var entries = await _ephemerisEntryRepository.GetEntries(from);
-            var tolerance = StationarySpeedTolerance(planet);
-            var ret = new Dictionary<DateTime, (Coordinates Coordinates, RetrogradeStatus? RetrogradeStatus)>();
+            var statuses = MapRetrogradeStatuses(entries, planet);
+            var cycles = CreateCycles(statuses, planet);
 
-            RetrogradeStatus? previousStatus = null;
+            return cycles;
+        }
+
+        private static List<RetrogradeCycle> CreateCycles(Dictionary<DateTime, (Coordinates Coordinates, RetrogradeStatus RetrogradeStatus)> statuses, Planet planet)
+        {
+            var changeDates = new List<DateTime>();
+            var previousStatus = statuses.First().Value.RetrogradeStatus;
+
+            foreach (var kvp in statuses)
+            {
+                if (kvp.Value.RetrogradeStatus != previousStatus)
+                {
+                    changeDates.Add(kvp.Key);
+                }
+                previousStatus = kvp.Value.RetrogradeStatus;
+            }
+
+            var cycles = new List<RetrogradeCycle>();
+
+            var startDate = statuses.First().Key;
+            foreach (var chgDate in changeDates)
+            {
+                var values = statuses.Where(_ => _.Key >= startDate && _.Key < chgDate);
+                var cycle = new RetrogradeCycle(planet, values.ToDictionary(_ => _.Key, _ => _.Value.Coordinates), values.First().Value.RetrogradeStatus, startDate, chgDate);
+                cycles.Add(cycle);
+                startDate = chgDate;
+            }
+
+            return cycles;
+        }
+
+        private static Dictionary<DateTime, (Coordinates Coordinates, RetrogradeStatus RetrogradeStatus)> MapRetrogradeStatuses(IEnumerable<EphemerisEntry> entries, Planet planet)
+        {
+            var tolerance = StationarySpeedTolerance(planet);
+            var ret = new Dictionary<DateTime, (Coordinates Coordinates, RetrogradeStatus RetrogradeStatus)>();
+
+            RetrogradeStatus previousStatus = RetrogradeStatus.Unknown;
 
             foreach (var entry in entries)
             {
@@ -32,10 +70,10 @@ namespace CycleFinder.Calculations.Ephemeris.Retrograde
                 previousStatus = status;
             }
 
-            return new RetrogradeCycles(planet, ret);
+            return ret;
         }
 
-        private RetrogradeStatus? RetrogradeStatusFromSpeed(double speed, double tolerance, RetrogradeStatus? previousStatus)
+        private static RetrogradeStatus RetrogradeStatusFromSpeed(double speed, double tolerance, RetrogradeStatus previousStatus)
         {
             if (speed > 0 && speed > tolerance)
             {
@@ -47,7 +85,7 @@ namespace CycleFinder.Calculations.Ephemeris.Retrograde
                     return RetrogradeStatus.StationaryRetrograde;
                 else if (previousStatus == RetrogradeStatus.Retrograde || previousStatus == RetrogradeStatus.StationaryDirect)
                     return RetrogradeStatus.StationaryDirect;
-                else return null;
+                else return RetrogradeStatus.Unknown; 
             }
             else if (speed < 0 && speed < tolerance * -1)
             {
@@ -58,7 +96,7 @@ namespace CycleFinder.Calculations.Ephemeris.Retrograde
                 return RetrogradeStatus.StationaryDirect;
 
             }
-            else return null;
+            else return RetrogradeStatus.Unknown;
         }
 
         private static double StationarySpeedTolerance(Planet planet)

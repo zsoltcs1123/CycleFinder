@@ -17,8 +17,7 @@
       }
     },
     "CycleFinder": {
-      "commandName": "Executable",
-      "executablePath": "C:\\Program Files\\ConEmu\\ConEmu64.exe",
+      "commandName": "Project",
       "commandLineArgs": "-run ./CycleFinder.exe",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

@@ -18,6 +18,9 @@ namespace CycleFinder.Dtos
         public string Shape { get; }
         public bool IsInTheFuture { get => _time > DateTime.Now; }
 
+        //DEBUG
+        public string TimeStr { get => _time.ToShortDateString(); }
+
         public CandleStickMarkerDto(ICandleStickMarker candleMarker)
         {
             _time = candleMarker.Time;
