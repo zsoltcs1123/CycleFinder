@@ -8,9 +8,9 @@ namespace CycleFinder.Models.Markers
     {
         public override MarkerShape Shape => MarkerShape.Square;
 
-        public RetrogradeMarker(DateTime time, Color color, RetrogradeStatus? status, double longitude, double speed) : base(time)
+        public RetrogradeMarker(DateTime time, Color color, RetrogradeStatus status, double longitude, double speed) : base(time)
         {
-            Text = $"{longitude} {speed} {(status.HasValue ? status.Value.GetDescription() : string.Empty)}";
+            Text = $"{longitude} {speed} {status.GetDescription()}";
             Color = color;
         }
     }

@@ -68,10 +68,7 @@ namespace CycleFinder.Calculations.Markers
             var color = spec.Planet.ToColor();
             return (await _retrogradeCalculator.GetRetrogradeCycles(spec.Planet, spec.From))
                 .SelectMany(_ => _.RetrogradeStatusByDay)
-                .Where(_ => _.Value.RetrogradeStatus == RetrogradeStatus.StationaryDirect 
-                || _.Value.RetrogradeStatus == RetrogradeStatus.StationaryRetrograde 
-                || _.Value.RetrogradeStatus == RetrogradeStatus.MaxDirect
-                || _.Value.RetrogradeStatus == RetrogradeStatus.MaxRetrograde)
+                .Where(_ => spec.Filter(_.Value.RetrogradeStatus))
                 .Select(_ => new RetrogradeMarker(_.Key, color, _.Value.RetrogradeStatus, _.Value.Coordinates.Longitude, _.Value.Coordinates.Speed));
         }
 

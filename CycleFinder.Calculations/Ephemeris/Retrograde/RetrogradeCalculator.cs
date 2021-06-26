@@ -91,9 +91,13 @@ namespace CycleFinder.Calculations.Ephemeris.Retrograde
             {
                 return RetrogradeStatus.Retrograde;
             }
-            else if (speed <= 0 && speed >= tolerance * -1 && (previousStatus == RetrogradeStatus.Retrograde || previousStatus == RetrogradeStatus.StationaryDirect))
+            else if (speed <= 0 && speed >= tolerance * -1)
             {
-                return RetrogradeStatus.StationaryDirect;
+                if (previousStatus == RetrogradeStatus.Direct || previousStatus == RetrogradeStatus.StationaryRetrograde)
+                    return RetrogradeStatus.StationaryRetrograde;
+                else if (previousStatus == RetrogradeStatus.Retrograde || previousStatus == RetrogradeStatus.StationaryDirect)
+                    return RetrogradeStatus.StationaryDirect;
+                else return RetrogradeStatus.Unknown;
 
             }
             else return RetrogradeStatus.Unknown;
@@ -101,7 +105,7 @@ namespace CycleFinder.Calculations.Ephemeris.Retrograde
 
         private static double StationarySpeedTolerance(Planet planet)
         {
-            return planet == Planet.Mercury ? 0.04 : planet == Planet.Venus ? 0.03 : planet == Planet.Mars ? 0.01 : 0;
+            return planet == Planet.Mercury ? 0.07 : planet == Planet.Venus ? 0.03 : planet == Planet.Mars ? 0.01 : 0;
         }
     }
 }

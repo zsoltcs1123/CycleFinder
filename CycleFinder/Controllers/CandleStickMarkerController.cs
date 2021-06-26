@@ -203,7 +203,8 @@ namespace CycleFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandleStickMarkerDto>>> GetRetrogrades(
             [FromQuery] string planet,
-            [FromQuery] long from)
+            [FromQuery] long from,
+            [FromQuery] bool filter = true)
         {
             var planetEnum = ParameterProcessor.PlanetFromString(planet);
 
@@ -212,7 +213,7 @@ namespace CycleFinder.Controllers
                 return NotFound();
             }
 
-            var spec = new RetrogradeMarkerSpecification(DateTimeExtensions.FromUnixTimeStamp(from), planetEnum.Value);
+            var spec = new RetrogradeMarkerSpecification(DateTimeExtensions.FromUnixTimeStamp(from), planetEnum.Value, filter);
 
             return Ok((await _candleStickMarkerCalculator.GetMarkers(spec)).Select(_ => _.ToCandleStickMarkerDto()));
         }
