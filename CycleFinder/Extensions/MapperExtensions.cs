@@ -18,16 +18,5 @@ namespace CycleFinder.Extensions
         {
             return new CandleStickMarkerDto(candleMarker);
         }
-
-        public static PlanetaryLinesDto ToPlanetaryLinesDto(
-            this PlanetaryLine pLine)
-        {
-            return new PlanetaryLinesDto(pLine);
-        }
-
-        public static PriceLevelDto ToPriceLevelDto(this PriceLevel priceLevel)
-        {
-            return new PriceLevelDto(priceLevel);
-        }
     }
 }

@@ -1,11 +1,7 @@
 using CycleFinder.Calculations.Ephemeris;
-using CycleFinder.Calculations.Ephemeris.PlanetaryLines;
 using CycleFinder.Calculations.Ephemeris.Retrograde;
 using CycleFinder.Calculations.Markers;
-using CycleFinder.Calculations.Math;
 using CycleFinder.Calculations.Math.Extremes;
-using CycleFinder.Calculations.Math.Sq9;
-using CycleFinder.Calculations.Math.W24;
 using CycleFinder.Calculations.Services;
 using CycleFinder.Calculations.Services.Ephemeris.Aspects;
 using CycleFinder.Data;
@@ -38,17 +34,11 @@ namespace CycleFinder
 
             services.AddScoped<ICandleStickRepository, BinanceDataService>();
             services.AddScoped<IEphemerisEntryRepository, EphemerisEntryRepository>();
-            services.AddScoped<ICandleStickMarkerService, CandleStickMarkerService>();
             services.AddScoped<IAspectCalculator, AspectCalculator>();
             services.AddScoped<IRetrogradeCalculcator, RetrogradeCalculator>();
             services.AddScoped<IQueryParameterProcessor, QueryParameterProcessor>();
-            services.AddScoped<IPlanetaryLinesCalculator, PlanetaryLinesCalculator>();
 
             services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
-
-            //TODO multiple implementations: https://www.infoworld.com/article/3597989/use-multiple-implementations-of-an-interface-in-aspnet-core.html
-            services.AddSingleton<IPriceTimeCalculator, W24Calculator>();
-            services.AddSingleton<ISq9Calculator, SQ9Calculator>();
 
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));
