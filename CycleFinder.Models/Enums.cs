@@ -38,14 +38,14 @@ namespace CycleFinder.Models
 
         [Description("Moon")]
         Moon = 1 << 0,
-        [Description("Sun")]
-        Sun = 1 << 1,
         [Description("Mercury")]
         Mercury = 1 << 2,
         [Description("Venus")]
         Venus = 1 << 3,
         [Description("Mars")]
         Mars = 1 << 4,
+        [Description("Sun")]
+        Sun = 1 << 1,
         [Description("Jupiter")]
         Jupiter = 1 << 5,
         [Description("Saturn")]
@@ -57,10 +57,8 @@ namespace CycleFinder.Models
         [Description("Pluto")]
         Pluto = 1 << 9,
         All = ~None,
-        FastPlanets = Sun | Mercury | Venus | Mars,
-        FastPlanetsWithMoon = FastPlanets | Moon,
-        SlowPlanets = Jupiter | Saturn | Uranus | Neptune,
-        SlowPlanetsWithPlut = SlowPlanets | Pluto
+
+        AllExceptMoon = Sun | Mercury | Venus | Mars | Jupiter | Saturn | Uranus | Neptune | Pluto
     }
 
     public enum RetrogradeStatus
@@ -100,7 +98,8 @@ namespace CycleFinder.Models
         [Description("icj")]
         Inconjunct = 1 << 6,
 
-        All = ~None,
+        Any = ~None,
+        MainAspects = Conjunction | Opposition | Square | Trine | Sextile
     }
 
 

@@ -1,19 +1,22 @@
-﻿using System;
+﻿using CycleFinder.Models.Extensions;
+using System;
 
 namespace CycleFinder.Models.Ephemeris
 {
-    public class Aspect
+    public record Aspect : AstroEvent
     {
-        public DateTime Time { get; }
-        public (Planet Planet, bool IsRetrograde) Planet1 { get; }
-        public (Planet Planet, bool IsRetrograde) Planet2 { get; }
+        public (Planet Planet, Coordinates cords) SmallerPlanet { get; }
+        public (Planet Planet, Coordinates cords) LargerPlanet { get; }
         public AspectType AspectType { get; }
 
-        public Aspect(DateTime time, (Planet Planet, bool IsRetrograde) planet1, (Planet Planet, bool IsRetrograde) planet2, AspectType aspectType)
+        public override string Description
+            => $"{SmallerPlanet.Planet.GetDescription()} {(SmallerPlanet.cords.IsRetrograde ? "rx" : "")} {AspectType.GetDescription()}" +
+            $" {LargerPlanet.Planet.GetDescription()} {(LargerPlanet.cords.IsRetrograde ? "rx" : "")}"; 
+
+        public Aspect(DateTime time, (Planet Planet, Coordinates cords) smallerPlanet, (Planet Planet, Coordinates cords) largerPlanet, AspectType aspectType) : base(time)
         {
-            Time = time;
-            Planet1 = planet1;
-            Planet2 = planet2;
+            SmallerPlanet = smallerPlanet;
+            LargerPlanet = largerPlanet;
             AspectType = aspectType;
         }
     }

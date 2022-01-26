@@ -4,11 +4,13 @@ using CycleFinder.Models.Ephemeris;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace CycleFinder.Calculations.Services.Ephemeris.Aspects
 {
     public class AspectCalculator : IAspectCalculator
     {
+        //TODO orb should come from API
         private static readonly double _orb = 1.00;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 
@@ -17,21 +19,35 @@ namespace CycleFinder.Calculations.Services.Ephemeris.Aspects
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }
 
-        public async Task<IEnumerable<Aspect>> GetAspects(DateTime startTime, Planet planet1, Planet planet2, AspectType aspectType)
+        public async Task<IEnumerable<Aspect>> GetAspects(DateTime from, DateTime to, Planet smallerPlanet, Planet largerPlanet, AspectType aspectType)
         {
-            var ephem = await _ephemerisEntryRepository.GetEntries(startTime);
+            var ephem = await _ephemerisEntryRepository.GetEntries(from, to);
             var ret = new List<Aspect>();
 
             foreach (var entry in ephem)
             {
-                var coord1 = entry.GetCoordinatesByPlanet(planet1);
-                var coord2 = entry.GetCoordinatesByPlanet(planet2);
+                var coord1 = entry.GetCoordinatesByPlanet(smallerPlanet);
+                var coord2 = entry.GetCoordinatesByPlanet(largerPlanet);
 
                 var aspect = GetAspectType(GetCircularDifference(coord1.Longitude, coord2.Longitude), _orb);
                 if (aspect != null && aspectType.HasFlag(aspect))
                 {
-                    ret.Add(new Aspect(entry.Time, (planet1, coord1.IsRetrograde), (planet2, coord2.IsRetrograde), aspect.Value));
+                    ret.Add(new Aspect(entry.Time, (smallerPlanet, coord1), (largerPlanet, coord2), aspect.Value));
                 }
+            }
+
+            return ret;
+        }
+
+        public async Task<IEnumerable<Aspect>> GetAspects(DateTime from, DateTime to, Planet planet, AspectType aspectType)
+        {
+            var ephem = await _ephemerisEntryRepository.GetEntries(from, to);
+
+            IEnumerable<Aspect> ret = new List<Aspect>();
+
+            foreach (var pl in ((Planet[])Enum.GetValues(typeof(Planet))).Where(_ => _ > planet)){
+                var asp = await GetAspects(from, to, planet, pl, aspectType);
+                ret = ret.Concat(asp);
             }
 
             return ret;
@@ -58,5 +74,6 @@ namespace CycleFinder.Calculations.Services.Ephemeris.Aspects
                 _ => null,
             };
         }
+
     }
 }

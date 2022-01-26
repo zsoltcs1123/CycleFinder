@@ -19,7 +19,8 @@ namespace CycleFinder.Calculations.Ephemeris.Retrograde
 
         public async Task<IEnumerable<RetrogradeCycle>> GetRetrogradeCycles(Planet planet, DateTime from)
         {
-            var entries = await _ephemerisEntryRepository.GetEntries(from);
+            //TODO
+            var entries = await _ephemerisEntryRepository.GetEntries(from, from);
             var statuses = MapRetrogradeStatuses(entries, planet);
             var cycles = CreateCycles(statuses, planet);
 

@@ -1,4 +1,5 @@
 ﻿using CycleFinder.Models;
+using CycleFinder.Models.Ephemeris;
 using System;
 
 namespace CycleFinder.Services
@@ -7,7 +8,7 @@ namespace CycleFinder.Services
     {
         public Planet PlanetsFromString(string planet)
         {
-            if (String.IsNullOrEmpty(planet)) return Planet.All;
+            if (String.IsNullOrEmpty(planet)) return Planet.AllExceptMoon;
 
             Planet ret = Planet.None;
 
@@ -22,7 +23,24 @@ namespace CycleFinder.Services
             return ret;
         }
 
-        public Planet? PlanetFromString(string planet) => planet switch
+        public AspectType AscpectTypesFromString(string aspect)
+        {
+            if (String.IsNullOrEmpty(aspect)) return AspectType.MainAspects;
+
+            AspectType ret = AspectType.None;
+
+            foreach (string s in aspect.Split(","))
+            {
+                var aspectEnum = AspectTypeFromString(s);
+                if (aspectEnum.HasValue)
+                {
+                    ret |= aspectEnum.Value;
+                }
+            }
+            return ret;
+        }
+
+        private static Planet? PlanetFromString(string planet) => planet switch
         {
             "mo" => Planet.Moon,
             "su" => Planet.Sun,
@@ -34,6 +52,18 @@ namespace CycleFinder.Services
             "ur" => Planet.Uranus,
             "ne" => Planet.Neptune,
             "pl" => Planet.Pluto,
+            _ => null,
+        };
+
+        private static AspectType? AspectTypeFromString(string aspectType) => aspectType switch
+        {
+            "cj" => AspectType.Conjunction,
+            "op" => AspectType.Opposition,
+            "sq" => AspectType.Square,
+            "tri" => AspectType.Trine,
+            "sex" => AspectType.Sextile,
+            "ssex" => AspectType.SemiSextile,
+            "icj" => AspectType.Inconjunct,
             _ => null,
         };
 

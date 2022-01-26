@@ -18,5 +18,11 @@ namespace CycleFinder.Extensions
         {
             return new CandleStickMarkerDto(candleMarker);
         }
+
+        public static AstroEventDto ToAstroEventDto(
+            this AstroEvent astroEvent)
+        {
+            return new AstroEventDto(astroEvent);
+        }
     }
 }

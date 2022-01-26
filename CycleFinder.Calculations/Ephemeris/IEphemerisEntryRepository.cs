@@ -8,6 +8,6 @@ namespace CycleFinder.Calculations.Ephemeris
 {
     public interface IEphemerisEntryRepository
     {
-        Task<IEnumerable<EphemerisEntry>> GetEntries(DateTime startTime);
+        Task<IEnumerable<EphemerisEntry>> GetEntries(DateTime from, DateTime to);
     }
 }

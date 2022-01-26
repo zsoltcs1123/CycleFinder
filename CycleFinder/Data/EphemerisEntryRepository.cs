@@ -21,23 +21,29 @@ namespace CycleFinder.Data
             _cache = cache;
         }
 
-        public async Task<IEnumerable<EphemerisEntry>> GetEntries(DateTime startTime)
+        public async Task<IEnumerable<EphemerisEntry>> GetEntries(DateTime from, DateTime to)
         {
-            var earliestStartTime = _cache.GetOrAdd("EarliestEphemStartTime", () => startTime);
+            if (to < from)
+            {
+                throw new Exception("End date must be later than start date");
+            }
+            
+            var earliestStartTime = _cache.GetOrAdd("EarliestEphemStartTime", () => from);
 
             var earliestEphemId = $"Ephem_{earliestStartTime}";
 
-            if (startTime < earliestStartTime)
+            if (from < earliestStartTime)
             {
                 _cache.Remove(earliestEphemId);
-                earliestStartTime = startTime;
+                earliestStartTime = from;
             }
             
-            var ret = await _cache.GetOrAddAsync(earliestEphemId, () => FilterByTime(earliestStartTime).ToListAsync());
+            var ret = await _cache.GetOrAddAsync(earliestEphemId, () => FilterByTime(earliestStartTime, to).ToListAsync());
 
-            return startTime > earliestStartTime ? ret.Where(_ => _.Time >= startTime) : ret;
+            return from > earliestStartTime ? ret.Where(_ => _.Time >= from) : ret;
         }
 
-        private IQueryable<EphemerisEntry> FilterByTime(DateTime startTime) => _ephemerisEntryContext.DailyEphemeris.Where(entry => entry.Time >= startTime);
+        private IQueryable<EphemerisEntry> FilterByTime(DateTime from, DateTime to) 
+            => _ephemerisEntryContext.DailyEphemeris.Where(entry => entry.Time >= from && entry.Time <= to);
     }
 }
