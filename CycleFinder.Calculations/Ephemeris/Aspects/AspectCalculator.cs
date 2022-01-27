@@ -5,23 +5,66 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using CycleFinder.Models.Extensions;
 
 namespace CycleFinder.Calculations.Services.Ephemeris.Aspects
 {
     public class AspectCalculator : IAspectCalculator
     {
         //TODO orb should come from API
-        private static readonly double _orb = 1.00;
+        private static readonly double _orb = 2.00;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
+
+        private readonly Planet[] Planets = ((Planet[])Enum.GetValues(typeof(Planet))).Where(_ => _ != Planet.None && _ != Planet.All && _ != Planet.AllExceptMoon).ToArray();
 
         public AspectCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }
 
-        public async Task<IEnumerable<Aspect>> GetAspects(DateTime from, DateTime to, Planet smallerPlanet, Planet largerPlanet, AspectType aspectType)
+        public async Task<IEnumerable<Aspect>> GetAspects(DateTime from, DateTime to, Planet planet, AspectType aspectType)
         {
             var ephem = await _ephemerisEntryRepository.GetEntries(from, to);
+
+            IEnumerable<Aspect> ret = new List<Aspect>();
+
+            if (planet == Planet.None || planet == Planet.All)
+            {
+                return ret;
+            }
+
+            if (planet == Planet.AllExceptMoon)
+            {
+
+                foreach (var spl in Planets)
+                {
+                    foreach (var lpl in Planets.Where(_ => _ > spl))
+                    {
+                        var aspects = GetAspectsForPlanetPairs(ephem, spl, lpl, aspectType);
+                        ret = ret.Concat(aspects);
+                    }
+                }
+
+            }
+
+            else
+            {
+                foreach (var lpl in Planets.Where(_ => _ > planet))
+                {
+                    var aspects = GetAspectsForPlanetPairs(ephem, planet, lpl, aspectType);
+                    ret = ret.Concat(aspects);
+                }
+            }
+
+            return ret.OrderBy(_ => _.Time);
+        }
+
+        private static IEnumerable<Aspect> GetAspectsForPlanetPairs(
+            IEnumerable<EphemerisEntry> ephem,
+            Planet smallerPlanet,
+            Planet largerPlanet,
+            AspectType aspectType)
+        {
             var ret = new List<Aspect>();
 
             foreach (var entry in ephem)
@@ -39,19 +82,6 @@ namespace CycleFinder.Calculations.Services.Ephemeris.Aspects
             return ret;
         }
 
-        public async Task<IEnumerable<Aspect>> GetAspects(DateTime from, DateTime to, Planet planet, AspectType aspectType)
-        {
-            var ephem = await _ephemerisEntryRepository.GetEntries(from, to);
-
-            IEnumerable<Aspect> ret = new List<Aspect>();
-
-            foreach (var pl in ((Planet[])Enum.GetValues(typeof(Planet))).Where(_ => _ > planet)){
-                var asp = await GetAspects(from, to, planet, pl, aspectType);
-                ret = ret.Concat(asp);
-            }
-
-            return ret;
-        }
 
         private static double GetCircularDifference(double l1, double l2) => System.Math.Abs(360 - l1 - (360 - l2));
 
@@ -74,6 +104,5 @@ namespace CycleFinder.Calculations.Services.Ephemeris.Aspects
                 _ => null,
             };
         }
-
     }
 }

@@ -11,7 +11,7 @@ namespace CycleFinder.Models.Extensions
             return System.Math.Floor(diff.TotalSeconds);
         }
 
-        public static DateTime FromUnixTimeStamp(long timeStamp)
+        public static DateTime FromUnixTimeStamp(this long timeStamp)
         {
             return DateTime.UnixEpoch.AddSeconds(timeStamp);
         }
