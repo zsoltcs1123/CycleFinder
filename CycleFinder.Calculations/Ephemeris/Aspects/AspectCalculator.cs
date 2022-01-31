@@ -36,7 +36,7 @@ namespace CycleFinder.Calculations.Services.Ephemeris.Aspects
             if (planet == Planet.AllExceptMoon)
             {
 
-                foreach (var spl in Planets)
+                foreach (var spl in Planets.Where(_ => _ != Planet.Moon))
                 {
                     foreach (var lpl in Planets.Where(_ => _ > spl))
                     {

@@ -50,7 +50,7 @@ namespace CycleFinder
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000",
+                        builder.WithOrigins("http://localhost:8080",
                                             "http://localhost");
                     });
             });
