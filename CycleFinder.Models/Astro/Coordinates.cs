@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CycleFinder.Models.Ephemeris
+namespace CycleFinder.Models.Astro
 {
     [Owned]
     public class Coordinates
     {
+        public DateTime EphemerisEntryTime { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
         public double Declination { get; set; }
@@ -13,5 +15,7 @@ namespace CycleFinder.Models.Ephemeris
 
         [NotMapped]
         public bool IsRetrograde => Speed < 0;
+
+        public override string ToString() => $"{Longitude}|{Latitude}|{Declination}|{Speed}";
     }
 }

@@ -1,7 +1,7 @@
 ﻿using CycleFinder.Models.Extensions;
 using System;
 
-namespace CycleFinder.Models.Ephemeris
+namespace CycleFinder.Models.Astro
 {
     public record Aspect : AstroEvent
     {

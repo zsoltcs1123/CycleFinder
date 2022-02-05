@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CycleFinder.Models.Ephemeris
+namespace CycleFinder.Models.Astro
 {
     public class RetrogradeCycle
     {

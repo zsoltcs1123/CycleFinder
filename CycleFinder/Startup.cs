@@ -1,9 +1,9 @@
-using CycleFinder.Calculations.Ephemeris;
-using CycleFinder.Calculations.Ephemeris.Retrograde;
+using CycleFinder.Calculations.Astro;
+using CycleFinder.Calculations.Astro.Retrograde;
 using CycleFinder.Calculations.Markers;
 using CycleFinder.Calculations.Math.Extremes;
 using CycleFinder.Calculations.Services;
-using CycleFinder.Calculations.Services.Ephemeris.Aspects;
+using CycleFinder.Calculations.Services.Astro.Aspects;
 using CycleFinder.Data;
 using CycleFinder.Extensions;
 using CycleFinder.Middlewares;
@@ -34,7 +34,7 @@ namespace CycleFinder
 
             services.AddScoped<ICandleStickRepository, BinanceDataService>();
             services.AddScoped<IEphemerisEntryRepository, EphemerisEntryRepository>();
-            services.AddScoped<IAspectCalculator, AspectCalculator>();
+            services.AddScoped<IAstroEventCalculator, AstroEventCalculator>();
             services.AddScoped<IRetrogradeCalculcator, RetrogradeCalculator>();
             services.AddScoped<IQueryParameterProcessor, QueryParameterProcessor>();
 

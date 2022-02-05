@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CycleFinder.Models.Ephemeris
+namespace CycleFinder.Models.Astro
 {
     public abstract record AstroEvent
     {

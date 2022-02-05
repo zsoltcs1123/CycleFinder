@@ -1,7 +1,7 @@
 ﻿using CycleFinder.Controllers;
 using CycleFinder.Dtos;
 using CycleFinder.Models.Candles;
-using CycleFinder.Models.Ephemeris;
+using CycleFinder.Models.Astro;
 using CycleFinder.Models.Markers;
 
 namespace CycleFinder.Extensions

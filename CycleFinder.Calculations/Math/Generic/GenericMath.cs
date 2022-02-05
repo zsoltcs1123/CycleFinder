@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CycleFinder.Calculations.Math.Generic
 {
@@ -13,73 +14,8 @@ namespace CycleFinder.Calculations.Math.Generic
         /// <returns></returns>
         public static List<int> FindLocalMinima(double[] arr, int order = 1)
         {
-            List<int> mn = new List<int>();
-
-            //Ensure input array has at least 2 elements
-            if (arr.Length < 2)
-            {
-                return new List<int>() { 0 };
-            }
-
-            static bool firstElementIsMinima(double[] arr, int order)
-            {
-                bool isMinima = true;
-                for (int i = 1; i <= order && isMinima; i++)
-                {
-                    isMinima = arr[0] < arr[0 + i];
-                }
-                return isMinima;
-            }
-
-            static bool lastElementIsMinima(double[] arr, int order)
-            {
-                bool isMinima = true;
-                for (int i = 1; i <= order && isMinima; i++)
-                {
-                    isMinima = arr[arr.Length - 1] < arr[arr.Length - 1 - i];
-                }
-                return isMinima;
-            }
-
-            static bool elementIsMinima(double[] arr, int index, int order)
-            {
-                bool isMinima = true;
-                for (int i = 1; i <= order && isMinima; i++)
-                {
-                    if (index + i >= arr.Length - 1)
-                    {
-                        //only check backwards
-                        isMinima = arr[index] < arr[index - i];
-                    }
-                    else if (index - i < 0)
-                    {
-                        //only check forward
-                        isMinima = arr[index] < arr[index + i];
-                    }
-                    else
-                    {
-                        isMinima = arr[index] < arr[index + i] && arr[index] < arr[index - i];
-                    }
-                }
-                return isMinima;
-            }
-
-            if (firstElementIsMinima(arr, order))
-            {
-                mn.Add(0);
-            }
-
-            if (lastElementIsMinima(arr, order))
-            {
-                mn.Add(arr.Length - 1);
-            }
-
-            for (int i = 1; i < arr.Length; i++)
-            {
-                if (elementIsMinima(arr, i, order)) mn.Add(i);
-            }
-
-            return mn;
+            static bool c_func(double e1, double e2) => e1 <= e2;
+            return FindLocalExtreme(arr, c_func, order);
         }
 
         /// <summary>
@@ -90,7 +26,32 @@ namespace CycleFinder.Calculations.Math.Generic
         /// <returns></returns>
         public static List<int> FindLocalMaxima(double[] arr, int order = 1)
         {
-            return FindLocalExtreme(arr, (e1, e2) => e1 > e2, order);
+            static bool c_func(double e1, double e2) => e1 >= e2;
+            return FindLocalExtreme(arr, c_func, order);
+        }
+
+        public static List<int> FindPeaks(double[] arr)
+        {
+            var ret = new List<int>();
+
+            //calculate & map slopes
+            (double val, double slope)[] arrWithSlopes = new (double, double)[arr.Length];
+
+            arrWithSlopes[0] = (arr[0], 0);
+            for (int i=0; i<arr.Length-1; i++)
+            {
+                arrWithSlopes[i+1] = (arr[i+1], arr[i] - arr[i + 1]);
+            }
+
+            //skip first 
+            for (int i = 1; i < arrWithSlopes.Length - 1; i++)
+            {
+                if (arrWithSlopes[i].slope <= 0 && arrWithSlopes[i + 1].slope >= 0)
+                {
+                    ret.Add(i);
+                }
+            }
+            return ret;
         }
 
         private static List<int> FindLocalExtreme(double[] arr, Func<double, double, bool> comparerFunc, int order = 1)

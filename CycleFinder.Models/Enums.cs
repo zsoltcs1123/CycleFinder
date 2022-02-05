@@ -61,6 +61,22 @@ namespace CycleFinder.Models
         AllExceptMoon = Sun | Mercury | Venus | Mars | Jupiter | Saturn | Uranus | Neptune | Pluto
     }
 
+    public enum ExtremeType
+    {
+        [Description("MIN DECLINATION")]
+        DeclinationMin,
+        [Description("MAX DECLINATION")]
+        DeclinationMax,
+        [Description("MIN SPEED")]
+        SpeedMin,
+        [Description("MAX SPEED")]
+        SpeedMax,
+        [Description("MIN LATITUDE")]
+        LatitudeMin,
+        [Description("MAX LATITUDE")]
+        LatitudeMax
+    }
+
     public enum RetrogradeStatus
     {
         [Description("D")]
@@ -100,13 +116,6 @@ namespace CycleFinder.Models
 
         Any = ~None,
         MainAspects = Conjunction | Opposition | Square | Trine | Sextile
-    }
-
-
-    public enum Extreme
-    {
-        High,
-        Low
     }
 
     public enum MarkerPosition

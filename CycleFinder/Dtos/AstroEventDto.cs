@@ -1,4 +1,4 @@
-﻿using CycleFinder.Models.Ephemeris;
+﻿using CycleFinder.Models.Astro;
 using CycleFinder.Models.Extensions;
 
 namespace CycleFinder.Dtos

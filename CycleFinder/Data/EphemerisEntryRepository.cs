@@ -1,5 +1,5 @@
-﻿using CycleFinder.Calculations.Ephemeris;
-using CycleFinder.Models.Ephemeris;
+﻿using CycleFinder.Calculations.Astro;
+using CycleFinder.Models.Astro;
 using LazyCache;
 using Microsoft.EntityFrameworkCore;
 using System;

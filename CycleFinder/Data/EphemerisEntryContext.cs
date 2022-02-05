@@ -1,5 +1,5 @@
 ﻿using CycleFinder.Extensions;
-using CycleFinder.Models.Ephemeris;
+using CycleFinder.Models.Astro;
 using Microsoft.EntityFrameworkCore;
 
 namespace CycleFinder.Data

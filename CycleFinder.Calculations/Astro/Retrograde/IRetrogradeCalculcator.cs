@@ -1,10 +1,10 @@
 ﻿using CycleFinder.Models;
-using CycleFinder.Models.Ephemeris;
+using CycleFinder.Models.Astro;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CycleFinder.Calculations.Ephemeris.Retrograde
+namespace CycleFinder.Calculations.Astro.Retrograde
 {
     public interface IRetrogradeCalculcator
     {

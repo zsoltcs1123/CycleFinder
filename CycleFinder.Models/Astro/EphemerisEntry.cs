@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CycleFinder.Models.Ephemeris
+namespace CycleFinder.Models.Astro
 {
     public class EphemerisEntry
     {
