@@ -9,5 +9,6 @@ namespace CycleFinder.Calculations.Astro
     public interface IEphemerisEntryRepository
     {
         Task<IEnumerable<EphemerisEntry>> GetEntries(DateTime from, DateTime to);
+        Task<Ephemeris> GetEphemeris(DateTime from, DateTime to);
     }
 }

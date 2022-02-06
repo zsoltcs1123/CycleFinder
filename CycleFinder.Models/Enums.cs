@@ -34,8 +34,6 @@ namespace CycleFinder.Models
     [Flags]
     public enum Planet
     {
-        None = 0,
-
         [Description("Moon")]
         Moon = 1 << 0,
         [Description("Mercury")]
@@ -56,9 +54,6 @@ namespace CycleFinder.Models
         Neptune = 1 << 8,
         [Description("Pluto")]
         Pluto = 1 << 9,
-        All = ~None,
-
-        AllExceptMoon = Sun | Mercury | Venus | Mars | Jupiter | Saturn | Uranus | Neptune | Pluto
     }
 
     public enum ExtremeType

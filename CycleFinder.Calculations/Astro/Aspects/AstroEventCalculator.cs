@@ -14,85 +14,34 @@ namespace CycleFinder.Calculations.Services.Astro.Aspects
         private static readonly double _orb = 2.00;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 
-        private readonly Planet[] Planets = ((Planet[])Enum.GetValues(typeof(Planet))).Where(_ => _ != Planet.None && _ != Planet.All && _ != Planet.AllExceptMoon).ToArray();
+        private readonly Planet[] Planets = ((Planet[])Enum.GetValues(typeof(Planet))).ToArray();
 
         public AstroEventCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }
 
-        public async Task<IEnumerable<Aspect>> GetAspects(DateTime from, DateTime to, Planet planet, AspectType aspectType)
+        public async Task<IEnumerable<AstroEvent>> GetAstroEvents(DateTime from, DateTime to, IEnumerable<Planet> planets)
         {
-            var ephem = new Ephemeris(await _ephemerisEntryRepository.GetEntries(from, to));
-
-            IEnumerable<Aspect> ret = new List<Aspect>();
-
-            if (planet == Planet.None || planet == Planet.All)
-            {
-                return ret;
-            }
-
-            if (planet == Planet.AllExceptMoon)
-            {
-                foreach (var spl in Planets.Where(_ => _ != Planet.Moon))
-                {
-                    //Get Aspects
-                    foreach (var lpl in Planets.Where(_ => _ > spl))
-                    {
-                        var aspects = GetAspectsForPlanetPairs(ephem.Entries, spl, lpl, aspectType);
-                        ret = ret.Concat(aspects);
-                    }
-                }
-            }
-
-            else
-            {
-                foreach (var lpl in Planets.Where(_ => _ > planet))
-                {
-                    var aspects = GetAspectsForPlanetPairs(ephem.Entries, planet, lpl, aspectType);
-                    ret = ret.Concat(aspects);
-                }
-            }
-            var hits = ret.GroupBy(a => a.Description).Select(g => new { Name = g.Key, FirstDate = g.OrderBy(a => a.Time).First() }).ToList();
-            return ret.OrderBy(_ => _.Time);
-            //return hits.Select(g => g.FirstDate).OrderBy(_ => _.Time);
-        }
-
-        public async Task<IEnumerable<AstroEvent>> GetAstroEvents(DateTime from, DateTime to, Planet planet)
-        {
-            var ephem = new Ephemeris(await _ephemerisEntryRepository.GetEntries(from, to));
+            var ephem = await _ephemerisEntryRepository.GetEphemeris(from, to);
             List<AstroEvent> ret = new();
-
-            if (planet == Planet.None || planet == Planet.All)
+            foreach (var spl in planets)
             {
-                return ret;
-            }
-
-            if (planet == Planet.AllExceptMoon)
-            {
-                foreach (var spl in Planets.Where(_ => _ != Planet.Moon))
-                {
-                    //Get Extremes
-                    ret.AddRange(GetExtremes(ephem, spl, ExtremeType.DeclinationMin));
-                    ret.AddRange(GetExtremes(ephem, spl, ExtremeType.DeclinationMax));
-                    //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.LatitudeMin));
-                    //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.LatitudeMax));
-                    //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.SpeedMin));
-                    //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.SpeedMax));
+                //Get Extremes
+                ret.AddRange(GetExtremes(ephem, spl, ExtremeType.DeclinationMin));
+                ret.AddRange(GetExtremes(ephem, spl, ExtremeType.DeclinationMax));
+                //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.LatitudeMin));
+                //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.LatitudeMax));
+                //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.SpeedMin));
+                //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.SpeedMax));
 
 
-                    //Get Aspects
-/*                    foreach (var lpl in Planets.Where(_ => _ > spl))
-                    {
-                        var aspects = GetAspectsForPlanetPairs(ephem.Entries, spl, lpl, AspectType.MainAspects);
-                        ret.AddRange(aspects);
-                    }*/
-                }
-            }
-            else
-            {
-                //ret.AddRange(GetExtremes(ephem, planet, ExtremeType.DeclinationMin));
-                ret.AddRange(GetExtremes(ephem, planet, ExtremeType.DeclinationMax));
+                //Get Aspects
+                /*                    foreach (var lpl in Planets.Where(_ => _ > spl))
+                                    {
+                                        var aspects = GetAspectsForPlanetPairs(ephem.Entries, spl, lpl, AspectType.MainAspects);
+                                        ret.AddRange(aspects);
+                                    }*/
             }
             return ret;
          }

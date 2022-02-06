@@ -43,6 +43,11 @@ namespace CycleFinder.Data
             return from > earliestStartTime ? ret.Where(_ => _.Time >= from) : ret;
         }
 
+        public async Task<Ephemeris> GetEphemeris(DateTime from, DateTime to)
+        {
+            return new Ephemeris(await GetEntries(from, to));
+        }
+
         private IQueryable<EphemerisEntry> FilterByTime(DateTime from, DateTime to) 
             => _ephemerisEntryContext.DailyEphemeris.Where(entry => entry.Time >= from && entry.Time <= to);
     }

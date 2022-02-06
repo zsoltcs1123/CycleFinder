@@ -30,7 +30,7 @@ namespace CycleFinder.Calculations.Math.Generic
             return FindLocalExtreme(arr, c_func, order);
         }
 
-        public static List<int> FindPeaks(double[] arr)
+        public static List<int> FindLocalMaxima(double[] arr)
         {
             var ret = new List<int>();
 
@@ -46,7 +46,31 @@ namespace CycleFinder.Calculations.Math.Generic
             //skip first 
             for (int i = 1; i < arrWithSlopes.Length - 1; i++)
             {
-                if (arrWithSlopes[i].slope <= 0 && arrWithSlopes[i + 1].slope >= 0)
+                if (arrWithSlopes[i].slope < 0 && arrWithSlopes[i + 1].slope > 0)
+                {
+                    ret.Add(i);
+                }
+            }
+            return ret;
+        }
+
+        public static List<int> FindLocalMinima(double[] arr)
+        {
+            var ret = new List<int>();
+
+            //calculate & map slopes
+            (double val, double slope)[] arrWithSlopes = new (double, double)[arr.Length];
+
+            arrWithSlopes[0] = (arr[0], 0);
+            for (int i = 0; i < arr.Length - 1; i++)
+            {
+                arrWithSlopes[i + 1] = (arr[i + 1], arr[i] - arr[i + 1]);
+            }
+
+            //skip first 
+            for (int i = 1; i < arrWithSlopes.Length - 1; i++)
+            {
+                if (arrWithSlopes[i].slope > 0 && arrWithSlopes[i + 1].slope < 0)
                 {
                     ret.Add(i);
                 }

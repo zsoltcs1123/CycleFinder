@@ -9,6 +9,13 @@ namespace CycleFinder.Calculations.Astro
 {
     public class Ephemeris
     {
+        public List<EphemerisEntry> Entries { get; }
+
+        public Ephemeris(IEnumerable<EphemerisEntry> entries)
+        {
+            Entries = new List<EphemerisEntry>(entries);
+        }
+
         public IEnumerable<Coordinates> GetEntriesByPlanet(Planet planet)
         {
             return Entries.Select(e => e.GetCoordinatesByPlanet(planet));
@@ -17,23 +24,15 @@ namespace CycleFinder.Calculations.Astro
         public IEnumerable<Coordinates> GetMinimaBy(Func<Coordinates, double> selector, Planet planet)
         {
             var coords = GetEntriesByPlanet(planet).ToArray();
-            var indices = GenericMath.FindLocalMinima(coords.Select(selector).ToArray(), 1);
+            var indices = GenericMath.FindLocalMinima(coords.Select(selector).ToArray());
             return indices.Select(_ => coords[_]);
         }
 
         public IEnumerable<Coordinates> GetMaximaBy(Func<Coordinates, double> selector, Planet planet)
         {
             var coords = GetEntriesByPlanet(planet).ToArray();
-            var indices = GenericMath.FindPeaks(coords.Select(selector).ToArray());
+            var indices = GenericMath.FindLocalMaxima(coords.Select(selector).ToArray());
             return indices.Select(_ => coords[_]);
-        }
-
-
-        public List<EphemerisEntry> Entries { get; }
-
-        public Ephemeris(IEnumerable<EphemerisEntry> entries)
-        {
-            Entries = new List<EphemerisEntry>(entries);
         }
     }
 }

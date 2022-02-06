@@ -1,23 +1,24 @@
 ﻿using CycleFinder.Models;
 using CycleFinder.Models.Astro;
 using System;
+using System.Collections.Generic;
 
 namespace CycleFinder.Services
 {
     public class QueryParameterProcessor : IQueryParameterProcessor
     {
-        public Planet PlanetsFromString(string planet)
+        public IEnumerable<Planet> PlanetsFromString(string planet)
         {
-            if (String.IsNullOrEmpty(planet)) return Planet.AllExceptMoon;
+            var ret = new List<Planet>();
 
-            Planet ret = Planet.None;
+            if (String.IsNullOrEmpty(planet)) return ret;
 
             foreach (string s in planet.Split(","))
             {
                 var planetEnum = PlanetFromString(s);
                 if (planetEnum.HasValue)
                 {
-                    ret |= planetEnum.Value;
+                    ret.Add(planetEnum.Value);
                 }
             }
             return ret;

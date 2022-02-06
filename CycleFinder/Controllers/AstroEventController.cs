@@ -31,26 +31,25 @@ namespace CycleFinder.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AstroEventDto>>> GetAspectsForPeriod(
-            [FromQuery] long from,
-            [FromQuery] long to)
-        {
-            return Ok((await _astroEventCalculator.GetAspects(from.FromUnixTimeStamp(), to.FromUnixTimeStamp(), Planet.AllExceptMoon, AspectType.MainAspects))
-                .Select(_ => _.ToAstroEventDto()).OrderBy(_ => _.Time));
-        }
-
-        [HttpGet]
         public async Task<ActionResult<IEnumerable<AstroEventDto>>> GetAstroEvents(
-            [FromQuery] int year)
+            [FromQuery] int year,
+            string planets)
         {
             if (!IsValidYear(year))
             {
                 return NotFound();
             }
 
+            var planetEnums = _parameterProcessor.PlanetsFromString(planets);
+
+            if (!planetEnums.Any())
+            {
+                return NotFound();
+            }
+
             var (from, to) = CalculateDatesForYear(year);
 
-            return Ok((await _astroEventCalculator.GetAstroEvents(from, to, Planet.Mercury))
+            return Ok((await _astroEventCalculator.GetAstroEvents(from, to, planetEnums))
                 .Select(_ => _.ToAstroEventDto()).OrderBy(_ => _.Time));
         }
 
