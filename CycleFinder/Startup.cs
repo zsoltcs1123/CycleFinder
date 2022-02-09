@@ -1,9 +1,11 @@
 using CycleFinder.Calculations.Astro;
+using CycleFinder.Calculations.Astro.Aspects;
+using CycleFinder.Calculations.Astro.Extremes;
 using CycleFinder.Calculations.Astro.Retrograde;
 using CycleFinder.Calculations.Markers;
 using CycleFinder.Calculations.Math.Extremes;
 using CycleFinder.Calculations.Services;
-using CycleFinder.Calculations.Services.Astro.Aspects;
+using CycleFinder.Calculations.Services.Astro;
 using CycleFinder.Data;
 using CycleFinder.Extensions;
 using CycleFinder.Middlewares;
@@ -35,10 +37,13 @@ namespace CycleFinder
             services.AddScoped<ICandleStickRepository, BinanceDataService>();
             services.AddScoped<IEphemerisEntryRepository, EphemerisEntryRepository>();
             services.AddScoped<IAstroEventCalculator, AstroEventCalculator>();
+            services.AddScoped<IAspectCalculator, AspectCalculator>();
+            services.AddScoped<IAstroExtremeCalculator, AstroExtremeCalculator>();
             services.AddScoped<IRetrogradeCalculcator, RetrogradeCalculator>();
             services.AddScoped<IQueryParameterProcessor, QueryParameterProcessor>();
 
             services.AddSingleton<ILocalExtremeCalculator, LocalExtremeCalculator>();
+            services.AddSingleton<IInversionCalculator, InversionCalculator>();
 
 
             services.AddDbContext<EphemerisEntryContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CycleFinderConnection")));

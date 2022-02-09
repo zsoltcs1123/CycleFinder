@@ -30,23 +30,43 @@ namespace CycleFinder.Calculations.Math.Generic
             return FindLocalExtreme(arr, c_func, order);
         }
 
+        //uses linear regression
         public static List<int> FindLocalMaxima(double[] arr)
         {
             var ret = new List<int>();
 
-            //calculate & map slopes
-            (double val, double slope)[] arrWithSlopes = new (double, double)[arr.Length];
+            var ascending = "asc";
+            var descending = "desc";
 
-            arrWithSlopes[0] = (arr[0], 0);
+            //calculate & map slopes & direction
+            (double val, double slope, string direction)[] arrWithSlopes = new (double, double, string)[arr.Length];
+
+            arrWithSlopes[0] = (arr[0], 0, "");
             for (int i=0; i<arr.Length-1; i++)
             {
-                arrWithSlopes[i+1] = (arr[i+1], arr[i] - arr[i + 1]);
+                arrWithSlopes[i+1] = (arr[i+1], (System.Math.Round(arr[i] - arr[i + 1],2))*-1,"");
+
+                if (arrWithSlopes[i+1].slope > 0)
+                {
+                    arrWithSlopes[i+1].direction = ascending;
+                }
+                else if (arrWithSlopes[i+1].slope == 0)
+                {
+                    if (arrWithSlopes[i].direction == ascending)
+                        arrWithSlopes[i+1].direction = ascending;
+                    else
+                        arrWithSlopes[i+1].direction = descending;
+                }
+                else
+                {
+                    arrWithSlopes[i+1].direction = descending;
+                }
             }
 
             //skip first 
             for (int i = 1; i < arrWithSlopes.Length - 1; i++)
             {
-                if (arrWithSlopes[i].slope < 0 && arrWithSlopes[i + 1].slope > 0)
+                if (arrWithSlopes[i].direction == ascending && arrWithSlopes[i].direction != arrWithSlopes[i+1].direction)
                 {
                     ret.Add(i);
                 }
@@ -64,13 +84,13 @@ namespace CycleFinder.Calculations.Math.Generic
             arrWithSlopes[0] = (arr[0], 0);
             for (int i = 0; i < arr.Length - 1; i++)
             {
-                arrWithSlopes[i + 1] = (arr[i + 1], arr[i] - arr[i + 1]);
+                arrWithSlopes[i + 1] = (arr[i + 1], (System.Math.Round(arr[i] - arr[i + 1], 2)) * -1);
             }
 
             //skip first 
             for (int i = 1; i < arrWithSlopes.Length - 1; i++)
             {
-                if (arrWithSlopes[i].slope > 0 && arrWithSlopes[i + 1].slope < 0)
+                if (arrWithSlopes[i].slope <= 0 && arrWithSlopes[i + 1].slope > 0)
                 {
                     ret.Add(i);
                 }

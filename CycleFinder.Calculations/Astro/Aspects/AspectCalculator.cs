@@ -1,70 +1,38 @@
-﻿using CycleFinder.Calculations.Astro;
-using CycleFinder.Models;
+﻿using CycleFinder.Models;
 using CycleFinder.Models.Astro;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace CycleFinder.Calculations.Services.Astro.Aspects
+namespace CycleFinder.Calculations.Astro.Aspects
 {
-    public class AstroEventCalculator : IAstroEventCalculator
+    public class AspectCalculator : IAspectCalculator
     {
         //TODO orb should come from API. Also, maybe orb per planet?
         private static readonly double _orb = 2.00;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 
-        private readonly Planet[] Planets = ((Planet[])Enum.GetValues(typeof(Planet))).ToArray();
-
-        public AstroEventCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
+        public AspectCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
         }
 
-        public async Task<IEnumerable<AstroEvent>> GetAstroEvents(DateTime from, DateTime to, IEnumerable<Planet> planets)
+        public async Task<IEnumerable<Aspect>> GetAspects(DateTime from, DateTime to, IEnumerable<Planet> planets, IEnumerable<AspectType> aspectTypes)
         {
             var ephem = await _ephemerisEntryRepository.GetEphemeris(from, to);
-            List<AstroEvent> ret = new();
+            List<Aspect> ret = new();
+
             foreach (var spl in planets)
             {
-                //Get Extremes
-                ret.AddRange(GetExtremes(ephem, spl, ExtremeType.DeclinationMin));
-                ret.AddRange(GetExtremes(ephem, spl, ExtremeType.DeclinationMax));
-                //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.LatitudeMin));
-                //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.LatitudeMax));
-                //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.SpeedMin));
-                //ret.AddRange(GetExtremes(ephem, spl, ExtremeType.SpeedMax));
-
-
-                //Get Aspects
-                /*                    foreach (var lpl in Planets.Where(_ => _ > spl))
-                                    {
-                                        var aspects = GetAspectsForPlanetPairs(ephem.Entries, spl, lpl, AspectType.MainAspects);
-                                        ret.AddRange(aspects);
-                                    }*/
+                foreach (var lpl in planets.Where(_ => _ > spl))
+                {
+                    var aspects = GetAspectsForPlanetPairs(ephem.Entries, spl, lpl, AspectType.MainAspects);
+                    ret.AddRange(aspects);
+                }
             }
+
             return ret;
-         }
-
-        private static IEnumerable<AstroEvent> GetExtremes(Ephemeris ephem, Planet planet, ExtremeType extremeType)
-        {
-            Func<Coordinates, double> selector = extremeType switch
-            {
-                ExtremeType.DeclinationMax or ExtremeType.DeclinationMin => c => c.Declination,
-                ExtremeType.LatitudeMax or ExtremeType.LatitudeMin => c => c.Latitude,
-                ExtremeType.SpeedMax or ExtremeType.SpeedMin => c => c.Speed,
-                _ => throw new NotImplementedException()
-            };
-
-            Func<Func<Coordinates, double>, Planet, IEnumerable<Coordinates>> extremeFunc = extremeType switch
-            {
-                ExtremeType.LatitudeMax or ExtremeType.SpeedMax or ExtremeType.DeclinationMax => ephem.GetMaximaBy,
-                ExtremeType.LatitudeMin or ExtremeType.SpeedMin or ExtremeType.DeclinationMin => ephem.GetMinimaBy,
-                _ => throw new NotImplementedException()
-            };
-
-            //Skip the first & last ones because they will always be an extreme due to being the first/last... deal with this later
-            return extremeFunc(selector, planet).Select(c => new Extreme(c.EphemerisEntryTime, planet, selector(c), extremeType));
         }
 
         private static IEnumerable<Aspect> GetAspectsForPlanetPairs(

@@ -1,8 +1,6 @@
-﻿using CycleFinder.Calculations.Services.Astro.Aspects;
+﻿using CycleFinder.Calculations.Services.Astro;
 using CycleFinder.Dtos;
 using CycleFinder.Extensions;
-using CycleFinder.Models;
-using CycleFinder.Models.Extensions;
 using CycleFinder.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -57,6 +55,6 @@ namespace CycleFinder.Controllers
         
         //TODO for dev purposes only return 2 months
         //private static (DateTime from, DateTime to) CalculateDatesForYear(int year) => (new DateTime(year, 1, 1).ToUniversalTime(), new DateTime(year, 2, 28).ToUniversalTime());
-        private static (DateTime from, DateTime to) CalculateDatesForYear(int year) => (new DateTime(year, 1, 1).ToUniversalTime(), new DateTime(year, 12, 31).ToUniversalTime());
+        private static (DateTime from, DateTime to) CalculateDatesForYear(int year) => (new DateTime(year-1, 1, 1).ToUniversalTime(), new DateTime(year, 12, 31).ToUniversalTime());
     }
 }
