@@ -31,23 +31,22 @@ namespace CycleFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AstroEventDto>>> GetAstroEvents(
             [FromQuery] int year,
-            string planets)
+            string planets,
+            string extremes,
+            string aspects)
         {
-            if (!IsValidYear(year))
-            {
-                return NotFound();
-            }
-
             var planetEnums = _parameterProcessor.PlanetsFromString(planets);
+            var extEnums = _parameterProcessor.ExtremeTypesFromString(extremes);
+            var aspEnums = _parameterProcessor.AscpectTypesFromString(aspects);
 
-            if (!planetEnums.Any())
+            if (!IsValidYear(year) && !planetEnums.Any() && (!extEnums.Any() || !aspEnums.Any()))
             {
                 return NotFound();
             }
 
             var (from, to) = CalculateDatesForYear(year);
 
-            return Ok((await _astroEventCalculator.GetAstroEvents(from, to, planetEnums))
+            return Ok((await _astroEventCalculator.GetAstroEvents(from, to, planetEnums, extEnums, aspEnums))
                 .Select(_ => _.ToAstroEventDto()).OrderBy(_ => _.Time));
         }
 
@@ -55,6 +54,6 @@ namespace CycleFinder.Controllers
         
         //TODO for dev purposes only return 2 months
         //private static (DateTime from, DateTime to) CalculateDatesForYear(int year) => (new DateTime(year, 1, 1).ToUniversalTime(), new DateTime(year, 2, 28).ToUniversalTime());
-        private static (DateTime from, DateTime to) CalculateDatesForYear(int year) => (new DateTime(year-1, 1, 1).ToUniversalTime(), new DateTime(year, 12, 31).ToUniversalTime());
+        private static (DateTime from, DateTime to) CalculateDatesForYear(int year) => (new DateTime(year, 1, 1).ToUniversalTime(), new DateTime(year, 12, 31).ToUniversalTime());
     }
 }

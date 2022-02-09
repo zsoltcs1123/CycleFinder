@@ -1,7 +1,7 @@
 ﻿using CycleFinder.Models;
-using CycleFinder.Models.Astro;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CycleFinder.Services
 {
@@ -24,23 +24,6 @@ namespace CycleFinder.Services
             return ret;
         }
 
-        public AspectType AscpectTypesFromString(string aspect)
-        {
-            if (String.IsNullOrEmpty(aspect)) return AspectType.MainAspects;
-
-            AspectType ret = AspectType.None;
-
-            foreach (string s in aspect.Split(","))
-            {
-                var aspectEnum = AspectTypeFromString(s);
-                if (aspectEnum.HasValue)
-                {
-                    ret |= aspectEnum.Value;
-                }
-            }
-            return ret;
-        }
-
         private static Planet? PlanetFromString(string planet) => planet switch
         {
             "mo" => Planet.Moon,
@@ -55,6 +38,49 @@ namespace CycleFinder.Services
             "pl" => Planet.Pluto,
             _ => null,
         };
+
+        public IEnumerable<ExtremeType> ExtremeTypesFromString(string extremes)
+        {
+            var ret = new List<ExtremeType>();
+
+            if (String.IsNullOrEmpty(extremes)) return ret;
+
+            foreach (string s in extremes.Split(","))
+            {
+                var exts = ExtremeTypeFromString(s);
+                if (exts.Any())
+                {
+                    ret.AddRange(exts);
+                }
+            }
+            return ret;
+        }
+
+        private static ExtremeType[] ExtremeTypeFromString(string ext) => ext switch
+        {
+            "dec" => new ExtremeType[] { ExtremeType.DeclinationMin, ExtremeType.DeclinationMax },
+            "lat" => new ExtremeType[] { ExtremeType.LatitudeMin, ExtremeType.LatitudeMax },
+            "spe" => new ExtremeType[] { ExtremeType.SpeedMax, ExtremeType.SpeedMin },
+            _ => Array.Empty<ExtremeType>()
+        };
+
+        public IEnumerable<AspectType> AscpectTypesFromString(string aspects)
+        {
+            var ret = new List<AspectType>();
+
+            if (String.IsNullOrEmpty(aspects)) return ret;
+
+
+            foreach (string s in aspects.Split(","))
+            {
+                var asp = AspectTypeFromString(s);
+                if (asp.HasValue)
+                {
+                    ret.Add(asp.Value);
+                }
+            }
+            return ret;
+        }
 
         private static AspectType? AspectTypeFromString(string aspectType) => aspectType switch
         {

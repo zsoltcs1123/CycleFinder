@@ -13,6 +13,19 @@ namespace CycleFinder.Calculations.Astro.Aspects
         private static readonly double _orb = 2.00;
         private readonly IEphemerisEntryRepository _ephemerisEntryRepository;
 
+        private static readonly Planet[] Planets = new Planet[] {
+            Planet.Moon, 
+            Planet.Sun,
+            Planet.Mercury,
+            Planet.Venus,
+            Planet.Mars,
+            Planet.Jupiter,
+            Planet.Saturn,
+            Planet.Uranus,
+            Planet.Neptune,
+            Planet.Pluto 
+        };
+
         public AspectCalculator(IEphemerisEntryRepository ephemerisEntryRepository)
         {
             _ephemerisEntryRepository = ephemerisEntryRepository;
@@ -25,9 +38,9 @@ namespace CycleFinder.Calculations.Astro.Aspects
 
             foreach (var spl in planets)
             {
-                foreach (var lpl in planets.Where(_ => _ > spl))
+                foreach (var lpl in Planets.Where(_ => _ > spl || (_ == Planet.Sun) && spl != Planet.Sun))
                 {
-                    var aspects = GetAspectsForPlanetPairs(ephem.Entries, spl, lpl, AspectType.MainAspects);
+                    var aspects = GetAspectsForPlanetPairs(ephem.Entries, spl, lpl, aspectTypes);
                     ret.AddRange(aspects);
                 }
             }
@@ -39,7 +52,7 @@ namespace CycleFinder.Calculations.Astro.Aspects
             IEnumerable<EphemerisEntry> ephem,
             Planet smallerPlanet,
             Planet largerPlanet,
-            AspectType aspectType)
+            IEnumerable<AspectType> aspectTypes)
         {
             var ret = new List<Aspect>();
 
@@ -49,7 +62,7 @@ namespace CycleFinder.Calculations.Astro.Aspects
                 var coord2 = entry.GetCoordinatesByPlanet(largerPlanet);
 
                 var aspect = GetAspectType(GetCircularDifference(coord1.Longitude, coord2.Longitude), _orb);
-                if (aspect != null && aspectType.HasFlag(aspect))
+                if (aspect != null && aspectTypes.Contains(aspect.Value))
                 {
                     ret.Add(new Aspect(entry.Time, (smallerPlanet, coord1), (largerPlanet, coord2), aspect.Value));
                 }
@@ -57,7 +70,6 @@ namespace CycleFinder.Calculations.Astro.Aspects
 
             return ret;
         }
-
 
         private static double GetCircularDifference(double l1, double l2) => System.Math.Abs(360 - l1 - (360 - l2));
 

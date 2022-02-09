@@ -27,11 +27,24 @@ namespace CycleFinder.Calculations.Services.Astro
             _extremeCalculator = extremeCalculator;
         }
 
-        public async Task<IEnumerable<AstroEvent>> GetAstroEvents(DateTime from, DateTime to, IEnumerable<Planet> planets)
+        public async Task<IEnumerable<AstroEvent>> GetAstroEvents(
+            DateTime from, 
+            DateTime to, 
+            IEnumerable<Planet> planets, 
+            IEnumerable<ExtremeType> extremes,
+            IEnumerable<AspectType> aspects)
         {
             List<AstroEvent> ret = new();
 
-            ret.AddRange(await _extremeCalculator.GetExtremes(from, to, planets, new ExtremeType[] { ExtremeType.DeclinationMax, ExtremeType.DeclinationMin }));
+            if (extremes.Any())
+            {
+                ret.AddRange(await _extremeCalculator.GetExtremes(from, to, planets, extremes));
+            }
+
+            if (aspects.Any())
+            {
+                ret.AddRange(await _aspectCalculator.GetAspects(from, to, planets, aspects));
+            }
 
             return ret;
          }

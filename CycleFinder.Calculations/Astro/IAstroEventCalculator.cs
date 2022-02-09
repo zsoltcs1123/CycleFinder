@@ -8,6 +8,11 @@ namespace CycleFinder.Calculations.Services.Astro
 {
     public interface IAstroEventCalculator
     {
-        public Task<IEnumerable<AstroEvent>> GetAstroEvents(DateTime from, DateTime to, IEnumerable<Planet> planets);
+        public Task<IEnumerable<AstroEvent>> GetAstroEvents(
+            DateTime from, 
+            DateTime to, 
+            IEnumerable<Planet> planets, 
+            IEnumerable<ExtremeType> extremes,
+            IEnumerable<AspectType> aspects);
     }
 }

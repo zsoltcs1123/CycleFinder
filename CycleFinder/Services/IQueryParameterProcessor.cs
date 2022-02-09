@@ -6,7 +6,8 @@ namespace CycleFinder.Services
     public interface IQueryParameterProcessor
     {
         public IEnumerable<Planet> PlanetsFromString(string planet);
-        public AspectType AscpectTypesFromString(string aspectType);
+        public IEnumerable<AspectType> AscpectTypesFromString(string aspectType);
         public TimeFrame? TimeFrameFromString(string timeFrame);
+        public IEnumerable<ExtremeType> ExtremeTypesFromString(string planet);
     }
 }
