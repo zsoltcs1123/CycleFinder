@@ -64,7 +64,8 @@ namespace CycleFinder.Data
             return timeFrame switch
             {
                 TimeFrame.Daily => (await GetAllDailyData(symbol, timeFrame, _firstTradeDate)).OrderBy(_ => _.Time).ToList(),
-                TimeFrame.H4 => (await GetAllIntradayData(symbol, timeFrame, _firstTradeDate)).OrderBy(_ => _.Time).ToList(),
+                TimeFrame.H4 => (await GetAllIntradayData(symbol, timeFrame, _firstTradeDate, 4)).OrderBy(_ => _.Time).ToList(),
+                TimeFrame.H1 => (await GetAllIntradayData(symbol, timeFrame, _firstTradeDate, 1)).OrderBy(_ => _.Time).ToList(),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -77,12 +78,12 @@ namespace CycleFinder.Data
             return Math.Abs(diff.TotalDays) > _limit ?  (await GetAllDailyData(symbol, timeFrame, candles.Last().Time.AddDays(1))).Concat(candles).ToList() : candles;
         }
 
-        private async Task<IEnumerable<CandleStick>> GetAllIntradayData(string symbol, TimeFrame timeFrame, DateTime startTime)
+        private async Task<IEnumerable<CandleStick>> GetAllIntradayData(string symbol, TimeFrame timeFrame, DateTime startTime, int hours)
         {
             var candles = await GetData(symbol, timeFrame, startTime);
             var diff = candles.First().Time - DateTime.Now;
 
-            return Math.Abs(diff.TotalHours / 4) > _limit ? (await GetAllIntradayData(symbol, timeFrame, candles.Last().Time.AddHours(4))).Concat(candles).ToList() : candles;
+            return Math.Abs(diff.TotalHours / hours) > _limit ? (await GetAllIntradayData(symbol, timeFrame, candles.Last().Time.AddHours(4), hours)).Concat(candles).ToList() : candles;
         }
 
         private async Task<bool> CheckConnection()

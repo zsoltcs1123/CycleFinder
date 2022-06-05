@@ -1,5 +1,5 @@
 ﻿using CycleFinder.Calculations.Math;
-using CycleFinder.Calculations.Services.Ephemeris.Aspects;
+using CycleFinder.Data;
 using System;
 using System.Linq;
 

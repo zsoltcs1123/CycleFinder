@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30523.141
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleFinder", "CycleFinder\CycleFinder.csproj", "{1053B0A5-3020-43B8-874E-80617FD8E3B8}"
 EndProject
@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleFinder.Calculations", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CyceFinder.CalculationsTester", "CyceFinder.CalculationsTester\CyceFinder.CalculationsTester.csproj", "{3C4E4477-37BE-48BB-BF61-7DDB0FA3565B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleFinder.Models", "CycleFinder.Models\CycleFinder.Models.csproj", "{53EA2039-D2E0-4BF0-BB7B-E391262756D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleFinder.Models", "CycleFinder.Models\CycleFinder.Models.csproj", "{53EA2039-D2E0-4BF0-BB7B-E391262756D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleFinder.DataDownloader", "CycleFinder.DataDownloader\CycleFinder.DataDownloader.csproj", "{F60F523B-8E6C-4435-B3B6-C16A788E0090}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{53EA2039-D2E0-4BF0-BB7B-E391262756D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53EA2039-D2E0-4BF0-BB7B-E391262756D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53EA2039-D2E0-4BF0-BB7B-E391262756D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F60F523B-8E6C-4435-B3B6-C16A788E0090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F60F523B-8E6C-4435-B3B6-C16A788E0090}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F60F523B-8E6C-4435-B3B6-C16A788E0090}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F60F523B-8E6C-4435-B3B6-C16A788E0090}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
