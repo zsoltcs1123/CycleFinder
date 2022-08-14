@@ -49,5 +49,17 @@ namespace CycleFinder.Calculations.Services.Astro
             return ret;
          }
 
+
+        public async Task<IEnumerable<AstroEvent>> GetAspectsBetweenPlanets(DateTime from, DateTime to, Planet smallerPlanet, Planet largerPlanet, IEnumerable<AspectType> aspects)
+        {
+            List<AstroEvent> ret = new();
+
+            if (aspects.Any())
+            {
+                ret.AddRange(await _aspectCalculator.GetAspectsForPlanetPairs(from, to, smallerPlanet, largerPlanet, aspects));
+            }
+
+            return ret;
+        }
     }
 }

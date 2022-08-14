@@ -24,7 +24,7 @@ namespace CycleFinder.Services
             return ret;
         }
 
-        private static Planet? PlanetFromString(string planet) => planet switch
+        private static Planet? GetPlanetFromString(string planet) => planet switch
         {
             "mo" => Planet.Moon,
             "su" => Planet.Sun,
@@ -103,5 +103,11 @@ namespace CycleFinder.Services
             "1h" => TimeFrame.H1,
             _ => null,
         };
+
+        public Planet? PlanetFromString(string planet)
+        {
+            return QueryParameterProcessor.GetPlanetFromString(planet);
+        }
+
     }
 }

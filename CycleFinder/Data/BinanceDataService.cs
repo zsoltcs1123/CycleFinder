@@ -83,7 +83,7 @@ namespace CycleFinder.Data
             var candles = await GetData(symbol, timeFrame, startTime);
             var diff = candles.First().Time - DateTime.Now;
 
-            return Math.Abs(diff.TotalHours / hours) > _limit ? (await GetAllIntradayData(symbol, timeFrame, candles.Last().Time.AddHours(4), hours)).Concat(candles).ToList() : candles;
+            return Math.Abs(diff.TotalHours / hours) > _limit ? (await GetAllIntradayData(symbol, timeFrame, candles.Last().Time.AddHours(hours), hours)).Concat(candles).ToList() : candles;
         }
 
         private async Task<bool> CheckConnection()

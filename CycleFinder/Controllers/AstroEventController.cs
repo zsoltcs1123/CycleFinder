@@ -50,6 +50,30 @@ namespace CycleFinder.Controllers
                 .Select(_ => _.ToAstroEventDto()).OrderBy(_ => _.Time));
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AstroEventDto>>> GetAspectsBetweenPlanets(
+            [FromQuery] int year,
+            string p1,
+            string p2,
+            string aspects)
+        {
+            var planet1 = _parameterProcessor.PlanetFromString(p1);
+            var planet2 = _parameterProcessor.PlanetFromString(p2);
+
+            var aspEnums = _parameterProcessor.AscpectTypesFromString(aspects);
+
+            if (!IsValidYear(year) || planet1 == null || planet2 == null || !aspEnums.Any()) 
+            {
+                return NotFound();
+            }
+
+            var (from, to) = CalculateDatesForYear(year);
+
+            return Ok((await _astroEventCalculator.GetAspectsBetweenPlanets(from, to, planet1.Value, planet2.Value, aspEnums))
+                .Select(_ => _.ToAstroEventDto()).OrderBy(_ => _.Time));
+        }
+
+
         private bool IsValidYear(int year) => _validyears.Contains(year);
         
         //TODO for dev purposes only return 2 months

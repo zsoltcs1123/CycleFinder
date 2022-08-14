@@ -48,6 +48,16 @@ namespace CycleFinder.Calculations.Astro.Aspects
             return ret;
         }
 
+        public async Task<IEnumerable<Aspect>> GetAspectsForPlanetPairs(DateTime from, DateTime to, Planet smallerPlanet, Planet largerPlanet, IEnumerable<AspectType> aspectTypes)
+        {
+            var ephem = await _ephemerisEntryRepository.GetEphemeris(from, to);
+            List<Aspect> ret = new();
+
+            ret.AddRange(GetAspectsForPlanetPairs(ephem.Entries, smallerPlanet, largerPlanet, aspectTypes));
+
+            return ret;
+        }
+
         private static IEnumerable<Aspect> GetAspectsForPlanetPairs(
             IEnumerable<EphemerisEntry> ephem,
             Planet smallerPlanet,

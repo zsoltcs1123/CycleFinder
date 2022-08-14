@@ -14,5 +14,12 @@ namespace CycleFinder.Calculations.Services.Astro
             IEnumerable<Planet> planets, 
             IEnumerable<ExtremeType> extremes,
             IEnumerable<AspectType> aspects);
+
+        public Task<IEnumerable<AstroEvent>> GetAspectsBetweenPlanets(
+            DateTime from,
+            DateTime to,
+            Planet smallerPlanet,
+            Planet largerPlanet,
+            IEnumerable<AspectType> aspects);
     }
 }
